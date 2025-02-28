@@ -21,28 +21,26 @@ All the sprite work was ported over from Pokémon Ruby/Sapphire and Fire Red/Lea
 
 ### Controls
 
-* Directions: "Arrow Keys"
-
-* A button: "A"
-* B button: "S"
-* X button: "D"
-* Y button: "F"
-
-* L button: "W"
-* R button: "E"
-* Z button: "R"
-
-* D-pad Up: "1"
-* D-pad Down: "2" 
-
-* Start: "Space"
-* Select: "Shift"
+| Button | Keyboard Key |
+| :---: | :---: |
+| Movement | *ARROWS* |
+| A | *A* |
+| B | *S* |
+| X | *X* |
+| Y | *F* |
+| L | *W* |
+| R | *E* |
+| Z | *R* |
+| D-pad Up | *1* |
+| D-pad Down | *2* |
+| Start | *SPACEBAR* |
+| Select | *SHIFT* |
 
 ## Author
 
 Zachary Betters
-[LinkedIn](https://www.linkedin.com/in/zachary-betters-916a74116/)
-[@every1_betters](https://x.com/every1_betters)
+* [LinkedIn](https://www.linkedin.com/in/zachary-betters-916a74116/)
+* [@every1_betters](https://x.com/every1_betters)
 
 ## Version History
 
