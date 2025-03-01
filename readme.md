@@ -44,7 +44,7 @@ Zachary Betters
 
 ## Version History
 
-* 0.1
+* ALPHA 1.0.0
     * Initial Release
 
 ## License
