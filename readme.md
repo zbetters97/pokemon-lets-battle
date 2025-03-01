@@ -13,7 +13,7 @@ All the sprite work was ported over from Pokémon Ruby/Sapphire and Fire Red/Lea
 ### Dependencies
 
 * Windows 10
-* Java 17
+* Java SDK 23
 
 ### Installing
 
