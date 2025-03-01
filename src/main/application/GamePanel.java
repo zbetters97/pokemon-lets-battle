@@ -189,7 +189,9 @@ public class GamePanel extends JPanel implements Runnable {
         tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
         g2 = (Graphics2D) tempScreen.getGraphics();
 
-        if (fullScreenOn) setFullScreen();
+        if (fullScreenOn) {
+            setFullScreen();
+        }
     }
 
     private void setupWildPokemon() {
@@ -237,10 +239,21 @@ public class GamePanel extends JPanel implements Runnable {
 
         if (player.action == Entity.Action.SURFING) {
             startMusic(0, "surfing");
-        } else {
-            if (currentMap == petalburg) startMusic(0, "littleroot");
-            else if (currentMap == pokecenter) startMusic(0, "pokecenter");
-            else if (currentMap == pokemart) startMusic(0, "pokemart");
+        }
+        else {
+            if (currentMap == petalburg) {
+                startMusic(0, "littleroot");
+            }
+            else {
+                if (currentMap == pokecenter) {
+                    startMusic(0, "pokecenter");
+                }
+                else {
+                    if (currentMap == pokemart) {
+                        startMusic(0, "pokemart");
+                    }
+                }
+            }
         }
     }
 
@@ -365,10 +378,12 @@ public class GamePanel extends JPanel implements Runnable {
     private void updateOBJ() {
         for (int i = 0; i < obj[1].length; i++) {
             if (obj[currentMap][i] != null) {
-                if (!obj[currentMap][i].alive)
+                if (!obj[currentMap][i].alive) {
                     obj[currentMap][i] = null;
-                else
+                }
+                else {
                     obj[currentMap][i].update();
+                }
             }
         }
     }
@@ -376,10 +391,12 @@ public class GamePanel extends JPanel implements Runnable {
     private void updateOBJ_I() {
         for (int i = 0; i < obj_i[1].length; i++) {
             if (obj_i[currentMap][i] != null) {
-                if (!obj_i[currentMap][i].alive)
+                if (!obj_i[currentMap][i].alive) {
                     obj_i[currentMap][i] = null;
-                else
+                }
+                else {
                     obj_i[currentMap][i].update();
+                }
             }
         }
     }
@@ -467,64 +484,74 @@ public class GamePanel extends JPanel implements Runnable {
             ui.draw(g2);
         }
         // BATTLE STATE
-        else if (gameState == battleState) {
-
-            // DRAW UI
-            ui.draw(g2);
-        }
-        // PLAY STATE
         else {
+            if (gameState == battleState) {
 
-            // DRAW TILES
-            tileM.draw(g2);
-
-            // DRAW PLAYER
-            player.draw(g2);
-
-            // DRAW UI
-            ui.draw(g2);
-
-            // DON'T DRAW JUMPING PLAYER FIRST
-            if (!player.jumping) {
-                entities.add(player);
+                // DRAW UI
+                ui.draw(g2);
             }
+            // PLAY STATE
+            else {
 
-            // POPULATE ENTITY LIST
-            for (Entity n : npc[currentMap]) {
-                if (n != null) entities.add(n);
-            }
-            for (Entity o : obj[currentMap]) {
-                if (o != null) entities.add(o);
-            }
-            for (Entity oi : obj_i[currentMap]) {
-                if (oi != null) entities.add(oi);
-            }
-            for (Entity pa : particleList) {
-                if (pa != null) entities.add(pa);
-            }
+                // DRAW TILES
+                tileM.draw(g2);
 
-            // SORT DRAW ORDER BY Y COORD
-            entities.sort(new Comparator<Entity>() {
-                public int compare(Entity e1, Entity e2) {
-                    return Integer.compare(e1.worldY, e2.worldY);
-                }
-            });
-
-            // DRAW ENTITIES
-            for (Entity e : entities) {
-                e.draw(g2);
-            }
-
-            // DRAW JUMPING PLAYER OVER ENTITIES
-            if (player.jumping) {
+                // DRAW PLAYER
                 player.draw(g2);
+
+                // DRAW UI
+                ui.draw(g2);
+
+                // DON'T DRAW JUMPING PLAYER FIRST
+                if (!player.jumping) {
+                    entities.add(player);
+                }
+
+                // POPULATE ENTITY LIST
+                for (Entity n : npc[currentMap]) {
+                    if (n != null) {
+                        entities.add(n);
+                    }
+                }
+                for (Entity o : obj[currentMap]) {
+                    if (o != null) {
+                        entities.add(o);
+                    }
+                }
+                for (Entity oi : obj_i[currentMap]) {
+                    if (oi != null) {
+                        entities.add(oi);
+                    }
+                }
+                for (Entity pa : particleList) {
+                    if (pa != null) {
+                        entities.add(pa);
+                    }
+                }
+
+                // SORT DRAW ORDER BY Y COORD
+                entities.sort(new Comparator<Entity>() {
+                    public int compare(Entity e1, Entity e2) {
+                        return Integer.compare(e1.worldY, e2.worldY);
+                    }
+                });
+
+                // DRAW ENTITIES
+                for (Entity e : entities) {
+                    e.draw(g2);
+                }
+
+                // DRAW JUMPING PLAYER OVER ENTITIES
+                if (player.jumping) {
+                    player.draw(g2);
+                }
+
+                // EMPTY ENTITY LIST
+                entities.clear();
+
+                // DRAW UI
+                ui.draw(g2);
             }
-
-            // EMPTY ENTITY LIST
-            entities.clear();
-
-            // DRAW UI
-            ui.draw(g2);
         }
     }
 

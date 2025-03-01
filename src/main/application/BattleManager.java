@@ -13,6 +13,7 @@ import properties.Status;
 import properties.Type;
 
 import java.util.*;
+import java.util.List;
 
 public class BattleManager extends Thread {
 
@@ -57,6 +58,7 @@ public class BattleManager extends Thread {
     private int winner = -1, loser = -1;
     private int escapeAttempts = 0;
     public Entity ballUsed;
+    public boolean battleEnd = false;
 
     // BATTLE QUEUE
     public Deque<Integer> battleQueue = new ArrayDeque<>();
@@ -104,36 +106,56 @@ public class BattleManager extends Thread {
 
         gp.stopMusic();
 
-        if (gp.ui.textSpeed == 2) textSpeed = 30;
-        else if (gp.ui.textSpeed == 3) textSpeed = 40;
-        else if (gp.ui.textSpeed == 4) textSpeed = 50;
+        if (gp.ui.textSpeed == 2) {
+            textSpeed = 30;
+        }
+        else if (gp.ui.textSpeed == 3) {
+            textSpeed = 40;
+        }
+        else if (gp.ui.textSpeed == 4) {
+            textSpeed = 50;
+        }
 
         battleMode = currentBattle;
 
         if (gp.player.action == Entity.Action.SURFING) {
             gp.ui.battle_arena = gp.ui.battle_arena_water;
             gp.ui.battle_bkg = gp.ui.battle_bkg_water;
-        } else {
+        }
+        else {
             gp.ui.battle_arena = gp.ui.battle_arena_grass;
             gp.ui.battle_bkg = gp.ui.battle_bkg_grass;
         }
 
-        if (trainer != null) this.trainer = trainer;
-        else if (pokemon != null) fighter[1] = pokemon;
+        if (trainer != null) {
+            this.trainer = trainer;
+        }
+        else if (pokemon != null) {
+            fighter[1] = pokemon;
+        }
 
-        if (condition == null) weather = Weather.CLEAR;
-        else weather = Weather.valueOf(condition);
+        if (condition == null) {
+            weather = Weather.CLEAR;
+        }
+        else {
+            weather = Weather.valueOf(condition);
+        }
 
         weatherDays = -1;
 
         this.cpu = cpu;
         this.pcBattle = pcBattle;
 
-        if (pcBattle) gp.startMusic(9, music);
-        else gp.startMusic(1, music);
+        if (pcBattle) {
+            gp.startMusic(9, music);
+        }
+        else {
+            gp.startMusic(1, music);
+        }
 
         active = true;
         running = true;
+        battleEnd = false;
         fightStage = fight_Encounter;
     }
 
@@ -149,7 +171,8 @@ public class BattleManager extends Thread {
                 case fight_Encounter:
                     try {
                         setBattle();
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -157,7 +180,8 @@ public class BattleManager extends Thread {
                 case fight_Start:
                     try {
                         runBattle();
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -165,7 +189,8 @@ public class BattleManager extends Thread {
                 case fight_Capture:
                     try {
                         throwPokeball();
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -173,7 +198,8 @@ public class BattleManager extends Thread {
                 case fight_Run:
                     try {
                         escapeBattle();
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -181,7 +207,8 @@ public class BattleManager extends Thread {
                 case fight_Evolve:
                     try {
                         checkEvolve();
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -260,7 +287,8 @@ public class BattleManager extends Thread {
         }
         if (fighter[1].getAbility() == Ability.INTIMIDATE) {
             setAttribute(fighter[0], List.of("attack"), -1);
-        } else {
+        }
+        else {
             if (fighter[0].getAbility().getWeather() != null && fighter[1].getAbility().getWeather() != null) {
 
                 // if fighter 1 is faster
@@ -276,13 +304,16 @@ public class BattleManager extends Thread {
                     Random r = new Random();
                     if (r.nextFloat() <= ((float) 1 / 2)) {
                         weather = fighter[1].getAbility().getWeather();
-                    } else {
+                    }
+                    else {
                         weather = fighter[0].getAbility().getWeather();
                     }
                 }
-            } else if (fighter[0].getAbility().getWeather() != null) {
+            }
+            else if (fighter[0].getAbility().getWeather() != null) {
                 weather = fighter[0].getAbility().getWeather();
-            } else if (fighter[1].getAbility().getWeather() != null) {
+            }
+            else if (fighter[1].getAbility().getWeather() != null) {
                 weather = fighter[1].getAbility().getWeather();
             }
         }
@@ -443,7 +474,8 @@ public class BattleManager extends Thread {
         if (gp.ui.player == 1) {
             player = trainer;
             battleQueue.add(queue_CPUSwap);
-        } else {
+        }
+        else {
             battleQueue.add(queue_PlayerSwap);
         }
         if (fighter[gp.ui.player] == player.pokeParty.get(partySlot)) {
@@ -464,7 +496,8 @@ public class BattleManager extends Thread {
             }
 
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -554,14 +587,15 @@ public class BattleManager extends Thread {
 
         if (player == 0) {
             playerMove = selectedMove;
-        } else {
+        }
+        else {
             cpuMove = selectedMove;
         }
 
         return selectedMove;
     }
 
-    private void getCPUMove() throws InterruptedException {
+    private void getCPUMove() {
 
         if (cpu) {
 
@@ -609,15 +643,18 @@ public class BattleManager extends Thread {
     public Move chooseCPUMove() {
         /** SWITCH OUT LOGIC REFERENCE: https://www.youtube.com/watch?v=apuO7pvmGUo **/
 
-        Move bestMove = null;
+        Move bestMove;
 
         if (trainer == null || trainer.skillLevel == trainer.skill_rookie) {
             bestMove = chooseCPUMove_Random();
-        } else if (trainer.skillLevel == trainer.skill_smart) {
+        }
+        else if (trainer.skillLevel == trainer.skill_smart) {
             bestMove = chooseCPUMove_Power();
-        } else if (trainer.skillLevel == trainer.skill_elite) {
+        }
+        else if (trainer.skillLevel == trainer.skill_elite) {
             bestMove = chooseCPUMove_Best();
-        } else {
+        }
+        else {
             bestMove = chooseCPUMove_Random();
         }
 
@@ -626,7 +663,7 @@ public class BattleManager extends Thread {
 
     private Move chooseCPUMove_Random() {
 
-        Move bestMove = null;
+        Move bestMove;
 
         int ranMove = (int) (Math.random() * (fighter[1].getMoveSet().size()));
         bestMove = fighter[1].getMoveSet().get(ranMove);
@@ -636,7 +673,7 @@ public class BattleManager extends Thread {
 
     private Move chooseCPUMove_Power() {
 
-        Move bestMove = null;
+        Move bestMove;
 
         Map<Move, Integer> damageMoves = new HashMap<>();
 
@@ -666,7 +703,8 @@ public class BattleManager extends Thread {
 
             int ranMove = (int) (Math.random() * (fighter[1].getMoveSet().size()));
             bestMove = fighter[1].getMoveSet().get(ranMove);
-        } else {
+        }
+        else {
 
             bestMove = Collections.max(damageMoves.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
 
@@ -682,7 +720,7 @@ public class BattleManager extends Thread {
 
     private Move chooseCPUMove_Best() {
 
-        Move bestMove = null;
+        Move bestMove;
 
         Map<Move, Integer> damageMoves = new HashMap<>();
         Map<Move, Integer> koMoves = new HashMap<>();
@@ -715,11 +753,13 @@ public class BattleManager extends Thread {
 
                 int ranMove = (int) (Math.random() * (fighter[1].getMoveSet().size()));
                 bestMove = fighter[1].getMoveSet().get(ranMove);
-            } else {
+            }
+            else {
                 bestMove = Collections.max(damageMoves.entrySet(),
                         Comparator.comparingInt(Map.Entry::getValue)).getKey();
             }
-        } else {
+        }
+        else {
             bestMove = Collections.max(koMoves.entrySet(),
                     Comparator.comparingInt(Map.Entry::getValue)).getKey();
         }
@@ -745,12 +785,15 @@ public class BattleManager extends Thread {
             if (firstTurn == 1) {
                 battleQueue.addFirst(queue_CPUMove);
                 battleQueue.addFirst(queue_PlayerMove);
-            } else if (firstTurn == 2) {
+            }
+            else if (firstTurn == 2) {
                 battleQueue.addFirst(queue_PlayerMove);
                 battleQueue.addFirst(queue_CPUMove);
-            } else if (firstTurn == 3) {
+            }
+            else if (firstTurn == 3) {
                 battleQueue.addFirst(queue_CPUMove);
-            } else if (firstTurn == 4) {
+            }
+            else if (firstTurn == 4) {
                 battleQueue.addFirst(queue_PlayerMove);
             }
         }
@@ -758,25 +801,32 @@ public class BattleManager extends Thread {
 
     private int getFirstTurn() {
 
-        int first = -1;
+        int first;
 
         if (playerMove == null && cpuMove == null) {
             first = 0;
-        } else if (playerMove == null) {
+        }
+        else if (playerMove == null) {
             first = 3;
-        } else if (cpuMove == null) {
+        }
+        else if (cpuMove == null) {
             first = 4;
-        } else {
+        }
+        else {
             if (playerMove.getPriority() > cpuMove.getPriority()) {
                 first = 1;
-            } else if (playerMove.getPriority() < cpuMove.getPriority()) {
+            }
+            else if (playerMove.getPriority() < cpuMove.getPriority()) {
                 first = 2;
-            } else {
+            }
+            else {
                 if (fighter[0].getSpeed() > fighter[1].getSpeed()) {
                     first = 1;
-                } else if (fighter[0].getSpeed() < fighter[1].getSpeed()) {
+                }
+                else if (fighter[0].getSpeed() < fighter[1].getSpeed()) {
                     first = 2;
-                } else {
+                }
+                else {
                     Random r = new Random();
                     first = (r.nextFloat() <= ((float) 1 / 2)) ? 1 : 2;
                 }
@@ -793,7 +843,8 @@ public class BattleManager extends Thread {
 
         if (canMove(fighter[0], playerMove)) {
             move(fighter[0], fighter[1], playerMove);
-        } else {
+        }
+        else {
             playerMove.resetMoveTurns();
         }
     }
@@ -805,7 +856,8 @@ public class BattleManager extends Thread {
 
         if (canMove(fighter[1], cpuMove)) {
             move(fighter[1], fighter[0], cpuMove);
-        } else {
+        }
+        else {
             cpuMove.resetMoveTurns();
         }
     }
@@ -840,7 +892,8 @@ public class BattleManager extends Thread {
         if (val == 1) {
             pkm.getStatus().printStatus(gp, pkm.getName());
             return false;
-        } else {
+        }
+        else {
             return true;
         }
     }
@@ -852,7 +905,8 @@ public class BattleManager extends Thread {
         if (val == 1) {
             removeStatus(pkm);
             return true;
-        } else {
+        }
+        else {
             pkm.getStatus().printStatus(gp, pkm.getName());
             return false;
         }
@@ -893,7 +947,7 @@ public class BattleManager extends Thread {
             // increase counter
             pkm.setStatusCounter(pkm.getStatusCounter() + 1);
 
-            // if pokemon hurt itself in confusion
+            // if Pokémon hurt itself in confusion
             return !confusionDamage(pkm);
         }
     }
@@ -906,7 +960,9 @@ public class BattleManager extends Thread {
         if (val == 1) {
 
             int damage = getConfusionDamage(pkm);
-            if (damage > pkm.getHP()) damage = pkm.getHP();
+            if (damage > pkm.getHP()) {
+                damage = pkm.getHP();
+            }
 
             pkm.setHit(true);
             gp.playSE(gp.battle_SE, "hit-normal");
@@ -915,7 +971,8 @@ public class BattleManager extends Thread {
             pkm.getStatus().printStatus(gp, pkm.getName());
 
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -923,7 +980,7 @@ public class BattleManager extends Thread {
     private int getConfusionDamage(Pokemon pkm) {
         /** CONFUSION DAMAGE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition)#Effect **/
 
-        int damage = 0;
+        int damage;
 
         double level = pkm.getLevel();
         double power = 40.0;
@@ -951,7 +1008,8 @@ public class BattleManager extends Thread {
 
             removeStatus(pkm);
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -970,11 +1028,14 @@ public class BattleManager extends Thread {
             atk.setHit(true);
 
             int damage = (int) Math.ceil(atk.getHP() * 0.0625);
-            if (damage >= atk.getHP()) damage = atk.getHP();
+            if (damage >= atk.getHP()) {
+                damage = atk.getHP();
+            }
             decreaseHP(atk, damage);
 
             typeDialogue(atk.getName() + " is\nhurt by Wrap!");
-        } else if (atkMove.isReady()) {
+        }
+        else if (atkMove.isReady()) {
 
             typeDialogue(atk.getName() + " used\n" + atkMove + "!", false);
 
@@ -987,13 +1048,16 @@ public class BattleManager extends Thread {
                 atkMove.resetMoveTurns();
                 atkMove.setPP(atkMove.getPP() - 1);
                 attack(atk, trg, atkMove);
-            } else {
+            }
+            else {
                 typeDialogue("It had no effect!");
             }
-        } else if (atkMove.getRecharge()) {
+        }
+        else if (atkMove.getRecharge()) {
             typeDialogue(atkMove.getDelay(atk.getName()));
             atkMove.setTurnCount(atkMove.getTurns());
-        } else {
+        }
+        else {
             typeDialogue(atk.getName() + " used\n" + atkMove + "!");
             atk.setProtection(atkMove.getProtection());
             typeDialogue(atkMove.getDelay(atk.getName()));
@@ -1064,13 +1128,16 @@ public class BattleManager extends Thread {
             if (trg.getAbility() == Ability.PRESSURE) {
                 move.setPP(move.getPP() - 1);
             }
-        } else {
+        }
+        else {
             typeDialogue("The attack missed!");
 
             if (move.getMove() == Moves.JUMPKICK || move.getMove() == Moves.HIGHJUMPKICK) {
 
                 int damage = (int) Math.floor(atk.getHP() * 0.125);
-                if (damage >= atk.getHP()) damage = atk.getHP();
+                if (damage >= atk.getHP()) {
+                    damage = atk.getHP();
+                }
 
                 decreaseHP(atk, damage);
                 typeDialogue(atk.getName() + " hurt\n" + damage + " itself!");
@@ -1114,15 +1181,18 @@ public class BattleManager extends Thread {
         // if move never misses, return true
         else if (move.getAccuracy() == -1) {
             hit = true;
-        } else {
+        }
+        else {
             if (trg.hasActiveMove(Moves.MIRACLEEYE) || trg.hasActiveMove(Moves.ODORSLEUTH)) {
                 hit = true;
-            } else {
-                double accuracy = 0;
+            }
+            else {
+                double accuracy;
 
                 if (trg.hasActiveMove(Moves.FORESIGHT)) {
                     accuracy = getAccuracy(atk, move) * atk.getAccuracy();
-                } else {
+                }
+                else {
                     accuracy = getAccuracy(atk, move) * (atk.getAccuracy() / trg.getEvasion());
                 }
 
@@ -1173,10 +1243,12 @@ public class BattleManager extends Thread {
 
             if (trg.hasActiveMove(Moves.SAFEGUARD)) {
                 typeDialogue("It had no effect!");
-            } else {
+            }
+            else {
                 setStatus(atk, trg, move.getEffect());
             }
-        } else {
+        }
+        else {
             typeDialogue(trg.getName() + " is\nalready " +
                     trg.getStatus().getStatus() + "!");
         }
@@ -1190,7 +1262,8 @@ public class BattleManager extends Thread {
 
                 if (trg.getAbility() == Ability.LIMBER && status == Status.PARALYZE) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     trg.setStatus(status);
 
                     gp.playSE(gp.battle_SE, status.getStatus());
@@ -1199,10 +1272,12 @@ public class BattleManager extends Thread {
                     if (trg.getAbility() == Ability.QUICKFEET && !trg.getAbility().isActive()) {
                         trg.getAbility().setActive(true);
                         setAttribute(trg, List.of("speed"), 2);
-                    } else if (trg.getAbility() == Ability.GUTS && !trg.getAbility().isActive()) {
+                    }
+                    else if (trg.getAbility() == Ability.GUTS && !trg.getAbility().isActive()) {
                         trg.getAbility().setActive(true);
                         setAttribute(trg, List.of("attack"), 2);
-                    } else if ((trg.getAbility() == Ability.SYNCHRONIZE) &&
+                    }
+                    else if ((trg.getAbility() == Ability.SYNCHRONIZE) &&
                             (status == Status.BURN || status == Status.PARALYZE || status == Status.POISON)) {
                         setStatus(trg, atk, status);
                     }
@@ -1238,10 +1313,12 @@ public class BattleManager extends Thread {
         else {
             if (trg.hasActiveMove(Moves.MIST) || trg.getAbility() == Ability.CLEARBODY) {
                 typeDialogue("It had no effect!");
-            } else {
+            }
+            else {
                 if (move.getMove() == Moves.CAPTIVATE && trg.getSex() == atk.getSex()) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     setAttribute(trg, move.getStats(), move.getLevel());
 
                     if (move.getMove() == Moves.SWAGGER) {
@@ -1260,10 +1337,12 @@ public class BattleManager extends Thread {
             if (level > 0) {
                 gp.playSE(gp.battle_SE, "stat-up");
                 typeDialogue(pkm.changeStat(stat, level));
-            } else {
+            }
+            else {
                 if (pkm.getAbility() == Ability.KEENEYE && stat.equals("accuracy")) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     gp.playSE(gp.battle_SE, "stat-down");
                     typeDialogue(pkm.changeStat(stat, level));
                 }
@@ -1324,7 +1403,8 @@ public class BattleManager extends Thread {
                 if (item != null && item.damage != 0) {
                     typeDialogue(atk.getName() + " flung\nits " + item.name + "!");
                     damageMove(atk, trg, move);
-                } else {
+                }
+                else {
                     typeDialogue("It had no effect!");
                 }
 
@@ -1332,7 +1412,8 @@ public class BattleManager extends Thread {
             case FUTURESIGHT:
                 if (trg.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     trg.addActiveMove(move.getMove());
                     typeDialogue(trg.getName() + " has\nforeseen an attack!");
                 }
@@ -1353,7 +1434,8 @@ public class BattleManager extends Thread {
                     for (Pokemon p : gp.player.pokeParty) {
                         p.removeStatus();
                     }
-                } else if (atk == fighter[1] && trainer != null) {
+                }
+                else if (atk == fighter[1] && trainer != null) {
                     for (Pokemon p : trainer.pokeParty) {
                         p.removeStatus();
                     }
@@ -1364,7 +1446,8 @@ public class BattleManager extends Thread {
             case LEECHSEED:
                 if (trg.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     trg.addActiveMove(move.getMove());
                     typeDialogue(atk.getName() + " planted\na seed on " + trg.getName() + "!");
                 }
@@ -1372,7 +1455,8 @@ public class BattleManager extends Thread {
             case LIGHTSCREEN, REFLECT:
                 if (atk.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     atk.addActiveMove(move.getMove());
                     typeDialogue(atk.getName() + "'s " + move + "\nraised DEFENSE!");
                 }
@@ -1380,7 +1464,8 @@ public class BattleManager extends Thread {
             case MIST:
                 if (trg.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     trg.addActiveMove(move.getMove());
                     typeDialogue(atk.getName() + " became\nshrouded in MIST!");
                 }
@@ -1398,7 +1483,8 @@ public class BattleManager extends Thread {
             case ODORSLEUTH, MIRACLEEYE, FORESIGHT:
                 if (trg.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     trg.addActiveMove(move.getMove());
                     typeDialogue(atk.getName() + " identified\n" + trg.getName() + "!");
                 }
@@ -1406,9 +1492,11 @@ public class BattleManager extends Thread {
             case PERISHSONG:
                 if (trg.hasActiveMove(move.getMove()) && atk.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
-                } else if (trg.getAbility() == Ability.SOUNDPROOF && atk.getAbility() == Ability.SOUNDPROOF) {
+                }
+                else if (trg.getAbility() == Ability.SOUNDPROOF && atk.getAbility() == Ability.SOUNDPROOF) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     if (!trg.hasActiveMove(move.getMove()) && trg.getAbility() != Ability.SOUNDPROOF) {
                         trg.addActiveMove(move.getMove());
                     }
@@ -1423,7 +1511,8 @@ public class BattleManager extends Thread {
                 if (atk.getStatus() != null) {
                     setStatus(atk, trg, atk.getStatus());
                     atk.removeStatus();
-                } else {
+                }
+                else {
                     typeDialogue("It had no effect!");
                 }
 
@@ -1446,11 +1535,14 @@ public class BattleManager extends Thread {
 
                     int gainedHP = atk.getBHP() - atk.getHP();
                     int halfHP = (int) Math.floor(atk.getBHP() / 2.0);
-                    if (gainedHP > halfHP) gainedHP = halfHP;
+                    if (gainedHP > halfHP) {
+                        gainedHP = halfHP;
+                    }
 
                     increaseHP(atk, gainedHP);
                     typeDialogue(atk.getName() + "\nregained health!");
-                } else {
+                }
+                else {
                     typeDialogue("It had no effect!");
                 }
                 break;
@@ -1458,7 +1550,8 @@ public class BattleManager extends Thread {
 
                 if (atk.hasStatus(Status.BURN) || atk.hasStatus(Status.PARALYZE) || atk.hasStatus(Status.POISON)) {
                     typeDialogue(atk.getName() + " status\nreturned to normal!");
-                } else {
+                }
+                else {
                     typeDialogue("It had no effect!");
                 }
 
@@ -1478,7 +1571,8 @@ public class BattleManager extends Thread {
                     while (move.getMove() == Moves.SLEEPTALK);
 
                     move(atk, trg, move);
-                } else {
+                }
+                else {
                     typeDialogue("It had no effect!");
                 }
                 break;
@@ -1487,7 +1581,8 @@ public class BattleManager extends Thread {
 
                 if (trgMove.getPP() < 1) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     int PP = 4;
                     if (trgMove.getPP() < PP) {
                         PP = trgMove.getPP();
@@ -1505,14 +1600,16 @@ public class BattleManager extends Thread {
                 if (trainer == null) {
                     typeDialogue(atk.getName() + " teleported\naway!");
                     endBattle();
-                } else {
+                }
+                else {
                     typeDialogue("It had no effect!");
                 }
                 break;
             case WISH:
                 if (atk.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     atk.addActiveMove(move.getMove());
                     typeDialogue(atk.getName() + " made\na wish!");
                 }
@@ -1520,7 +1617,8 @@ public class BattleManager extends Thread {
             case WRAP:
                 if (trg.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
-                } else {
+                }
+                else {
                     trg.addActiveMove(move.getMove());
                     typeDialogue(trg.getName() + " was\nwrapped by " + atk.getName() + "!");
                 }
@@ -1537,7 +1635,7 @@ public class BattleManager extends Thread {
 
         getDamage(atk, trg, move);
 
-        // BOTH POKEMON ALIVE
+        // BOTH POKÉMON ALIVE
         if (trg.getHP() > 0 && atk.getHP() > 0) {
 
             applyEffect(atk, trg, move);
@@ -1578,8 +1676,12 @@ public class BattleManager extends Thread {
                 while (i <= turns) {
                     damage += (int) Math.floor((dealDamage(atk, trg, move) * crit));
                     pause(800);
-                    if (trg.getHP() <= 0) break;
-                    else i++;
+                    if (trg.getHP() <= 0) {
+                        break;
+                    }
+                    else {
+                        i++;
+                    }
                 }
                 typeDialogue("Hit " + i + " times!");
                 break;
@@ -1591,12 +1693,19 @@ public class BattleManager extends Thread {
 
         if (damage <= 0) {
             typeDialogue("It had no effect!");
-        } else {
-            if (crit >= 1.5) typeDialogue("A critical hit!");
+        }
+        else {
+            if (crit >= 1.5) {
+                typeDialogue("A critical hit!");
+            }
 
             String hitSE = getHitSE(getEffectiveness(trg, move.getType()));
-            if (hitSE.equals("hit-super")) typeDialogue("It's super effective!");
-            else if (hitSE.equals("hit-weak")) typeDialogue("It's not very effective...");
+            if (hitSE.equals("hit-super")) {
+                typeDialogue("It's super effective!");
+            }
+            else if (hitSE.equals("hit-weak")) {
+                typeDialogue("It's not very effective...");
+            }
 
             typeDialogue(trg.getName() + " took\n" + damage + " damage!");
 
@@ -1634,7 +1743,8 @@ public class BattleManager extends Thread {
         if (trg.getAbility() == Ability.FLASHFIRE && move.getType() == Type.FIRE &&
                 !trg.getAbility().isActive()) {
             trg.getAbility().setActive(true);
-        } else if (trg.getAbility() == Ability.WONDERGUARD && effectiveness <= 1.0) {
+        }
+        else if (trg.getAbility() == Ability.WONDERGUARD && effectiveness <= 1.0) {
             damage = 0;
         }
 
@@ -1657,7 +1767,7 @@ public class BattleManager extends Thread {
     private int calculateDamage(Pokemon atk, Pokemon trg, Move move) {
         /** DAMAGE FORMULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Damage **/
 
-        double damage = 0;
+        double damage;
 
         double level = atk.getLevel();
         double power = getPower(move, atk, trg);
@@ -1677,8 +1787,12 @@ public class BattleManager extends Thread {
                 damage = 40;
                 break;
             case ENDEAVOR:
-                if (trg.getHP() < atk.getHP()) damage = 0;
-                else damage = trg.getHP() - atk.getHP();
+                if (trg.getHP() < atk.getHP()) {
+                    damage = 0;
+                }
+                else {
+                    damage = trg.getHP() - atk.getHP();
+                }
                 break;
             case SEISMICTOSS:
                 damage = trg.getLevel();
@@ -1689,16 +1803,24 @@ public class BattleManager extends Thread {
 
         switch (trg.getAbility()) {
             case FLASHFIRE:
-                if (move.getType() == Type.FIRE) damage = 0;
+                if (move.getType() == Type.FIRE) {
+                    damage = 0;
+                }
                 break;
             case LEVITATE:
-                if (move.getType() == Type.GROUND) damage = 0;
+                if (move.getType() == Type.GROUND) {
+                    damage = 0;
+                }
                 break;
             case SOUNDPROOF:
-                if (soundMoves.contains(move.getMove())) damage = 0;
+                if (soundMoves.contains(move.getMove())) {
+                    damage = 0;
+                }
                 break;
             case THICKFAT:
-                if (move.getType() == Type.FIRE || move.getType() == Type.ICE) damage *= 0.5;
+                if (move.getType() == Type.FIRE || move.getType() == Type.ICE) {
+                    damage *= 0.5;
+                }
                 break;
             default:
                 break;
@@ -1719,12 +1841,24 @@ public class BattleManager extends Thread {
             case FLAIL, REVERSAL:
                 double remainHP = (double) atk.getHP() / atk.getBHP();
 
-                if (remainHP >= 0.672) power = 20;
-                else if (0.672 > remainHP && remainHP >= 0.344) power = 40;
-                else if (0.344 > remainHP && remainHP >= 0.203) power = 80;
-                else if (0.203 > remainHP && remainHP >= 0.094) power = 100;
-                else if (0.094 > remainHP && remainHP >= 0.031) power = 150;
-                else if (0.031 > remainHP) power = 200;
+                if (remainHP >= 0.672) {
+                    power = 20;
+                }
+                else if (0.672 > remainHP && remainHP >= 0.344) {
+                    power = 40;
+                }
+                else if (0.344 > remainHP && remainHP >= 0.203) {
+                    power = 80;
+                }
+                else if (0.203 > remainHP && remainHP >= 0.094) {
+                    power = 100;
+                }
+                else if (0.094 > remainHP && remainHP >= 0.031) {
+                    power = 150;
+                }
+                else if (0.031 > remainHP) {
+                    power = 200;
+                }
 
                 break;
 
@@ -1753,28 +1887,58 @@ public class BattleManager extends Thread {
                     }
                 }
 
-                if (strength == 4) power = 10;
-                else if (strength == 5) power = 30;
-                else if (strength == 6) power = 50;
-                else if (strength == 7) power = 70;
-                else if (strength == 8) power = 90;
-                else if (strength == 9) power = 110;
-                else if (strength == 10) power = 150;
+                if (strength == 4) {
+                    power = 10;
+                }
+                else if (strength == 5) {
+                    power = 30;
+                }
+                else if (strength == 6) {
+                    power = 50;
+                }
+                else if (strength == 7) {
+                    power = 70;
+                }
+                else if (strength == 8) {
+                    power = 90;
+                }
+                else if (strength == 9) {
+                    power = 110;
+                }
+                else if (strength == 10) {
+                    power = 150;
+                }
 
                 break;
             case PUNISHMENT:
 
                 power = 60.0;
 
-                if (trg.getAttackStg() > 0) power += 20.0 * trg.getAttackStg();
-                if (trg.getDefenseStg() > 0) power += 20.0 * trg.getDefenseStg();
-                if (trg.getSpAttackStg() > 0) power += 20.0 * trg.getSpAttackStg();
-                if (trg.getSpDefenseStg() > 0) power += 20.0 * trg.getSpDefenseStg();
-                if (trg.getAccuracyStg() > 0) power += 20.0 * trg.getAccuracyStg();
-                if (trg.getEvasionStg() > 0) power += 20.0 * trg.getEvasionStg();
-                if (trg.getSpeedStg() > 0) power += 20.0 * trg.getSpeedStg();
+                if (trg.getAttackStg() > 0) {
+                    power += 20.0 * trg.getAttackStg();
+                }
+                if (trg.getDefenseStg() > 0) {
+                    power += 20.0 * trg.getDefenseStg();
+                }
+                if (trg.getSpAttackStg() > 0) {
+                    power += 20.0 * trg.getSpAttackStg();
+                }
+                if (trg.getSpDefenseStg() > 0) {
+                    power += 20.0 * trg.getSpDefenseStg();
+                }
+                if (trg.getAccuracyStg() > 0) {
+                    power += 20.0 * trg.getAccuracyStg();
+                }
+                if (trg.getEvasionStg() > 0) {
+                    power += 20.0 * trg.getEvasionStg();
+                }
+                if (trg.getSpeedStg() > 0) {
+                    power += 20.0 * trg.getSpeedStg();
+                }
 
-                if (power > 200.0) power = 200.0;
+                if (power > 200.0) {
+                    power = 200.0;
+                }
 
                 break;
 
@@ -1782,9 +1946,15 @@ public class BattleManager extends Thread {
                 power = Math.ceil((double) (atk.getHP() * move.getPower()) / atk.getBHP());
                 break;
             default:
-                if (move.getPower() == -1) power = atk.getLevel();
-                else if (move.getPower() == 1) power = trg.getLevel();
-                else power = move.getPower();
+                if (move.getPower() == -1) {
+                    power = atk.getLevel();
+                }
+                else if (move.getPower() == 1) {
+                    power = trg.getLevel();
+                }
+                else {
+                    power = move.getPower();
+                }
                 break;
         }
 
@@ -1792,17 +1962,29 @@ public class BattleManager extends Thread {
             case CLEAR:
                 break;
             case SUNLIGHT:
-                if (move.getType() == Type.FIRE) power *= 1.5;
-                else if (move.getType() == Type.WATER) power *= 0.5;
+                if (move.getType() == Type.FIRE) {
+                    power *= 1.5;
+                }
+                else if (move.getType() == Type.WATER) {
+                    power *= 0.5;
+                }
                 break;
             case RAIN:
-                if (move.getType() == Type.WATER) power *= 1.5;
-                else if (move.getType() == Type.FIRE) power *= 0.5;
+                if (move.getType() == Type.WATER) {
+                    power *= 1.5;
+                }
+                else if (move.getType() == Type.FIRE) {
+                    power *= 0.5;
+                }
 
-                if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
+                if (move.getMove() == Moves.SOLARBEAM) {
+                    power *= 0.5;
+                }
                 break;
             case HAIL, SANDSTORM:
-                if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
+                if (move.getMove() == Moves.SOLARBEAM) {
+                    power *= 0.5;
+                }
                 break;
         }
 
@@ -1844,7 +2026,8 @@ public class BattleManager extends Thread {
             if (trg.hasActiveMove(Moves.LIGHTSCREEN)) {
                 attack /= 2.0;
             }
-        } else if (move.getMType().equals(MoveType.PHYSICAL)) {
+        }
+        else if (move.getMType().equals(MoveType.PHYSICAL)) {
             attack = atk.getAttack();
         }
 
@@ -1870,7 +2053,8 @@ public class BattleManager extends Thread {
 
         if (move.getMType().equals(MoveType.SPECIAL)) {
             defense = trg.getSpDefense();
-        } else if (move.getMType().equals(MoveType.PHYSICAL)) {
+        }
+        else if (move.getMType().equals(MoveType.PHYSICAL)) {
             defense = trg.getDefense();
         }
 
@@ -1895,7 +2079,8 @@ public class BattleManager extends Thread {
                 pkm.checkType(Type.GHOST) &&
                 (pkm.hasActiveMove(Moves.ODORSLEUTH) || pkm.hasActiveMove(Moves.FORESIGHT))) {
             return effect;
-        } else if (type == Type.PSYCHIC && pkm.checkType(Type.DARK) &&
+        }
+        else if (type == Type.PSYCHIC && pkm.checkType(Type.DARK) &&
                 pkm.hasActiveMove(Moves.MIRACLEEYE)) {
             return effect;
         }
@@ -1925,7 +2110,6 @@ public class BattleManager extends Thread {
             for (Type trgType : pkm.getTypes()) {
 
                 // for each vulnerability
-                vulnerabilityLoop:
                 for (Type vulnType : trgType.getVulnerability().keySet()) {
 
                     // if found, multiply by effect and move to next loop
@@ -1936,7 +2120,6 @@ public class BattleManager extends Thread {
                 }
 
                 // for each resistance
-                resistanceLoop:
                 for (Type resType : trgType.getResistance().keySet()) {
 
                     // if found, multiply by effect and move to next loop
@@ -1956,7 +2139,7 @@ public class BattleManager extends Thread {
         return effect;
     }
 
-    private String getHitSE(double effectiveness) throws InterruptedException {
+    private String getHitSE(double effectiveness) {
 
         return switch (Double.toString(effectiveness)) {
             case "0.25", "0.5" -> "hit-weak";
@@ -1971,8 +2154,12 @@ public class BattleManager extends Thread {
         int chance = 2;
         double damage = 1.5;
 
-        if (atk.getAbility() == Ability.SNIPER) damage = 3.0;
-        if (trg.getAbility() == Ability.SHELLARMOR) damage = 1.0;
+        if (atk.getAbility() == Ability.SNIPER) {
+            damage = 3.0;
+        }
+        if (trg.getAbility() == Ability.SHELLARMOR) {
+            damage = 1.0;
+        }
 
         if (move.getCrit() == 1) {
             chance = 4;
@@ -1995,7 +2182,8 @@ public class BattleManager extends Thread {
             if (gainedHP + pkm.getHP() > pkm.getBHP()) {
                 gainedHP = pkm.getBHP() - pkm.getHP();
                 increaseHP(pkm, gainedHP);
-            } else {
+            }
+            else {
                 increaseHP(pkm, gainedHP);
             }
 
@@ -2008,10 +2196,13 @@ public class BattleManager extends Thread {
         if (move.getMove() == Moves.EXPLOSION || move.getMove() == Moves.SELFDESTRUCT) {
             decreaseHP(pkm, pkm.getHP());
             typeDialogue(pkm.getName() + " was hit\nwith recoil damage!");
-        } else if (move.getSelfInflict() != 0.0 && pkm.getAbility() != Ability.ROCKHEAD) {
+        }
+        else if (move.getSelfInflict() != 0.0 && pkm.getAbility() != Ability.ROCKHEAD) {
 
             int recoilDamage = (int) (Math.ceil(damage * move.getSelfInflict()));
-            if (recoilDamage > pkm.getHP()) recoilDamage = pkm.getHP();
+            if (recoilDamage > pkm.getHP()) {
+                recoilDamage = pkm.getHP();
+            }
 
             if (recoilDamage > 0) {
                 decreaseHP(pkm, recoilDamage);
@@ -2027,7 +2218,8 @@ public class BattleManager extends Thread {
                 if (trg.hasActiveMove(Moves.REFLECT)) {
                     trg.removeActiveMove(Moves.REFLECT);
                     typeDialogue(atk.getName() + " broke\nthe foe's shield!");
-                } else if (trg.hasActiveMove(Moves.LIGHTSCREEN)) {
+                }
+                else if (trg.hasActiveMove(Moves.LIGHTSCREEN)) {
                     trg.removeActiveMove(Moves.LIGHTSCREEN);
                     typeDialogue(atk.getName() + " broke\nthe foe's shield!");
                 }
@@ -2061,16 +2253,18 @@ public class BattleManager extends Thread {
             }
 
             // chance for effect to apply
-            if (new Random().nextDouble() <= move.getProbability()) {
+            if (new Random().nextDouble() <= probability) {
 
                 if (move.getStats() != null) {
 
                     if (move.isToSelf()) {
                         setAttribute(atk, move.getStats(), move.getLevel());
-                    } else {
+                    }
+                    else {
                         setAttribute(trg, move.getStats(), move.getLevel());
                     }
-                } else {
+                }
+                else {
                     setStatus(atk, trg, move.getEffect());
                 }
             }
@@ -2141,10 +2335,13 @@ public class BattleManager extends Thread {
 
                         if (trg.getHP() == trg.getBHP()) {
                             typeDialogue("It had no effect!");
-                        } else {
+                        }
+                        else {
                             int gainedHP = trg.getBHP() - trg.getHP();
                             int halfHP = (int) Math.floor(trg.getBHP() / 2.0);
-                            if (gainedHP > halfHP) gainedHP = halfHP;
+                            if (gainedHP > halfHP) {
+                                gainedHP = halfHP;
+                            }
 
                             increaseHP(trg, gainedHP);
                             typeDialogue(trg.getName() + "\nregained health!");
@@ -2173,8 +2370,12 @@ public class BattleManager extends Thread {
 
         String hitSE = getHitSE(getEffectiveness(trg, move.getType()));
 
-        if (hitSE.equals("hit-super")) typeDialogue("It's super effective!");
-        else if (hitSE.equals("hit-weak")) typeDialogue("It's not very effective...");
+        if (hitSE.equals("hit-super")) {
+            typeDialogue("It's super effective!");
+        }
+        else if (hitSE.equals("hit-weak")) {
+            typeDialogue("It's not very effective...");
+        }
 
         typeDialogue(trg.getName() + " took\n" + damage + " by Future Sight!");
     }
@@ -2184,7 +2385,9 @@ public class BattleManager extends Thread {
         if (trg.isAlive() && atk.isAlive()) {
 
             int stolenHP = (int) (trg.getHP() * 0.125);
-            if (stolenHP > trg.getHP()) stolenHP = trg.getHP();
+            if (stolenHP > trg.getHP()) {
+                stolenHP = trg.getHP();
+            }
 
             decreaseHP(trg, stolenHP);
 
@@ -2193,10 +2396,12 @@ public class BattleManager extends Thread {
                 if (stolenHP + atk.getHP() > atk.getBHP()) {
                     stolenHP = atk.getBHP() - atk.getHP();
                     increaseHP(atk, stolenHP);
-                } else {
+                }
+                else {
                     increaseHP(atk, stolenHP);
                 }
-            } else {
+            }
+            else {
                 stolenHP = 0;
             }
 
@@ -2228,7 +2433,9 @@ public class BattleManager extends Thread {
                     pkm.getStatus().getAbbreviation().equals("BRN")) {
 
                 int damage = (int) Math.ceil((pkm.getHP() * 0.16));
-                if (damage > pkm.getHP()) damage = pkm.getHP();
+                if (damage > pkm.getHP()) {
+                    damage = pkm.getHP();
+                }
 
                 gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
                 pkm.setHit(true);
@@ -2268,7 +2475,8 @@ public class BattleManager extends Thread {
 
                 weather = Weather.CLEAR;
                 weatherDays = -1;
-            } else {
+            }
+            else {
                 weatherDays--;
             }
         }
@@ -2320,7 +2528,9 @@ public class BattleManager extends Thread {
     private void setWeatherDamage(Pokemon pkm) throws InterruptedException {
 
         int damage = (int) Math.ceil((pkm.getHP() * 0.0625));
-        if (damage > pkm.getHP()) damage = pkm.getHP();
+        if (damage > pkm.getHP()) {
+            damage = pkm.getHP();
+        }
 
         gp.playSE(gp.battle_SE, "hit-normal");
         pkm.setHit(true);
@@ -2339,22 +2549,33 @@ public class BattleManager extends Thread {
         int delay = getDelay();
 
         if (delay == 0) {
-            if (playerMove != null) playerMove.resetMoveTurns();
+            if (playerMove != null) {
+                playerMove.resetMoveTurns();
+            }
             playerMove = null;
 
-            if (cpuMove != null) cpuMove.resetMoveTurns();
+            if (cpuMove != null) {
+                cpuMove.resetMoveTurns();
+            }
             cpuMove = null;
-        } else if (delay == 1) {
-            if (cpuMove != null) cpuMove.resetMoveTurns();
+        }
+        else if (delay == 1) {
+            if (cpuMove != null) {
+                cpuMove.resetMoveTurns();
+            }
             cpuMove = null;
-        } else if (delay == 2) {
-            if (playerMove != null) playerMove.resetMoveTurns();
+        }
+        else if (delay == 2) {
+            if (playerMove != null) {
+                playerMove.resetMoveTurns();
+            }
             playerMove = null;
         }
 
         if (delay == 1 || delay == 3) {
             fightStage = fight_Start;
-        } else {
+        }
+        else {
             running = false;
             fightStage = fight_Start;
             gp.ui.player = 0;
@@ -2410,19 +2631,25 @@ public class BattleManager extends Thread {
         // TRAINER 1 WINNER
         if (winner == 0) {
 
-            if (playerMove != null) playerMove.resetMoveTurns();
+            if (playerMove != null) {
+                playerMove.resetMoveTurns();
+            }
             playerMove = null;
             fighter[0].clearProtection();
 
             gp.playSE(gp.faint_SE, fighter[1].toString());
             typeDialogue(fighter[1].getName() + " fainted!");
 
-            if (!pcBattle) gainEXP();
+            if (!pcBattle) {
+                gainEXP();
+            }
         }
         // TRAINER 2 WINNER
         else if (winner == 1) {
 
-            if (cpuMove != null) cpuMove.resetMoveTurns();
+            if (cpuMove != null) {
+                cpuMove.resetMoveTurns();
+            }
             cpuMove = null;
             fighter[1].clearProtection();
 
@@ -2448,6 +2675,12 @@ public class BattleManager extends Thread {
      **/
     private void gainEXP() throws InterruptedException {
 
+        // WILD BATTLE
+        if (trainer == null) {
+            gp.stopMusic();
+            gp.startMusic(1, 2);
+        }
+
         int gainedXP = calculateEXPGain();
 
         if (!otherFighters.isEmpty()) {
@@ -2468,7 +2701,8 @@ public class BattleManager extends Thread {
             }
 
             otherFighters.clear();
-        } else {
+        }
+        else {
 
             int xp = fighter[0].getXP() + gainedXP;
             int xpTimer = (int) Math.ceil(2500.0 / (double) gainedXP);
@@ -2484,7 +2718,7 @@ public class BattleManager extends Thread {
     private int calculateEXPGain() {
         // EXP FORMULA REFERENCE (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience
 
-        int exp = 0;
+        int exp;
 
         double b = fighter[loser].getXPYield();
         double L = fighter[loser].getLevel();
@@ -2540,7 +2774,8 @@ public class BattleManager extends Thread {
                         newMove.getName() + "!", true);
 
                 newMove = null;
-            } else {
+            }
+            else {
                 gp.playMusic();
 
                 typeDialogue(pokemon.getName() + " is trying to\nlearn " + newMove.getName() + ".", true);
@@ -2561,7 +2796,8 @@ public class BattleManager extends Thread {
 
             if (fightStage == fight_Evolve) {
                 gp.ui.battleState = gp.ui.battle_Evolve;
-            } else {
+            }
+            else {
 //				fightStage = fight_Swap;	
                 gp.ui.battleState = gp.ui.battle_Dialogue;
             }
@@ -2600,22 +2836,26 @@ public class BattleManager extends Thread {
                     typeDialogue(pokemon.getName() + " learned\n" + newMove.getName() + "!", true);
 
                     gp.playMusic();
-                } else {
+                }
+                else {
                     typeDialogue(pokemon.getName() + " did not learn\n" + newMove.getName() + ".", true);
                 }
-            } else {
+            }
+            else {
                 typeDialogue(pokemon.getName() + " did not learn\n" + newMove.getName() + ".", true);
             }
 
             newMove = null;
             oldMove = null;
             gp.ui.commandNum = 0;
-        } else if (gp.keyH.bPressed) {
+        }
+        else if (gp.keyH.bPressed) {
             gp.keyH.bPressed = false;
 
             if (fightStage == fight_Evolve) {
                 gp.ui.battleState = gp.ui.battle_Evolve;
-            } else {
+            }
+            else {
 //				fightStage = fight_Swap;	
                 fightStage = fight_Start;
                 gp.ui.battleState = gp.ui.battle_Dialogue;
@@ -2645,7 +2885,7 @@ public class BattleManager extends Thread {
             // WILD POKEMON WINNER
             else if (winner == 1) {
 
-                // TRAINER 1 HAS MORE POKEMON
+                // TRAINER 1 HAS MORE POKÉMON
                 if (gp.player.hasPokemon()) {
 
                     winner = -1;
@@ -2656,7 +2896,7 @@ public class BattleManager extends Thread {
                     gp.ui.partyState = gp.ui.party_Main_Select;
 
                 }
-                // TRAINER 1 OUT OF POKEMON
+                // TRAINER 1 OUT OF POKÉMON
                 else {
                     announceWinner();
                 }
@@ -2669,7 +2909,7 @@ public class BattleManager extends Thread {
             // TRAINER 1 WINNER
             if (winner == 0) {
 
-                // TRAINER 2 HAS MORE POKEMON
+                // TRAINER 2 HAS MORE POKÉMON
                 if (trainer.hasPokemon()) {
 
                     winner = -1;
@@ -2689,11 +2929,13 @@ public class BattleManager extends Thread {
 
                             waitForKeyPress();
                             getSwapAnswer();
-                        } else {
+                        }
+                        else {
                             gp.ui.resetFighterPositions();
                             gp.ui.battleState = gp.ui.battle_Dialogue;
                         }
-                    } else {
+                    }
+                    else {
                         running = false;
 
                         gp.gameState = gp.pauseState;
@@ -2703,7 +2945,7 @@ public class BattleManager extends Thread {
                         gp.ui.partyState = gp.ui.party_Main_Select;
                     }
                 }
-                // TRAINER 2 OUT OF POKEMON
+                // TRAINER 2 OUT OF POKÉMON
                 else {
                     announceWinner();
                 }
@@ -2711,7 +2953,7 @@ public class BattleManager extends Thread {
             // TRAINER 2 WINNER
             else if (winner == 1) {
 
-                // TRAINER 1 HAS MORE POKEMON
+                // TRAINER 1 HAS MORE POKÉMON
                 if (gp.player.hasPokemon()) {
 
                     winner = -1;
@@ -2723,7 +2965,7 @@ public class BattleManager extends Thread {
                     gp.ui.pauseState = gp.ui.pause_Party;
                     gp.ui.partyState = gp.ui.party_Main_Select;
                 }
-                // TRAINER 1 OUT OF POKEMON
+                // TRAINER 1 OUT OF POKÉMON
                 else {
                     announceWinner();
                 }
@@ -2731,7 +2973,7 @@ public class BattleManager extends Thread {
             // TIE GAME
             else if (winner == 2) {
 
-                // TRAINER 1 AND 2 HAVE MORE POKEMON
+                // TRAINER 1 AND 2 HAVE MORE POKÉMON
                 if (gp.player.hasPokemon() && trainer.hasPokemon()) {
 
                     winner = -1;
@@ -2749,12 +2991,12 @@ public class BattleManager extends Thread {
                     gp.ui.pauseState = gp.ui.pause_Party;
                     gp.ui.partyState = gp.ui.party_Main_Select;
                 }
-                // ONLY TRAINER 1 HAS MORE POKEMON
+                // ONLY TRAINER 1 HAS MORE POKÉMON
                 else if (gp.player.hasPokemon()) {
                     winner = 0;
                     announceWinner();
                 }
-                // ONLY TRAINER 2 HAS MORE POKEMON
+                // ONLY TRAINER 2 HAS MORE POKÉMON
                 else if (trainer.hasPokemon()) {
                     winner = 1;
                     announceWinner();
@@ -2777,9 +3019,11 @@ public class BattleManager extends Thread {
 
         if (trainer == null || trainer.skillLevel == trainer.skill_rookie) {
             nextFighter = getCPUFighter_Next();
-        } else if (trainer.skillLevel == trainer.skill_smart) {
+        }
+        else if (trainer.skillLevel == trainer.skill_smart) {
             nextFighter = getCPUFighter_Power();
-        } else if (trainer.skillLevel == trainer.skill_elite) {
+        }
+        else if (trainer.skillLevel == trainer.skill_elite) {
             nextFighter = getCPUFighter_Best();
         }
 
@@ -2792,11 +3036,13 @@ public class BattleManager extends Thread {
 
         if (fighter == null) {
             nextFighter = trainer.pokeParty.getFirst();
-        } else {
+        }
+        else {
             int index = trainer.pokeParty.indexOf(fighter[1]);
             if (index < 0 || index + 1 == trainer.pokeParty.size()) {
                 nextFighter = null;
-            } else {
+            }
+            else {
                 nextFighter = trainer.pokeParty.get(index + 1);
             }
         }
@@ -2806,7 +3052,7 @@ public class BattleManager extends Thread {
 
     private Pokemon getCPUFighter_Power() {
 
-        Pokemon bestFighter = null;
+        Pokemon bestFighter;
 
         Map<Pokemon, Integer> fighters = new HashMap<>();
         Map<Move, Integer> powerMoves = new HashMap<>();
@@ -2843,7 +3089,7 @@ public class BattleManager extends Thread {
 
         if (fighters.isEmpty()) {
 
-            // loop through party and find highest level pokemon
+            // loop through party and find highest level Pokémon
             for (Pokemon p : trainer.pokeParty) {
                 fighters.put(p, p.getLevel());
             }
@@ -2856,7 +3102,7 @@ public class BattleManager extends Thread {
 
     private Pokemon getCPUFighter_Best() {
 
-        Pokemon bestFighter = null;
+        Pokemon bestFighter;
 
         Map<Pokemon, Integer> fighters = new HashMap<>();
         Map<Move, Integer> damageMoves = new HashMap<>();
@@ -2888,7 +3134,7 @@ public class BattleManager extends Thread {
 
         if (fighters.isEmpty()) {
 
-            // loop through party and find highest level pokemon
+            // loop through party and find highest level Pokémon
             for (Pokemon p : trainer.pokeParty) {
                 fighters.put(p, p.getLevel());
             }
@@ -2933,7 +3179,8 @@ public class BattleManager extends Thread {
 
             if (winner == 0) {
                 typeDialogue("Player defeated\nTrainer " + trainer.name + "!", true);
-            } else {
+            }
+            else {
                 typeDialogue("Player defeated\nTrainer " + gp.player.name + "!", true);
             }
 
@@ -2987,7 +3234,7 @@ public class BattleManager extends Thread {
     private int calculateMoneyEarned() {
         /** MONEY EARNED FORMULA REFERENCE (ALL GEN): https://bulbapedia.bulbagarden.net/wiki/Prize_money **/
 
-        int payout = 0;
+        int payout;
 
         int level = trainer.pokeParty.getLast().getLevel();
         int base = trainer.trainerClass;
@@ -3016,7 +3263,8 @@ public class BattleManager extends Thread {
 
             if (isCaptured()) {
                 capturePokemon();
-            } else {
+            }
+            else {
                 gp.playSE(gp.battle_SE, "ball-open");
                 gp.ui.isFighterCaptured = false;
 
@@ -3024,7 +3272,8 @@ public class BattleManager extends Thread {
                 setQueue();
                 fightStage = fight_Start;
             }
-        } else {
+        }
+        else {
             typeDialogue("You can't use\nthat here!", true);
             gp.ui.battleState = gp.ui.battle_Options;
             running = false;
@@ -3039,15 +3288,19 @@ public class BattleManager extends Thread {
         boolean isCaptured = false;
 
         double catchOdds;
-        double maxHP = 1.0;
-        double hp = 1.0;
-        double catchRate = 1.0;
+        double maxHP;
+        double hp;
+        double catchRate;
         double statusBonus = 1.0;
 
         maxHP = fighter[1].getBHP();
-        if (maxHP == 0.0) maxHP = 1.0;
+        if (maxHP == 0.0) {
+            maxHP = 1.0;
+        }
         hp = fighter[1].getHP();
-        if (hp == 0.0) hp = 1.0;
+        if (hp == 0.0) {
+            hp = 1.0;
+        }
         catchRate = fighter[1].getCatchRate();
 
         if (fighter[1].getStatus() != null) {
@@ -3095,7 +3348,8 @@ public class BattleManager extends Thread {
         if (gp.player.pokeParty.size() < 6) {
             gp.player.pokeParty.add(fighter[1]);
             typeDialogue(fighter[1].getName() + " was added\nto your party!", true);
-        } else {
+        }
+        else {
             boolean found = false;
             for (int i = 0; i < gp.player.pcParty.length; i++) {
                 for (int c = 0; c < gp.player.pcParty[i].length; c++) {
@@ -3109,7 +3363,8 @@ public class BattleManager extends Thread {
 
             if (found) {
                 typeDialogue(fighter[1].getName() + " was sent\nto your PC!", true);
-            } else {
+            }
+            else {
                 typeDialogue("There is no more room in your PC!\n" + fighter[1].getName() + " was released!", true);
             }
         }
@@ -3134,7 +3389,8 @@ public class BattleManager extends Thread {
 
             if (playerSpeed > wildSpeed) {
                 escape = true;
-            } else {
+            }
+            else {
                 escapeAttempts++;
                 double attempts = escapeAttempts;
                 double escapeOdds = ((((playerSpeed * 128) / wildSpeed) + 30) * attempts);
@@ -3151,7 +3407,8 @@ public class BattleManager extends Thread {
                 gp.playSE(gp.battle_SE, "run");
                 typeDialogue("Got away safely!", true);
                 endBattle();
-            } else {
+            }
+            else {
                 typeDialogue("Oh no!\nYou can't escape!", true);
                 setQueue();
                 fightStage = fight_Start;
@@ -3161,7 +3418,8 @@ public class BattleManager extends Thread {
         else if (pcBattle) {
             if (gp.ui.player == 0) {
                 typeDialogue("Trainer " + gp.player.name + " has fled\nthe battle!", true);
-            } else {
+            }
+            else {
                 typeDialogue("Trainer " + trainer.name + " has fled\nthe battle!", true);
             }
 
@@ -3216,7 +3474,8 @@ public class BattleManager extends Thread {
 
             if (i % 2 == 0) {
                 gp.ui.evolvePokemon = oldEvolve;
-            } else {
+            }
+            else {
                 gp.ui.evolvePokemon = newEvolve;
             }
 
@@ -3251,6 +3510,7 @@ public class BattleManager extends Thread {
      * END BATTLE METHODS
      **/
     public void endBattle() {
+
         gp.stopMusic();
         gp.setupMusic();
 
@@ -3287,6 +3547,7 @@ public class BattleManager extends Thread {
         running = false;
         pcBattle = false;
         cpu = true;
+        battleEnd = true;
 
         trainer = null;
         fighter[0] = null;
@@ -3311,7 +3572,7 @@ public class BattleManager extends Thread {
         gp.player.canMove = true;
         gp.particleList.clear();
     }
-    /** END END BATTLE METHODS **/
+    /** END BATTLE METHODS **/
 
     /**
      * MISC METHODS
@@ -3358,7 +3619,9 @@ public class BattleManager extends Thread {
         int hpTimer = getHPTimer(gainedHP);
 
         int newHP = pkm.getHP() + gainedHP;
-        if (newHP > pkm.getBHP()) newHP = pkm.getBHP();
+        if (newHP > pkm.getBHP()) {
+            newHP = pkm.getBHP();
+        }
         while (pkm.getHP() < newHP) {
             pkm.setHP(pkm.getHP() + 1);
             pause(hpTimer);
@@ -3370,7 +3633,9 @@ public class BattleManager extends Thread {
         int hpTimer = getHPTimer(lostHP);
 
         int newHP = pkm.getHP() - lostHP;
-        if (newHP < 0) newHP = 0;
+        if (newHP < 0) {
+            newHP = 0;
+        }
         while (newHP < pkm.getHP()) {
             pkm.setHP(pkm.getHP() - 1);
             pause(hpTimer);
@@ -3381,11 +3646,12 @@ public class BattleManager extends Thread {
         /** FORMULA GENERATED FROM LINEAR REGRESSION CALCULATOR **/
 
 
-        int hpTimer = 1;
+        int hpTimer;
 
         if (damage < 10) {
             hpTimer = 70;
-        } else {
+        }
+        else {
             hpTimer = (int) ((-0.2405 * damage) + 71);
             if (hpTimer < 7) {
                 hpTimer = 7;

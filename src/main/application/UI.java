@@ -257,9 +257,9 @@ public class UI {
         // FONT DECLARATION
         try {
             InputStream is = getClass().getResourceAsStream("/ui/fonts/pokemon-ds.ttf");
-            assert is != null;
             PK_DS = Font.createFont(Font.TRUETYPE_FONT, is);
-        } catch (FontFormatException | IOException e) {
+        }
+        catch (FontFormatException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -271,24 +271,38 @@ public class UI {
 
         if (gp.gameState == gp.playState) {
             drawHUD();
-        } else if (gp.gameState == gp.pauseState) {
+        }
+        else if (gp.gameState == gp.pauseState) {
             drawPauseScreen();
-        } else if (gp.gameState == gp.dialogueState) {
+        }
+        else if (gp.gameState == gp.dialogueState) {
             drawHUD();
             drawDialogueScreen(true);
-        } else if (gp.gameState == gp.tradeState) {
+        }
+        else if (gp.gameState == gp.tradeState) {
             drawTradeScreen();
-        } else if (gp.gameState == gp.hmState) {
+        }
+        else if (gp.gameState == gp.hmState) {
             drawHUD();
             drawHMScreen();
-        } else if (gp.gameState == gp.healState) {
+        }
+        else if (gp.gameState == gp.healState) {
             drawHUD();
             drawHealScreen();
-        } else if (gp.gameState == gp.battleState) {
+        }
+        else if (gp.gameState == gp.battleState) {
             drawBattleScreen();
-        } else if (gp.gameState == gp.transitionState) {
-            drawTransitionScreen();
-        } else if (gp.gameState == gp.pcState) {
+        }
+        else if (gp.gameState == gp.transitionState) {
+
+            if (gp.btlManager.active) {
+                drawBattleTransition();
+            }
+            else {
+                drawTransitionScreen();
+            }
+        }
+        else if (gp.gameState == gp.pcState) {
             drawPCScreen();
         }
     }
@@ -369,8 +383,10 @@ public class UI {
                 }
 
                 dialogueCounter = 0;
-            } else
+            }
+            else {
                 dialogueCounter++;
+            }
 
         }
         // NPC HAS NO MORE DIALOGUE
@@ -385,15 +401,22 @@ public class UI {
                 gp.btlManager.setup(gp.btlManager.trainerBattle, npc.music, npc, null, null, true, false);
 
                 startBattle();
-            } else if (npc.type == npc.type_obstacle_i) {
+            }
+            else if (npc.type == npc.type_obstacle_i) {
 
                 Pokemon p = gp.player.pokemonHasHM(npc.hmType);
 
-                if (p != null) gp.gameState = gp.hmState;
-                else gp.gameState = gp.playState;
-            } else if (npc.name.equals(NPC_Nurse.npcName) && npc.dialogueSet == 0) {
+                if (p != null) {
+                    gp.gameState = gp.hmState;
+                }
+                else {
+                    gp.gameState = gp.playState;
+                }
+            }
+            else if (npc.name.equals(NPC_Nurse.npcName) && npc.dialogueSet == 0) {
                 gp.gameState = gp.healState;
-            } else {
+            }
+            else {
                 gp.gameState = gp.playState;
             }
         }
@@ -416,7 +439,9 @@ public class UI {
             g2.drawImage(dialogue_next, x, y + 25, null);
         }
 
-        if (skip) skipDialogue();
+        if (skip) {
+            skipDialogue();
+        }
     }
 
     private void skipDialogue() {
@@ -625,7 +650,8 @@ public class UI {
 
                 if (selectedItem == npc.inventory_items.get(i)) {
                     drawText(text, x, y, hp_red, Color.LIGHT_GRAY);
-                } else {
+                }
+                else {
                     drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
                     if (commandNum == i) {
@@ -643,7 +669,8 @@ public class UI {
                 textX = x;
                 y += gp.tileSize * 0.9;
                 slotY += gp.tileSize * 0.9;
-            } else {
+            }
+            else {
                 break;
             }
         }
@@ -668,7 +695,9 @@ public class UI {
                     gp.keyH.playCursorSE();
                     commandNum--;
                 }
-                if (bagStart > 0) bagStart--;
+                if (bagStart > 0) {
+                    bagStart--;
+                }
             }
             if (gp.keyH.downPressed) {
                 gp.keyH.downPressed = false;
@@ -677,7 +706,9 @@ public class UI {
                     gp.keyH.playCursorSE();
                     commandNum++;
                 }
-                if (commandNum >= bagStart + 11) bagStart++;
+                if (commandNum >= bagStart + 11) {
+                    bagStart++;
+                }
             }
 
             if (gp.keyH.bPressed) {
@@ -694,7 +725,8 @@ public class UI {
                 gp.keyH.playCursorSE();
                 selectedItem = npc.inventory_items.get(commandNum);
             }
-        } else {
+        }
+        else {
             if (gp.keyH.upPressed) {
                 gp.keyH.upPressed = false;
 
@@ -755,8 +787,12 @@ public class UI {
         String text;
 
         ArrayList<Entity> items = new ArrayList<>();
-        if (bagTab == bag_Items) items = gp.player.inventory_items;
-        else if (bagTab == bag_Pokeballs) items = gp.player.inventory_pokeballs;
+        if (bagTab == bag_Items) {
+            items = gp.player.inventory_items;
+        }
+        else if (bagTab == bag_Pokeballs) {
+            items = gp.player.inventory_pokeballs;
+        }
 
         // MONEY WINDOW
         x = 5;
@@ -807,7 +843,8 @@ public class UI {
 
         if (items.isEmpty()) {
             text = "There is nothing to\nsell!";
-        } else {
+        }
+        else {
             text = items.get(bagNum).description;
         }
 
@@ -842,7 +879,8 @@ public class UI {
 
                 if (selectedItem == items.get(i)) {
                     drawText(text, x, y, hp_red, Color.LIGHT_GRAY);
-                } else {
+                }
+                else {
                     drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
                     if (bagNum == i) {
@@ -860,7 +898,8 @@ public class UI {
                 textX = x;
                 y += gp.tileSize * 0.9;
                 slotY += gp.tileSize * 0.9;
-            } else {
+            }
+            else {
                 break;
             }
         }
@@ -869,7 +908,8 @@ public class UI {
             x = (int) (gp.tileSize * 15.4);
             y = (int) (gp.tileSize * 0.9);
             drawText(">", x, y, Color.BLACK, Color.LIGHT_GRAY);
-        } else if (bagTab == bag_Pokeballs) {
+        }
+        else if (bagTab == bag_Pokeballs) {
             x = (int) (gp.tileSize * 9.2);
             y = (int) (gp.tileSize * 0.9);
             drawText("<", x, y, Color.BLACK, Color.LIGHT_GRAY);
@@ -895,7 +935,9 @@ public class UI {
                     gp.keyH.playCursorSE();
                     bagNum--;
                 }
-                if (bagStart > 0) bagStart--;
+                if (bagStart > 0) {
+                    bagStart--;
+                }
             }
             if (gp.keyH.downPressed) {
                 gp.keyH.downPressed = false;
@@ -904,7 +946,9 @@ public class UI {
                     gp.keyH.playCursorSE();
                     bagNum++;
                 }
-                if (bagNum >= bagStart + 11) bagStart++;
+                if (bagNum >= bagStart + 11) {
+                    bagStart++;
+                }
             }
             if (gp.keyH.rightPressed) {
                 gp.keyH.rightPressed = false;
@@ -940,12 +984,14 @@ public class UI {
                 gp.keyH.aPressed = false;
                 if (items.isEmpty()) {
                     gp.keyH.playErrorSE();
-                } else {
+                }
+                else {
                     gp.keyH.playCursorSE();
                     selectedItem = items.get(bagNum);
                 }
             }
-        } else {
+        }
+        else {
             if (gp.keyH.upPressed) {
                 gp.keyH.upPressed = false;
                 if (selectedAmount < selectedItem.amount) {
@@ -978,7 +1024,8 @@ public class UI {
 
                     selectedItem = null;
                     selectedAmount = 0;
-                } else {
+                }
+                else {
                     gp.keyH.playErrorSE();
                 }
             }
@@ -1031,7 +1078,8 @@ public class UI {
 
                 if (gp.player.healPokemonParty()) {
                     npc.dialogueSet = 1;
-                } else {
+                }
+                else {
                     npc.dialogueSet = 2;
                 }
 
@@ -1231,7 +1279,8 @@ public class UI {
                     files[0] = gp.saveLoad.loadFileData(0);
                     files[1] = gp.saveLoad.loadFileData(1);
                     files[2] = gp.saveLoad.loadFileData(2);
-                } else {
+                }
+                else {
                     gp.keyH.playErrorSE();
                 }
             }
@@ -1393,7 +1442,8 @@ public class UI {
                 textX = getXForCenteredTextOnWidth(text, width, x + 5);
                 textY = (int) (y + (gp.tileSize * 0.75));
                 drawText(text, textX, textY, battle_white, Color.BLACK);
-            } else {
+            }
+            else {
                 x = (int) (gp.tileSize * 2.4);
                 for (Type t : pokemon.getTypes()) {
                     drawSubWindow(x, y, width, height, 10, 3, t.getColor(), Color.BLACK);
@@ -1441,13 +1491,15 @@ public class UI {
                 p = gp.player.personalDex.stream().filter(o -> o.getIndex() == index).findAny().orElse(null);
                 if (p != null) {
                     drawText(p.getName(), x + (int) (gp.tileSize * 2.2), y, Color.BLACK, Color.LIGHT_GRAY);
-                } else {
+                }
+                else {
                     drawText("---------", x + (int) (gp.tileSize * 2.2), y, Color.BLACK, Color.LIGHT_GRAY);
                 }
 
                 y += gp.tileSize * 0.88;
                 slotY += gp.tileSize * 0.88;
-            } else {
+            }
+            else {
                 break;
             }
         }
@@ -1475,7 +1527,9 @@ public class UI {
                 bagNum = 385;
                 bagStart = 376;
             }
-            if (bagStart > 0) bagStart--;
+            if (bagStart > 0) {
+                bagStart--;
+            }
         }
         if (gp.keyH.downPressed) {
             gp.keyH.downPressed = false;
@@ -1488,7 +1542,9 @@ public class UI {
                 bagNum = 0;
                 bagStart = 0;
             }
-            if (bagNum >= bagStart + 11) bagStart++;
+            if (bagNum >= bagStart + 11) {
+                bagStart++;
+            }
         }
         if (gp.keyH.bPressed) {
             gp.keyH.bPressed = false;
@@ -1587,7 +1643,9 @@ public class UI {
                 gp.keyH.playCursorSE();
                 bagNum--;
             }
-            if (bagStart > 0) bagStart--;
+            if (bagStart > 0) {
+                bagStart--;
+            }
         }
         if (gp.keyH.downPressed) {
             gp.keyH.downPressed = false;
@@ -1596,7 +1654,9 @@ public class UI {
                 gp.keyH.playCursorSE();
                 bagNum++;
             }
-            if (bagNum >= bagStart + 9) bagStart++;
+            if (bagNum >= bagStart + 9) {
+                bagStart++;
+            }
         }
         if (gp.keyH.leftPressed) {
             gp.keyH.leftPressed = false;
@@ -1634,7 +1694,8 @@ public class UI {
                 pauseState = pause_Party;
 
                 commandNum = 0;
-            } else {
+            }
+            else {
                 bagState = bag_Options;
             }
         }
@@ -1648,7 +1709,8 @@ public class UI {
                 bagNum = 0;
                 commandNum = 1;
                 gp.gameState = gp.battleState;
-            } else if (partyState == party_Main_Options_Item) {
+            }
+            else if (partyState == party_Main_Options_Item) {
 
                 bagNum = 0;
                 bagTab = 0;
@@ -1659,7 +1721,8 @@ public class UI {
                 partyDialogue = "Choose a POKeMON.";
 
                 commandNum = 0;
-            } else {
+            }
+            else {
                 bagTab = 0;
                 bagStart = 0;
                 bagNum = 0;
@@ -1757,7 +1820,8 @@ public class UI {
                     bagState = bag_Dialogue;
                 }
             }
-        } else {
+        }
+        else {
             text = "TOSS";
             g2.drawString(text, x, y);
             if (commandNum == 2) {
@@ -1773,7 +1837,8 @@ public class UI {
                     if (items.get(bagNum).collectableType == items.get(bagNum).type_keyItem) {
                         bagDialogue = "You shouldn't toss this\nitem!";
                         bagState = bag_Dialogue;
-                    } else {
+                    }
+                    else {
                         trainer.removeItem(items.get(bagNum), gp.player);
                         bagState = bag_Main;
                         commandNum = 0;
@@ -1932,7 +1997,8 @@ public class UI {
                 x = (int) (gp.tileSize * 7.8);
                 y += gp.tileSize * 1.08;
                 slotY += gp.tileSize * 1.08;
-            } else {
+            }
+            else {
                 break;
             }
         }
@@ -2003,8 +2069,12 @@ public class UI {
         width = (int) (gp.tileSize * 3.5);
         height = gp.tileSize;
 
-        if (fighterNum == 6) drawSubWindow(x, y, width, height, 5, 5, party_blue, party_red);
-        else drawSubWindow(x, y, width, height, 5, 3, party_blue, Color.BLACK);
+        if (fighterNum == 6) {
+            drawSubWindow(x, y, width, height, 5, 5, party_blue, party_red);
+        }
+        else {
+            drawSubWindow(x, y, width, height, 5, 3, party_blue, Color.BLACK);
+        }
 
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));
         x += gp.tileSize * 0.8;
@@ -2029,7 +2099,8 @@ public class UI {
             if (fighterNum == 6) {
                 gp.keyH.playCursorSE();
                 fighterNum = trainer.pokeParty.size() - 1;
-            } else if (fighterNum > 0) {
+            }
+            else if (fighterNum > 0) {
                 gp.keyH.playCursorSE();
                 fighterNum--;
             }
@@ -2039,7 +2110,8 @@ public class UI {
             if (fighterNum < trainer.pokeParty.size() - 1) {
                 gp.keyH.playCursorSE();
                 fighterNum++;
-            } else {
+            }
+            else {
                 gp.keyH.playCursorSE();
                 fighterNum = 6;
             }
@@ -2054,7 +2126,8 @@ public class UI {
             if (fighterNum == 0 && trainer.pokeParty.size() > 1) {
                 gp.keyH.playCursorSE();
                 fighterNum = 1;
-            } else if (fighterNum == 0) {
+            }
+            else if (fighterNum == 0) {
                 gp.keyH.playCursorSE();
                 fighterNum = 6;
             }
@@ -2065,7 +2138,8 @@ public class UI {
 
             if (fighterNum == 6) {
                 party_Main_Close();
-            } else {
+            }
+            else {
                 if (partyMove) {
                     gp.keyH.playCursorSE();
 
@@ -2076,16 +2150,19 @@ public class UI {
                     partyMove = false;
                     partyMoveNum = -1;
                     partyDialogue = "Choose a POKéMON.";
-                } else if (partyItem != null) {
+                }
+                else if (partyItem != null) {
 
                     Pokemon p = trainer.pokeParty.get(fighterNum);
 
                     if (partyItemApply) {
                         partyItem.apply(partyItem, p);
-                    } else if (partyItemGive) {
+                    }
+                    else if (partyItemGive) {
                         partyItem.giveItem(partyItem, p);
                     }
-                } else {
+                }
+                else {
                     gp.keyH.playCursorSE();
                     commandNum = 0;
                     partyState = party_Main_Options;
@@ -2098,7 +2175,8 @@ public class UI {
 
             if (fighterNum == 6) {
                 party_Main_Close();
-            } else {
+            }
+            else {
                 gp.keyH.playCursorSE();
                 fighterNum = 6;
             }
@@ -2113,7 +2191,8 @@ public class UI {
             partyMove = false;
             partyMoveNum = -1;
             partyDialogue = "Choose a POKéMON.";
-        } else if (partyItem != null) {
+        }
+        else if (partyItem != null) {
             gp.keyH.playCursorSE();
             partyItem = null;
             partyItemGive = false;
@@ -2123,7 +2202,8 @@ public class UI {
             bagNum = 0;
             bagState = bag_Main;
             pauseState = pause_Bag;
-        } else {
+        }
+        else {
             if (gp.btlManager.active) {
 
                 if (battleState == battle_Options) {
@@ -2132,9 +2212,11 @@ public class UI {
                     fighterNum = 0;
                     commandNum = 2;
                     gp.gameState = gp.battleState;
-                } else if (!gp.btlManager.fighter[player].isAlive()) {
+                }
+                else if (!gp.btlManager.fighter[player].isAlive()) {
                     gp.keyH.playErrorSE();
-                } else {
+                }
+                else {
                     gp.keyH.playCursorSE();
 
                     fighterNum = 0;
@@ -2143,7 +2225,8 @@ public class UI {
                     new Thread(gp.btlManager).start();
                     gp.gameState = gp.battleState;
                 }
-            } else {
+            }
+            else {
                 gp.keyH.playCursorSE();
 
                 fighterNum = 0;
@@ -2189,8 +2272,12 @@ public class UI {
         drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
         y += gp.tileSize * 0.95;
-        if (gp.btlManager.active) text = "SELECT";
-        else text = "SWITCH";
+        if (gp.btlManager.active) {
+            text = "SELECT";
+        }
+        else {
+            text = "SWITCH";
+        }
         drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
         y += gp.tileSize * 0.95;
@@ -2246,7 +2333,8 @@ public class UI {
                                 !gp.btlManager.fighter[0].isAlive()) {
                             player = 0;
                             partyDialogue = "Choose a POKéMON.";
-                        } else {
+                        }
+                        else {
                             pauseState = pause_Main;
                             player = 0;
                             gp.btlManager.fightStage = gp.btlManager.fight_Start;
@@ -2260,7 +2348,8 @@ public class UI {
                     else {
                         gp.keyH.playErrorSE();
                     }
-                } else {
+                }
+                else {
                     gp.keyH.playCursorSE();
 
                     partyDialogue = "Move to where?";
@@ -2282,7 +2371,8 @@ public class UI {
 
                 if (!trainer.pokeParty.get(fighterNum).isAlive()) {
                     gp.keyH.playErrorSE();
-                } else {
+                }
+                else {
                     gp.keyH.playCursorSE();
                     partyState = party_Main_Options_Item;
                     commandNum = 0;
@@ -2393,7 +2483,8 @@ public class UI {
                     bagState = bag_Main;
                     bagTab = bag_KeyItems;
                     commandNum = 0;
-                } else {
+                }
+                else {
                     gp.keyH.playErrorSE();
                 }
             }
@@ -2418,7 +2509,8 @@ public class UI {
                     partyDialogue = "Choose a POKéMON.";
                     partyState = party_Main_Select;
                     commandNum = 0;
-                } else {
+                }
+                else {
                     gp.keyH.playErrorSE();
                 }
             }
@@ -2488,7 +2580,8 @@ public class UI {
             if (partyItem == null) {
                 partyDialogue = "Choose a POKéMON.";
                 partyState = party_Main_Select;
-            } else {
+            }
+            else {
                 partyDialogue = "";
                 partyItem = null;
                 partyItemApply = false;
@@ -2511,7 +2604,8 @@ public class UI {
 
                         bagState = bag_Main;
                         battleState = battle_Dialogue;
-                    } else {
+                    }
+                    else {
                         bagState = bag_Main;
                         commandNum = 0;
                         player = 1;
@@ -2519,7 +2613,8 @@ public class UI {
                     }
 
                     gp.gameState = gp.battleState;
-                } else {
+                }
+                else {
                     bagState = bag_Main;
                     pauseState = pause_Bag;
                 }
@@ -2551,15 +2646,18 @@ public class UI {
 
         if (fighter.isAlive()) {
             boxColor = party_blue;
-        } else {
+        }
+        else {
             boxColor = party_faint;
         }
 
         if (partyMove && partyMoveNum == 0) {
             drawSubWindow(x, y, width, height, 3, 3, boxColor, hp_yellow);
-        } else if (fighterNum == 0) {
+        }
+        else if (fighterNum == 0) {
             drawSubWindow(x, y, width, height, 3, 5, boxColor, party_red);
-        } else {
+        }
+        else {
             drawSubWindow(x, y, width, height, 3, 3, boxColor, Color.BLACK);
         }
 
@@ -2578,23 +2676,28 @@ public class UI {
 
                 if (fighter.isAlive()) {
                     boxColor = party_blue;
-                } else {
+                }
+                else {
                     boxColor = party_faint;
                 }
 
                 if (partyMove && partyMoveNum == i) {
                     drawSubWindow(x, y, width, height, 3, 3, boxColor, hp_yellow);
-                } else if (fighterNum == i) {
+                }
+                else if (fighterNum == i) {
                     drawSubWindow(x, y, width, height, 3, 5, boxColor, party_red);
-                } else {
+                }
+                else {
                     drawSubWindow(x, y, width, height, 3, 3, boxColor, Color.BLACK);
                 }
 
                 party_Box((int) (x + gp.tileSize * 0.15), (int) (y - gp.tileSize * 0.15), fighter, false);
-            } else {
+            }
+            else {
                 if (fighterNum == i) {
                     drawSubWindow(x, y, width, height, 3, 5, party_blue, party_red);
-                } else {
+                }
+                else {
                     drawSubWindow(x, y, width, height, 3, 3, party_blue, Color.BLACK);
                 }
             }
@@ -2624,7 +2727,8 @@ public class UI {
         if (main) {
             x = (int) (gp.tileSize * 1.8);
             y = (int) (gp.tileSize * 4.8);
-        } else {
+        }
+        else {
             x = (int) (gp.tileSize * 11.4);
             y -= gp.tileSize;
         }
@@ -2658,9 +2762,15 @@ public class UI {
 
         double remainHP = (double) fighter.getHP() / (double) fighter.getBHP();
 
-        if (remainHP >= .50) g2.setColor(hp_green);
-        else if (remainHP >= .25) g2.setColor(hp_yellow);
-        else g2.setColor(hp_red);
+        if (remainHP >= .50) {
+            g2.setColor(hp_green);
+        }
+        else if (remainHP >= .25) {
+            g2.setColor(hp_yellow);
+        }
+        else {
+            g2.setColor(hp_red);
+        }
 
         width *= remainHP;
 
@@ -2693,8 +2803,12 @@ public class UI {
             trainer = gp.btlManager.trainer;
         }
 
-        if (gp.gameState == gp.pcState) fighter = gp.player.pcParty[boxTab][fighterNum];
-        else fighter = trainer.pokeParty.get(fighterNum);
+        if (gp.gameState == gp.pcState) {
+            fighter = gp.player.pcParty[boxTab][fighterNum];
+        }
+        else {
+            fighter = trainer.pokeParty.get(fighterNum);
+        }
 
         // SKILLS BOX
         x = (int) (gp.tileSize * 7.5);
@@ -2838,8 +2952,12 @@ public class UI {
         g2.setColor(Color.BLACK);
         g2.setFont(g2.getFont().deriveFont(Font.BOLD));
         y += gp.tileSize * 0.9;
-        if (fighter.getItem() != null) text = fighter.getItem().name;
-        else text = "NONE";
+        if (fighter.getItem() != null) {
+            text = fighter.getItem().name;
+        }
+        else {
+            text = "NONE";
+        }
         g2.drawString(text, x, y);
 
         // ABILITY BOX
@@ -2887,7 +3005,8 @@ public class UI {
             if (gp.gameState == gp.pcState) {
                 pcState = pc_Box;
                 partyState = 0;
-            } else {
+            }
+            else {
                 partyDialogue = "Choose a POKéMON.";
                 partyState = party_Main_Select;
             }
@@ -2900,7 +3019,8 @@ public class UI {
         Entity trainer;
         if (gp.btlManager.active && player == 1) {
             trainer = gp.btlManager.trainer;
-        } else {
+        }
+        else {
             trainer = gp.player;
         }
 
@@ -2915,8 +3035,12 @@ public class UI {
         String text;
         Pokemon fighter;
 
-        if (gp.gameState == gp.pcState) fighter = gp.player.pcParty[boxTab][fighterNum];
-        else fighter = trainer.pokeParty.get(fighterNum);
+        if (gp.gameState == gp.pcState) {
+            fighter = gp.player.pcParty[boxTab][fighterNum];
+        }
+        else {
+            fighter = trainer.pokeParty.get(fighterNum);
+        }
 
         int slotX = (int) (gp.tileSize * 7.5);
         int slotY;
@@ -2955,7 +3079,8 @@ public class UI {
         int power = fighter.getMoveSet().get(commandNum).getPower();
         if (power <= 0 || 999 <= power) {
             text = "---";
-        } else {
+        }
+        else {
             text = Integer.toString(power);
         }
         g2.drawString(text, tempX, tempY);
@@ -2963,7 +3088,8 @@ public class UI {
         tempY += gp.tileSize;
         if (fighter.getMoveSet().get(commandNum).getAccuracy() <= 0) {
             text = "---";
-        } else {
+        }
+        else {
             text = Integer.toString(fighter.getMoveSet().get(commandNum).getAccuracy());
         }
         g2.drawString(text, tempX, tempY);
@@ -3005,7 +3131,8 @@ public class UI {
                 g2.setColor(hp_yellow);
                 g2.setStroke(new BasicStroke(5));
                 g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
-            } else if (commandNum == i) {
+            }
+            else if (commandNum == i) {
                 slotY = y - 4;
                 g2.setColor(battle_red);
                 g2.setStroke(new BasicStroke(5));
@@ -3077,7 +3204,8 @@ public class UI {
                 Collections.swap(fighter.getMoveSet(), commandNum, partyMoveNum);
                 partyMove = false;
                 partyMoveNum = -1;
-            } else {
+            }
+            else {
                 partyMove = true;
                 partyMoveNum = commandNum;
             }
@@ -3088,10 +3216,12 @@ public class UI {
             if (partyMove) {
                 partyMove = false;
                 partyMoveNum = -1;
-            } else if (gp.gameState == gp.pcState) {
+            }
+            else if (gp.gameState == gp.pcState) {
                 pcState = pc_Box;
                 partyState = 0;
-            } else {
+            }
+            else {
                 partyDialogue = "Choose a POKéMON.";
                 partyState = party_Main_Select;
                 commandNum = 0;
@@ -3104,7 +3234,8 @@ public class UI {
         Entity trainer;
         if (gp.btlManager.active && player == 1) {
             trainer = gp.btlManager.trainer;
-        } else {
+        }
+        else {
             trainer = gp.player;
         }
 
@@ -3118,8 +3249,12 @@ public class UI {
         String text;
         Pokemon fighter;
 
-        if (gp.gameState == gp.pcState) fighter = gp.player.pcParty[boxTab][fighterNum];
-        else fighter = trainer.pokeParty.get(fighterNum);
+        if (gp.gameState == gp.pcState) {
+            fighter = gp.player.pcParty[boxTab][fighterNum];
+        }
+        else {
+            fighter = trainer.pokeParty.get(fighterNum);
+        }
 
         // HEADER
         x = -10;
@@ -3203,7 +3338,9 @@ public class UI {
 
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 50F));
 
-        if (subState == 1) g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
+        if (subState == 1) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
+        }
         text = "SKILLS";
         x = (int) (gp.tileSize * 5.2);
         y = (int) (gp.tileSize * 1.3);
@@ -3211,13 +3348,19 @@ public class UI {
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
 
-        if (subState == 0) text = "->";
-        else text = "<-";
+        if (subState == 0) {
+            text = "->";
+        }
+        else {
+            text = "<-";
+        }
         x += gp.tileSize * 2.7;
         y = (int) (gp.tileSize * 1.3);
         drawText(text, x, y, Color.WHITE, Color.BLACK);
 
-        if (subState == 0) g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
+        if (subState == 0) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
+        }
         text = "MOVES";
         x += gp.tileSize;
         y = (int) (gp.tileSize * 1.3);
@@ -3263,7 +3406,8 @@ public class UI {
                     commandNum = 0;
                 }
             }
-        } else {
+        }
+        else {
             if (0 < fighterNum) {
 
                 x = (int) (gp.tileSize * 1.4);
@@ -3399,7 +3543,8 @@ public class UI {
         tempY -= gp.tileSize;
         if (moveSet.get(commandNum).getPower() == 0) {
             text = "---";
-        } else {
+        }
+        else {
             text = Integer.toString(moveSet.get(commandNum).getPower());
         }
         g2.drawString(text, tempX, tempY);
@@ -3407,7 +3552,8 @@ public class UI {
         tempY += gp.tileSize;
         if (moveSet.get(commandNum).getAccuracy() == 0) {
             text = "---";
-        } else {
+        }
+        else {
             text = Integer.toString(moveSet.get(commandNum).getAccuracy());
         }
         g2.drawString(text, tempX, tempY);
@@ -3463,7 +3609,8 @@ public class UI {
                 g2.setColor(hp_yellow);
                 g2.setStroke(new BasicStroke(5));
                 g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
-            } else if (commandNum == i) {
+            }
+            else if (commandNum == i) {
                 slotY = y - 4;
                 g2.setColor(battle_red);
                 g2.setStroke(new BasicStroke(5));
@@ -3534,7 +3681,8 @@ public class UI {
 
                 commandNum = 0;
                 gp.gameState = gp.battleState;
-            } else {
+            }
+            else {
                 gp.keyH.playErrorSE();
             }
         }
@@ -3586,8 +3734,12 @@ public class UI {
         y += gp.tileSize;
         for (int i = 0; i < 3; i++) {
 
-            if (files[i] == null) text = i + 1 + ")  [EMPTY]";
-            else text = i + 1 + ")  " + files[i];
+            if (files[i] == null) {
+                text = i + 1 + ")  [EMPTY]";
+            }
+            else {
+                text = i + 1 + ")  " + files[i];
+            }
             y += gp.tileSize;
             drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
@@ -3735,7 +3887,8 @@ public class UI {
                         gp.keyH.playErrorSE();
                     }
                 }
-            } else {
+            }
+            else {
                 text = i + 1 + ")  " + files[i];
                 drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
@@ -3828,7 +3981,8 @@ public class UI {
             gp.tileM.loadMap();
             gp.gameState = gp.playState;
             gp.setupMusic();
-        } else {
+        }
+        else {
             commandNum = -1;
         }
     }
@@ -3917,12 +4071,20 @@ public class UI {
 
         x += gp.tileSize * 6.5;
         y = slotY;
-        if (gp.fullScreenOn) drawText("ON", x, y, hp_red, Color.LIGHT_GRAY);
-        else drawText("ON", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (gp.fullScreenOn) {
+            drawText("ON", x, y, hp_red, Color.LIGHT_GRAY);
+        }
+        else {
+            drawText("ON", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        }
 
         y += gp.tileSize * 1.3;
-        if (textSpeed == 4) drawText("SLOW", x, y, hp_red, Color.LIGHT_GRAY);
-        else drawText("SLOW", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (textSpeed == 4) {
+            drawText("SLOW", x, y, hp_red, Color.LIGHT_GRAY);
+        }
+        else {
+            drawText("SLOW", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        }
 
         // MUSIC SLIDER
         g2.setStroke(new BasicStroke(5));
@@ -3941,27 +4103,47 @@ public class UI {
         g2.fillRect(x, y - (int) (gp.tileSize * 0.7), volumeWidth, slotHeight);
 
         y += gp.tileSize * 1.3;
-        if (gp.btlManager.shift) drawText("SHIFT", x, y, hp_red, Color.LIGHT_GRAY);
-        else drawText("SHIFT", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (gp.btlManager.shift) {
+            drawText("SHIFT", x, y, hp_red, Color.LIGHT_GRAY);
+        }
+        else {
+            drawText("SHIFT", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        }
 
         x += gp.tileSize * 2.5;
         y = slotY;
         y += gp.tileSize * 1.3;
-        if (textSpeed == 3) drawText("MED", x, y, hp_red, Color.LIGHT_GRAY);
-        else drawText("MED", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (textSpeed == 3) {
+            drawText("MED", x, y, hp_red, Color.LIGHT_GRAY);
+        }
+        else {
+            drawText("MED", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        }
 
         x += gp.tileSize * 2;
         y = slotY;
-        if (!gp.fullScreenOn) drawText("OFF", x, y, hp_red, Color.LIGHT_GRAY);
-        else drawText("OFF", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (!gp.fullScreenOn) {
+            drawText("OFF", x, y, hp_red, Color.LIGHT_GRAY);
+        }
+        else {
+            drawText("OFF", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        }
 
         y += gp.tileSize * 1.3;
-        if (textSpeed == 2) drawText("FAST", x, y, hp_red, Color.LIGHT_GRAY);
-        else drawText("FAST", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (textSpeed == 2) {
+            drawText("FAST", x, y, hp_red, Color.LIGHT_GRAY);
+        }
+        else {
+            drawText("FAST", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        }
 
         y += (gp.tileSize * 1.3) * 3;
-        if (!gp.btlManager.shift) drawText("SET", x, y, hp_red, Color.LIGHT_GRAY);
-        else drawText("SET", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (!gp.btlManager.shift) {
+            drawText("SET", x, y, hp_red, Color.LIGHT_GRAY);
+        }
+        else {
+            drawText("SET", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        }
 
         if (gp.keyH.upPressed) {
 
@@ -3989,23 +4171,27 @@ public class UI {
                     gp.keyH.playCursorSE();
                     gp.fullScreenOn = true;
                 }
-            } else if (commandNum == 1) {
+            }
+            else if (commandNum == 1) {
                 if (textSpeed < 4) {
                     gp.keyH.playCursorSE();
                     textSpeed++;
                 }
-            } else if (commandNum == 2) {
+            }
+            else if (commandNum == 2) {
                 if (gp.music.volumeScale > 0) {
                     gp.keyH.playCursorSE();
                     gp.music.volumeScale--;
                     gp.music.checkVolume();
                 }
-            } else if (commandNum == 3) {
+            }
+            else if (commandNum == 3) {
                 if (gp.se.volumeScale > 0) {
                     gp.keyH.playCursorSE();
                     gp.se.volumeScale--;
                 }
-            } else if (commandNum == 4) {
+            }
+            else if (commandNum == 4) {
                 if (!gp.btlManager.shift) {
                     gp.keyH.playCursorSE();
                     gp.btlManager.shift = true;
@@ -4021,23 +4207,27 @@ public class UI {
                     gp.keyH.playCursorSE();
                     gp.fullScreenOn = false;
                 }
-            } else if (commandNum == 1) {
+            }
+            else if (commandNum == 1) {
                 if (textSpeed > 2) {
                     gp.keyH.playCursorSE();
                     textSpeed--;
                 }
-            } else if (commandNum == 2) {
+            }
+            else if (commandNum == 2) {
                 if (gp.music.volumeScale < 5) {
                     gp.keyH.playCursorSE();
                     gp.music.volumeScale++;
                     gp.music.checkVolume();
                 }
-            } else if (commandNum == 3) {
+            }
+            else if (commandNum == 3) {
                 if (gp.se.volumeScale < 5) {
                     gp.keyH.playCursorSE();
                     gp.se.volumeScale++;
                 }
-            } else if (commandNum == 4) {
+            }
+            else if (commandNum == 4) {
                 if (gp.btlManager.shift) {
                     gp.keyH.playCursorSE();
                     gp.btlManager.shift = false;
@@ -4111,7 +4301,8 @@ public class UI {
                     battle_Evolve();
                     battle_Confirmation();
                     battle_Dialogue();
-                } else {
+                }
+                else {
                     battle_Fighters();
                     battle_Dialogue();
                     battle_HUD();
@@ -4175,7 +4366,8 @@ public class UI {
 
         if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {
             g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
-        } else {
+        }
+        else {
             g2.drawImage(gp.btlManager.trainer.frontSprite, fighter_two_X + 25, fighter_two_Y + 15, null);
         }
 
@@ -4198,8 +4390,12 @@ public class UI {
         if (gp.btlManager.fighter[0] != null &&
                 gp.btlManager.fighter[0].getProtection() == Protection.NONE) {
 
-            if (gp.btlManager.fighter[0].getAttacking()) animateAttack_One();
-            else fighter_one_X = fighter_one_endX;
+            if (gp.btlManager.fighter[0].getAttacking()) {
+                animateAttack_One();
+            }
+            else {
+                fighter_one_X = fighter_one_endX;
+            }
 
             if (!gp.btlManager.fighter[0].isAlive()) {
                 animateFaint_One();
@@ -4210,7 +4406,8 @@ public class UI {
                 if (hitCounter > 30) {
                     gp.btlManager.fighter[0].setHit(false);
                     hitCounter = -1;
-                } else if (hitCounter % 5 == 0) {
+                }
+                else if (hitCounter % 5 == 0) {
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
                 }
             }
@@ -4223,19 +4420,26 @@ public class UI {
 
             if (isFighterCaptured) {
                 g2.drawImage(gp.btlManager.ballUsed.image3, fighter_two_X + (int) (gp.tileSize * 1.9), fighter_two_Y + (int) (gp.tileSize * 3.3), null);
-            } else {
-                if (gp.btlManager.fighter[1].getAttacking()) animateAttack_Two();
-                else fighter_two_X = fighter_two_endX;
+            }
+            else {
+                if (gp.btlManager.fighter[1].getAttacking()) {
+                    animateAttack_Two();
+                }
+                else {
+                    fighter_two_X = fighter_two_endX;
+                }
 
                 if (!gp.btlManager.fighter[1].isAlive()) {
                     animateFaint_Two();
-                } else {
+                }
+                else {
                     if (gp.btlManager.fighter[1].getHit()) {
                         hitCounter++;
                         if (hitCounter > 30) {
                             gp.btlManager.fighter[1].setHit(false);
                             hitCounter = -1;
-                        } else if (hitCounter % 5 == 0) {
+                        }
+                        else if (hitCounter % 5 == 0) {
                             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
                         }
                     }
@@ -4261,7 +4465,8 @@ public class UI {
             if (faintCounter >= gp.btlManager.fighter[1].getFrontSprite().getHeight()) {
                 faintCounter = gp.btlManager.fighter[1].getFrontSprite().getHeight() - 1;
             }
-        } else {
+        }
+        else {
             faintCounter = 0;
         }
 
@@ -4274,8 +4479,12 @@ public class UI {
 
     private void animateAttack_One() {
         attackCounter++;
-        if (attackCounter > 20) fighter_one_X -= 3;
-        else fighter_one_X += 3;
+        if (attackCounter > 20) {
+            fighter_one_X -= 3;
+        }
+        else {
+            fighter_one_X += 3;
+        }
 
         if (attackCounter == 41) {
             attackCounter = 0;
@@ -4285,8 +4494,12 @@ public class UI {
 
     private void animateAttack_Two() {
         attackCounter++;
-        if (attackCounter > 20) fighter_two_X += 3;
-        else fighter_two_X -= 3;
+        if (attackCounter > 20) {
+            fighter_two_X += 3;
+        }
+        else {
+            fighter_two_X -= 3;
+        }
 
         if (attackCounter == 41) {
             attackCounter = 0;
@@ -4398,9 +4611,11 @@ public class UI {
 
         if (remainHP >= .50) {
             g2.setColor(hp_green);
-        } else if (remainHP >= .25) {
+        }
+        else if (remainHP >= .25) {
             g2.setColor(hp_yellow);
-        } else {
+        }
+        else {
             g2.setColor(hp_red);
             if (num == 0) {
                 if (remainHP > 0) {
@@ -4409,7 +4624,8 @@ public class UI {
                         gp.playSE(gp.battle_SE, "hp-low");
                         hpCounter = 0;
                     }
-                } else {
+                }
+                else {
                     hpCounter = 0;
                 }
             }
@@ -4440,7 +4656,9 @@ public class UI {
         int partySize = pokeParty.size();
         int activePartySize = 0;
         for (Pokemon p : pokeParty) {
-            if (p.isAlive()) activePartySize++;
+            if (p.isAlive()) {
+                activePartySize++;
+            }
         }
 
         if (num == 0) {
@@ -4465,7 +4683,8 @@ public class UI {
                 x -= gp.tileSize * 0.5;
                 g2.drawImage(ball_active, x, y, null);
             }
-        } else {
+        }
+        else {
 
             startX = (int) (gp.tileSize * 0.6);
             x = startX;
@@ -4700,10 +4919,12 @@ public class UI {
 
             if (i == 1) {
                 x += gp.tileSize * 5.5;
-            } else if (i == 2) {
+            }
+            else if (i == 2) {
                 x = gp.tileSize / 2;
                 y += gp.tileSize * 1.2;
-            } else if (i == 3) {
+            }
+            else if (i == 3) {
                 x += gp.tileSize * 5.5;
             }
 
@@ -4719,7 +4940,8 @@ public class UI {
                 }
 
                 g2.drawString(text, x, y);
-            } else {
+            }
+            else {
                 g2.drawString("-", x, y);
             }
         }
@@ -4769,7 +4991,8 @@ public class UI {
 
             if (pMove.getPP() <= 0) {
                 gp.keyH.playErrorSE();
-            } else {
+            }
+            else {
                 gp.keyH.playCursorSE();
 
                 if (gp.btlManager.cpu || player == 1) {
@@ -4782,7 +5005,8 @@ public class UI {
                     battleState = battle_Dialogue;
                     commandNum = 0;
                     player = 0;
-                } else {
+                }
+                else {
                     battleState = battle_Options;
                     commandNum = 0;
                     player = 1;
@@ -4825,8 +5049,12 @@ public class UI {
 
         power = gp.btlManager.fighter[player].getMoveSet().get(commandNum).getPower();
         y += gp.tileSize;
-        if (power <= 0) text = "PWR ---";
-        else text = "PWR " + power;
+        if (power <= 0) {
+            text = "PWR ---";
+        }
+        else {
+            text = "PWR " + power;
+        }
         drawText(text, x, y, battle_white, Color.BLACK);
 
         y += gp.tileSize * 1.1;
@@ -5025,7 +5253,8 @@ public class UI {
                 if (partyState == party_Skills) {
                     party_Skills();
                     party_Header(0);
-                } else {
+                }
+                else {
                     party_Moves();
                     party_Header(1);
                 }
@@ -5174,14 +5403,18 @@ public class UI {
                 gp.keyH.leftPressed = false;
                 gp.keyH.playCursorSE();
                 boxTab--;
-                if (boxTab < 0) boxTab = gp.player.pcParty.length - 1;
+                if (boxTab < 0) {
+                    boxTab = gp.player.pcParty.length - 1;
+                }
             }
 
             if (gp.keyH.rightPressed) {
                 gp.keyH.rightPressed = false;
                 gp.keyH.playCursorSE();
                 boxTab++;
-                if (boxTab > gp.player.pcParty.length - 1) boxTab = 0;
+                if (boxTab > gp.player.pcParty.length - 1) {
+                    boxTab = 0;
+                }
             }
         }
 
@@ -5265,7 +5498,8 @@ public class UI {
                     boxNum = 3;
                     boxTab = 0;
                     pcState = pc_Options;
-                } else {
+                }
+                else {
                     gp.keyH.playErrorSE();
                 }
             }
@@ -5282,7 +5516,8 @@ public class UI {
                     boxNum = 3;
                     boxTab = 0;
                     pcState = pc_Options;
-                } else {
+                }
+                else {
                     gp.keyH.playErrorSE();
                 }
             }
@@ -5330,7 +5565,8 @@ public class UI {
                 gp.keyH.playCursorSE();
                 if (fighterNum - 6 >= 0) {
                     fighterNum -= 6;
-                } else {
+                }
+                else {
                     fighterNum = 0;
                     boxNum = 2;
                 }
@@ -5367,10 +5603,12 @@ public class UI {
                         gp.keyH.playCursorSE();
                         commandNum = 0;
                         pcState = pc_Select;
-                    } else {
+                    }
+                    else {
                         gp.keyH.playErrorSE();
                     }
-                } else {
+                }
+                else {
                     gp.player.pcParty[boxTab][fighterNum] = selectedFighter;
                     selectedFighter = fighter;
                 }
@@ -5396,7 +5634,8 @@ public class UI {
 
         if (selectedFighter != null) {
             fighter = selectedFighter;
-        } else if (gp.player.pcParty[boxTab][fighterNum] != null && boxNum > 2) {
+        }
+        else if (gp.player.pcParty[boxTab][fighterNum] != null && boxNum > 2) {
             fighter = gp.player.pcParty[boxTab][fighterNum];
         }
 
@@ -5431,7 +5670,8 @@ public class UI {
                 textX = getXForCenteredTextOnWidth(text, width, x + 5);
                 textY = (int) (y + (gp.tileSize * 0.70));
                 drawText(text, textX, textY, battle_white, Color.BLACK);
-            } else {
+            }
+            else {
                 for (Type t : fighter.getTypes()) {
                     drawSubWindow(x, y, width, height, 10, 3, t.getColor(), Color.BLACK);
                     g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));
@@ -5618,7 +5858,8 @@ public class UI {
                 gp.keyH.playCursorSE();
                 fighterNum = 1;
             }
-        } else {
+        }
+        else {
             if (gp.keyH.downPressed) {
                 gp.keyH.downPressed = false;
                 if (fighterNum < 6) {
@@ -5648,7 +5889,8 @@ public class UI {
                 commandNum = 0;
                 fighterNum = 0;
                 pcState = pc_Box;
-            } else {
+            }
+            else {
                 if (gp.player.pokeParty.size() > fighterNum) {
                     fighter = gp.player.pokeParty.get(fighterNum);
                 }
@@ -5658,21 +5900,26 @@ public class UI {
                         if (gp.player.pokeParty.size() > 1) {
                             selectedFighter = fighter;
                             gp.player.pokeParty.remove(fighterNum);
-                        } else {
+                        }
+                        else {
                             gp.keyH.playErrorSE();
                         }
-                    } else {
+                    }
+                    else {
                         gp.keyH.playErrorSE();
                     }
-                } else {
+                }
+                else {
                     if (fighter == null) {
                         if (gp.player.pokeParty.size() <= fighterNum) {
                             gp.player.pokeParty.add(selectedFighter);
-                        } else {
+                        }
+                        else {
                             gp.player.pokeParty.set(fighterNum, selectedFighter);
                         }
                         selectedFighter = null;
-                    } else {
+                    }
+                    else {
                         gp.player.pokeParty.set(fighterNum, selectedFighter);
                         selectedFighter = fighter;
                     }
@@ -5746,7 +5993,8 @@ public class UI {
                         gp.keyH.playErrorSE();
                     }
                 }
-            } else {
+            }
+            else {
                 text = i + 1 + ")  " + files[i];
                 drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
@@ -5932,7 +6180,8 @@ public class UI {
                 gp.keyH.leftPressed = false;
                 if (bagNum > 0) {
                     bagNum--;
-                } else {
+                }
+                else {
                     bagNum = gp.se.getSELibrary(9).length - 1;
                 }
                 gp.keyH.playCursorSE();
@@ -5941,7 +6190,8 @@ public class UI {
                 gp.keyH.rightPressed = false;
                 if (bagNum < gp.se.getSELibrary(9).length - 1) {
                     bagNum++;
-                } else {
+                }
+                else {
                     bagNum = 0;
                 }
                 gp.keyH.playCursorSE();
@@ -6110,37 +6360,47 @@ public class UI {
 
         // DARKEN SCREEN
         tCounter++;
-        g2.setColor(new Color(0, 0, 0, tCounter * 5));
+        g2.setColor(new Color(0, 0, 0, tCounter));
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 
         // STOP DARKENING SCREEN
-        if (tCounter == 50) {
+        if (tCounter >= 50) {
             tCounter = 0;
 
-            if (gp.btlManager.running) {
-                startBattle();
-            } else {
-                gp.player.direction = tDirection;
-                gp.currentMap = gp.eHandler.tempMap;
+            gp.player.direction = tDirection;
+            gp.currentMap = gp.eHandler.tempMap;
 
-                gp.player.worldX = gp.tileSize * gp.eHandler.tempCol;
-                gp.player.worldY = gp.tileSize * gp.eHandler.tempRow;
+            gp.player.worldX = gp.tileSize * gp.eHandler.tempCol;
+            gp.player.worldY = gp.tileSize * gp.eHandler.tempRow;
 
-                gp.player.defaultWorldX = gp.player.worldX;
-                gp.player.defaultWorldY = gp.player.worldY;
+            gp.player.defaultWorldX = gp.player.worldX;
+            gp.player.defaultWorldY = gp.player.worldY;
 
-                gp.eHandler.previousEventX = gp.player.worldX;
-                gp.eHandler.previousEventY = gp.player.worldY;
+            gp.eHandler.previousEventX = gp.player.worldX;
+            gp.eHandler.previousEventY = gp.player.worldY;
 
-                gp.changeArea();
+            gp.changeArea();
 
-                if (tMoving) {
-                    gp.player.moving = true;
-                    tMoving = false;
-                }
-
-                gp.gameState = gp.playState;
+            if (tMoving) {
+                gp.player.moving = true;
+                tMoving = false;
             }
+
+            gp.gameState = gp.playState;
+        }
+    }
+    private void drawBattleTransition() {
+
+        // DARKEN SCREEN
+        tCounter++;
+
+        g2.setColor(new Color(0, 0, 0, tCounter));
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        // STOP DARKENING SCREEN
+        if (tCounter >= 255) {
+            tCounter = 0;
+            startBattle();
         }
     }
 
@@ -6201,7 +6461,8 @@ public class UI {
             int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
             int x = (gp.screenWidth / 2) - (length / 2);
             return x;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return gp.screenWidth / 2;
         }
     }
@@ -6221,7 +6482,8 @@ public class UI {
         try {
             image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
             image = utility.scaleImage(image, width, height);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 

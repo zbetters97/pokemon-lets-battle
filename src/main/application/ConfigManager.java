@@ -38,8 +38,8 @@ public class ConfigManager {
 
             // CLOSE FILE
             bw.close();
-        } catch (IOException e) {
-
+        }
+        catch (IOException e) {
         }
     }
 
@@ -78,7 +78,8 @@ public class ConfigManager {
             br.readLine();
 
             br.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
 
             // FULL SCREEN
             gp.fullScreenOn = false;
