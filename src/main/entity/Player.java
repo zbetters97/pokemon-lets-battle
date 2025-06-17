@@ -108,8 +108,6 @@ public class Player extends Entity {
         pokeParty.add(Pokemon.get(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
         pokeParty.add(Pokemon.get(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
         pokeParty.add(Pokemon.get(Pokedex.SWAMPERT, 36, new COL_Ball_Ultra(gp)));
-
-        pokeParty.getFirst().addMove(Moves.SURF);
     }
 
     public void setDefaultValues() {
@@ -299,11 +297,14 @@ public class Player extends Entity {
             animationSpeed = 6;
             moving = true;
             running = false;
-        } else if (action == Action.HM) {
+        }
+        else if (action == Action.HM) {
             hm();
-        } else if (action == Action.FISHING) {
+        }
+        else if (action == Action.FISHING) {
             fishing();
-        } else if (!moving && canMove) {
+        }
+        else if (!moving && canMove) {
 
             if (gp.keyH.startPressed) {
                 gp.keyH.startPressed = false;
@@ -314,7 +315,8 @@ public class Player extends Entity {
                 running = false;
 
                 gp.gameState = gp.pauseState;
-            } else {
+            }
+            else {
                 gp.eHandler.checkEvent();
 
                 running = false;
@@ -327,12 +329,15 @@ public class Player extends Entity {
 
                 if (gp.keyH.xPressed) {
                     gp.keyH.xPressed = false;
-                    if (keyItem != null) keyItem.use();
+                    if (keyItem != null) {
+                        keyItem.use();
+                    }
                 }
 
                 if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) {
                     move();
-                } else {
+                }
+                else {
                     spriteNum = 1;
                 }
             }
@@ -354,8 +359,12 @@ public class Player extends Entity {
         int npcIndex = gp.cChecker.checkNPC();
         int objIIndex = gp.cChecker.checkObject_I(this);
 
-        if (npcIndex != -1) interactNPC(npcIndex);
-        else if (objIIndex != -1) interactObject_I(objIIndex);
+        if (npcIndex != -1) {
+            interactNPC(npcIndex);
+        }
+        else if (objIIndex != -1) {
+            interactObject_I(objIIndex);
+        }
 
         if (action != Action.SURFING && gp.cChecker.checkWater(this)) {
             Entity water = new OBJ_Water(gp);
@@ -384,7 +393,8 @@ public class Player extends Entity {
             running = true;
             speed = 6;
             animationSpeed = 6;
-        } else {
+        }
+        else {
             speed = defaultSpeed;
             animationSpeed = defaultAnimationSpeed;
         }
@@ -394,7 +404,8 @@ public class Player extends Entity {
         checkCollision();
         if (!collisionOn) {
             moving = true;
-        } else {
+        }
+        else {
             running = false;
             spriteNum = 1;
         }
@@ -404,10 +415,18 @@ public class Player extends Entity {
 
         String tempDirection = "";
 
-        if (gp.keyH.upPressed) tempDirection = "up";
-        if (gp.keyH.downPressed) tempDirection = "down";
-        if (gp.keyH.leftPressed) tempDirection = "left";
-        if (gp.keyH.rightPressed) tempDirection = "right";
+        if (gp.keyH.upPressed) {
+            tempDirection = "up";
+        }
+        if (gp.keyH.downPressed) {
+            tempDirection = "down";
+        }
+        if (gp.keyH.leftPressed) {
+            tempDirection = "left";
+        }
+        if (gp.keyH.rightPressed) {
+            tempDirection = "right";
+        }
 
         direction = tempDirection;
     }
@@ -455,7 +474,8 @@ public class Player extends Entity {
             if (!hasRepel()) {
                 if (inGrass) {
                     checkWildEncounter_Grass();
-                } else if (action == Action.SURFING) {
+                }
+                else if (action == Action.SURFING) {
                     checkWildEncounter_Surfing();
                 }
             }
@@ -466,7 +486,8 @@ public class Player extends Entity {
                 jumpCounter++;
                 if (jumpCounter != 2) {
                     moving = true;
-                } else {
+                }
+                else {
                     jumpCounter = 0;
                     jumping = false;
                 }
@@ -483,11 +504,17 @@ public class Player extends Entity {
             if (spriteNum == 1 && spriteCycle == 0) {
                 spriteNum = 2;
                 spriteCycle = 1;
-            } else if (spriteNum == 1 && spriteCycle == 1) {
+            }
+            else if (spriteNum == 1 && spriteCycle == 1) {
                 spriteNum = 3;
                 spriteCycle = 0;
-            } else if (spriteNum == 2) spriteNum = 1;
-            else if (spriteNum == 3) spriteNum = 1;
+            }
+            else if (spriteNum == 2) {
+                spriteNum = 1;
+            }
+            else if (spriteNum == 3) {
+                spriteNum = 1;
+            }
 
             spriteCounter = 0;
         }
@@ -497,7 +524,9 @@ public class Player extends Entity {
 
         collisionOn = false;
 
-        if (gp.keyH.debug) return;
+        if (gp.keyH.debug) {
+            return;
+        }
 
         gp.eHandler.checkEvent();
         gp.cChecker.checkTile(this);
@@ -506,8 +535,12 @@ public class Player extends Entity {
         int objIndex = gp.cChecker.checkObject(this, true);
         int objIIndex = gp.cChecker.checkObject_I(this);
 
-        if (objIndex != -1) interactObject(objIndex);
-        else if (objIIndex != -1) moveObject_I(objIIndex);
+        if (objIndex != -1) {
+            interactObject(objIndex);
+        }
+        else if (objIIndex != -1) {
+            moveObject_I(objIIndex);
+        }
     }
 
     public void interactObject(int i) {
@@ -530,11 +563,21 @@ public class Player extends Entity {
     private void hm() {
 
         hmCounter++;
-        if (5 > hmCounter) hmNum = 1;
-        else if (10 > hmCounter && hmCounter > 5) hmNum = 2;
-        else if (15 > hmCounter && hmCounter > 10) hmNum = 3;
-        else if (20 > hmCounter && hmCounter > 15) hmNum = 4;
-        else if (25 > hmCounter && hmCounter > 20) hmNum = 5;
+        if (5 > hmCounter) {
+            hmNum = 1;
+        }
+        else if (10 > hmCounter && hmCounter > 5) {
+            hmNum = 2;
+        }
+        else if (15 > hmCounter && hmCounter > 10) {
+            hmNum = 3;
+        }
+        else if (20 > hmCounter && hmCounter > 15) {
+            hmNum = 4;
+        }
+        else if (25 > hmCounter && hmCounter > 20) {
+            hmNum = 5;
+        }
         else if (hmCounter > 60) {
 
             hmNum = 1;
@@ -573,10 +616,18 @@ public class Player extends Entity {
     private void fishing() {
 
         fishCounter++;
-        if (25 > fishCounter) fishNum = 1;
-        else if (30 > fishCounter && fishCounter > 25) fishNum = 2;
-        else if (35 > fishCounter && fishCounter > 30) fishNum = 3;
-        else if (40 > fishCounter && fishCounter > 35) fishNum = 4;
+        if (25 > fishCounter) {
+            fishNum = 1;
+        }
+        else if (30 > fishCounter && fishCounter > 25) {
+            fishNum = 2;
+        }
+        else if (35 > fishCounter && fishCounter > 30) {
+            fishNum = 3;
+        }
+        else if (40 > fishCounter && fishCounter > 35) {
+            fishNum = 4;
+        }
         else if (fishCounter > 40) {
             catchFish();
         }
@@ -586,9 +637,15 @@ public class Player extends Entity {
 
         int length = 30;
 
-        if (activeItem.power == 0) length = 60;
-        else if (activeItem.power == 1) length = 40;
-        else if (activeItem.power == 2) length = 20;
+        if (activeItem.power == 0) {
+            length = 60;
+        }
+        else if (activeItem.power == 1) {
+            length = 40;
+        }
+        else if (activeItem.power == 2) {
+            length = 20;
+        }
 
         if (fishCounter == 41) {
 
@@ -598,10 +655,12 @@ public class Player extends Entity {
             if (activeItem.power == 0) {
                 min = 80;
                 max = 150;
-            } else if (activeItem.power == 1) {
+            }
+            else if (activeItem.power == 1) {
                 min = 100;
                 max = 250;
-            } else if (activeItem.power == 2) {
+            }
+            else if (activeItem.power == 2) {
                 min = 100;
                 max = 350;
             }
@@ -636,7 +695,8 @@ public class Player extends Entity {
                     gp.gameState = gp.transitionState;
                 }
             }
-        } else if (fishCounter == (fishCatch + length + 15) || gp.keyH.aPressed || gp.keyH.bPressed) {
+        }
+        else if (fishCounter == (fishCatch + length + 15) || gp.keyH.aPressed || gp.keyH.bPressed) {
             gp.keyH.aPressed = false;
             gp.keyH.bPressed = false;
             alert = false;
@@ -788,7 +848,8 @@ public class Player extends Entity {
             }
 
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -816,7 +877,8 @@ public class Player extends Entity {
 
         if (gp.player.pokeParty.stream().anyMatch(p -> p.getIndex() == index)) {
             ownsPokemon = true;
-        } else {
+        }
+        else {
             for (final Pokemon[] pokemons : pcParty) {
                 if (pokemons != null) {
                     for (final Pokemon pokemon : pokemons) {
@@ -859,8 +921,12 @@ public class Player extends Entity {
         tempScreenX = screenX;
         tempScreenY = screenY;
 
-        if (worldX < screenX) tempScreenX = worldX;
-        if (worldY < screenY) tempScreenY = worldY;
+        if (worldX < screenX) {
+            tempScreenX = worldX;
+        }
+        if (worldY < screenY) {
+            tempScreenY = worldY;
+        }
 
         // FROM PLAYER TO RIGHT-EDGE OF SCREEN
         int rightOffset = gp.screenWidth - screenX;
@@ -881,7 +947,9 @@ public class Player extends Entity {
 
     public void draw(Graphics2D g2) {
 
-        if (!drawing) return;
+        if (!drawing) {
+            return;
+        }
 
         offCenter();
 
@@ -894,36 +962,71 @@ public class Player extends Entity {
             case "up":
                 switch (action) {
                     case HM:
-                        if (hmNum == 1) image = hm1;
-                        else if (hmNum == 2) image = hm2;
-                        else if (hmNum == 3) image = hm3;
-                        else if (hmNum == 4) image = hm4;
-                        else if (hmNum == 5) image = hm5;
+                        if (hmNum == 1) {
+                            image = hm1;
+                        }
+                        else if (hmNum == 2) {
+                            image = hm2;
+                        }
+                        else if (hmNum == 3) {
+                            image = hm3;
+                        }
+                        else if (hmNum == 4) {
+                            image = hm4;
+                        }
+                        else if (hmNum == 5) {
+                            image = hm5;
+                        }
                         break;
                     case FISHING:
                         tempScreenY -= 16;
-                        if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX - 1, tempScreenY - gp.tileSize, null);
+                        if (alert) {
+                            g2.drawImage(gp.ui.battleIcon, tempScreenX - 1, tempScreenY - gp.tileSize, null);
+                        }
 
-                        if (fishNum == 1) image = fishUp1;
-                        else if (fishNum == 2) image = fishUp2;
-                        else if (fishNum == 3) image = fishUp3;
-                        else if (fishNum == 4) image = fishUp4;
+                        if (fishNum == 1) {
+                            image = fishUp1;
+                        }
+                        else if (fishNum == 2) {
+                            image = fishUp2;
+                        }
+                        else if (fishNum == 3) {
+                            image = fishUp3;
+                        }
+                        else if (fishNum == 4) {
+                            image = fishUp4;
+                        }
                         break;
                     case SURFING:
                         image = surfUp1;
                         tempScreenX -= 7;
                         tempScreenY -= 7;
-                        if (surfCounter > 30) tempScreenY -= 5;
+                        if (surfCounter > 30) {
+                            tempScreenY -= 5;
+                        }
                         break;
                     default:
                         if (running) {
-                            if (spriteNum == 1) image = runUp1;
-                            else if (spriteNum == 2) image = runUp2;
-                            else if (spriteNum == 3) image = runUp3;
-                        } else {
-                            if (spriteNum == 1) image = up1;
-                            else if (spriteNum == 2) image = up2;
-                            else if (spriteNum == 3) image = up3;
+                            if (spriteNum == 1) {
+                                image = runUp1;
+                            }
+                            else if (spriteNum == 2) {
+                                image = runUp2;
+                            }
+                            else if (spriteNum == 3) {
+                                image = runUp3;
+                            }
+                        }
+                        else {
+                            if (spriteNum == 1) {
+                                image = up1;
+                            }
+                            else if (spriteNum == 2) {
+                                image = up2;
+                            }
+                            else if (spriteNum == 3) {
+                                image = up3;
+                            }
 
                             if (jumping) {
                                 tempScreenY -= 15;
@@ -935,38 +1038,73 @@ public class Player extends Entity {
             case "down":
                 switch (action) {
                     case HM:
-                        if (hmNum == 1) image = hm1;
-                        else if (hmNum == 2) image = hm2;
-                        else if (hmNum == 3) image = hm3;
-                        else if (hmNum == 4) image = hm4;
-                        else if (hmNum == 5) image = hm5;
+                        if (hmNum == 1) {
+                            image = hm1;
+                        }
+                        else if (hmNum == 2) {
+                            image = hm2;
+                        }
+                        else if (hmNum == 3) {
+                            image = hm3;
+                        }
+                        else if (hmNum == 4) {
+                            image = hm4;
+                        }
+                        else if (hmNum == 5) {
+                            image = hm5;
+                        }
                         break;
                     case FISHING:
 
-                        if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX + 1, tempScreenY - gp.tileSize, null);
+                        if (alert) {
+                            g2.drawImage(gp.ui.battleIcon, tempScreenX + 1, tempScreenY - gp.tileSize, null);
+                        }
                         tempScreenX -= 2;
                         tempScreenY -= 16;
 
-                        if (fishNum == 1) image = fishDown1;
-                        else if (fishNum == 2) image = fishDown2;
-                        else if (fishNum == 3) image = fishDown3;
-                        else if (fishNum == 4) image = fishDown4;
+                        if (fishNum == 1) {
+                            image = fishDown1;
+                        }
+                        else if (fishNum == 2) {
+                            image = fishDown2;
+                        }
+                        else if (fishNum == 3) {
+                            image = fishDown3;
+                        }
+                        else if (fishNum == 4) {
+                            image = fishDown4;
+                        }
                         break;
                     case SURFING:
                         image = surfDown1;
                         tempScreenX -= 7;
                         tempScreenY -= 7;
-                        if (surfCounter > 30) tempScreenY -= 5;
+                        if (surfCounter > 30) {
+                            tempScreenY -= 5;
+                        }
                         break;
                     default:
                         if (running) {
-                            if (spriteNum == 1) image = runDown1;
-                            else if (spriteNum == 2) image = runDown2;
-                            else if (spriteNum == 3) image = runDown3;
-                        } else {
-                            if (spriteNum == 1) image = down1;
-                            else if (spriteNum == 2) image = down2;
-                            else if (spriteNum == 3) image = down3;
+                            if (spriteNum == 1) {
+                                image = runDown1;
+                            }
+                            else if (spriteNum == 2) {
+                                image = runDown2;
+                            }
+                            else if (spriteNum == 3) {
+                                image = runDown3;
+                            }
+                        }
+                        else {
+                            if (spriteNum == 1) {
+                                image = down1;
+                            }
+                            else if (spriteNum == 2) {
+                                image = down2;
+                            }
+                            else if (spriteNum == 3) {
+                                image = down3;
+                            }
 
                             if (jumping) {
                                 tempScreenY -= 15;
@@ -978,38 +1116,73 @@ public class Player extends Entity {
             case "left":
                 switch (action) {
                     case HM:
-                        if (hmNum == 1) image = hm1;
-                        else if (hmNum == 2) image = hm2;
-                        else if (hmNum == 3) image = hm3;
-                        else if (hmNum == 4) image = hm4;
-                        else if (hmNum == 5) image = hm5;
+                        if (hmNum == 1) {
+                            image = hm1;
+                        }
+                        else if (hmNum == 2) {
+                            image = hm2;
+                        }
+                        else if (hmNum == 3) {
+                            image = hm3;
+                        }
+                        else if (hmNum == 4) {
+                            image = hm4;
+                        }
+                        else if (hmNum == 5) {
+                            image = hm5;
+                        }
                         break;
                     case FISHING:
 
                         tempScreenY -= gp.tileSize;
-                        if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX, tempScreenY, null);
+                        if (alert) {
+                            g2.drawImage(gp.ui.battleIcon, tempScreenX, tempScreenY, null);
+                        }
                         tempScreenX -= 41;
 
-                        if (fishNum == 1) image = fishLeft1;
-                        else if (fishNum == 2) image = fishLeft2;
-                        else if (fishNum == 3) image = fishLeft3;
-                        else if (fishNum == 4) image = fishLeft4;
+                        if (fishNum == 1) {
+                            image = fishLeft1;
+                        }
+                        else if (fishNum == 2) {
+                            image = fishLeft2;
+                        }
+                        else if (fishNum == 3) {
+                            image = fishLeft3;
+                        }
+                        else if (fishNum == 4) {
+                            image = fishLeft4;
+                        }
                         break;
                     case SURFING:
                         image = surfLeft1;
                         tempScreenX -= 7;
                         tempScreenY -= 7;
-                        if (surfCounter > 30) tempScreenY -= 5;
+                        if (surfCounter > 30) {
+                            tempScreenY -= 5;
+                        }
                         break;
                     default:
                         if (running) {
-                            if (spriteNum == 1) image = runLeft1;
-                            else if (spriteNum == 2) image = runLeft2;
-                            else if (spriteNum == 3) image = runLeft3;
-                        } else {
-                            if (spriteNum == 1) image = left1;
-                            else if (spriteNum == 2) image = left2;
-                            else if (spriteNum == 3) image = left3;
+                            if (spriteNum == 1) {
+                                image = runLeft1;
+                            }
+                            else if (spriteNum == 2) {
+                                image = runLeft2;
+                            }
+                            else if (spriteNum == 3) {
+                                image = runLeft3;
+                            }
+                        }
+                        else {
+                            if (spriteNum == 1) {
+                                image = left1;
+                            }
+                            else if (spriteNum == 2) {
+                                image = left2;
+                            }
+                            else if (spriteNum == 3) {
+                                image = left3;
+                            }
 
                             if (jumping) {
                                 tempScreenY -= 15;
@@ -1021,38 +1194,73 @@ public class Player extends Entity {
             case "right":
                 switch (action) {
                     case HM:
-                        if (hmNum == 1) image = hm1;
-                        else if (hmNum == 2) image = hm2;
-                        else if (hmNum == 3) image = hm3;
-                        else if (hmNum == 4) image = hm4;
-                        else if (hmNum == 5) image = hm5;
+                        if (hmNum == 1) {
+                            image = hm1;
+                        }
+                        else if (hmNum == 2) {
+                            image = hm2;
+                        }
+                        else if (hmNum == 3) {
+                            image = hm3;
+                        }
+                        else if (hmNum == 4) {
+                            image = hm4;
+                        }
+                        else if (hmNum == 5) {
+                            image = hm5;
+                        }
                         break;
                     case FISHING:
 
                         tempScreenY -= gp.tileSize;
-                        if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX, tempScreenY, null);
+                        if (alert) {
+                            g2.drawImage(gp.ui.battleIcon, tempScreenX, tempScreenY, null);
+                        }
                         tempScreenX -= 7;
 
-                        if (fishNum == 1) image = fishRight1;
-                        else if (fishNum == 2) image = fishRight2;
-                        else if (fishNum == 3) image = fishRight3;
-                        else if (fishNum == 4) image = fishRight4;
+                        if (fishNum == 1) {
+                            image = fishRight1;
+                        }
+                        else if (fishNum == 2) {
+                            image = fishRight2;
+                        }
+                        else if (fishNum == 3) {
+                            image = fishRight3;
+                        }
+                        else if (fishNum == 4) {
+                            image = fishRight4;
+                        }
                         break;
                     case SURFING:
                         image = surfRight1;
                         tempScreenX -= 7;
                         tempScreenY -= 7;
-                        if (surfCounter > 30) tempScreenY -= 5;
+                        if (surfCounter > 30) {
+                            tempScreenY -= 5;
+                        }
                         break;
                     default:
                         if (running) {
-                            if (spriteNum == 1) image = runRight1;
-                            else if (spriteNum == 2) image = runRight2;
-                            else if (spriteNum == 3) image = runRight3;
-                        } else {
-                            if (spriteNum == 1) image = right1;
-                            else if (spriteNum == 2) image = right2;
-                            else if (spriteNum == 3) image = right3;
+                            if (spriteNum == 1) {
+                                image = runRight1;
+                            }
+                            else if (spriteNum == 2) {
+                                image = runRight2;
+                            }
+                            else if (spriteNum == 3) {
+                                image = runRight3;
+                            }
+                        }
+                        else {
+                            if (spriteNum == 1) {
+                                image = right1;
+                            }
+                            else if (spriteNum == 2) {
+                                image = right2;
+                            }
+                            else if (spriteNum == 3) {
+                                image = right3;
+                            }
 
                             if (jumping) {
                                 tempScreenY -= 15;
@@ -1066,7 +1274,8 @@ public class Player extends Entity {
         if (inGrass && !moving) {
             BufferedImage grassImg = image.getSubimage(0, 0, 48, 36);
             g2.drawImage(grassImg, tempScreenX, tempScreenY, null);
-        } else {
+        }
+        else {
             g2.drawImage(image, tempScreenX, tempScreenY, null);
         }
 

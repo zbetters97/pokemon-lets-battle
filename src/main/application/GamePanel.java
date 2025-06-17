@@ -479,79 +479,70 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void drawToTempScreen() {
 
-        // TITLE SCREEN
-        if (gameState == titleState) {
+        // TITLE SCREEN OR BATTLE STATE
+        if (gameState == titleState || gameState == battleState) {
             ui.draw(g2);
         }
-        // BATTLE STATE
+        // PLAY STATE
         else {
-            if (gameState == battleState) {
+            // DRAW TILES
+            tileM.draw(g2);
 
-                // DRAW UI
-                ui.draw(g2);
+            // DRAW PLAYER
+            player.draw(g2);
+
+            // DRAW UI
+            ui.draw(g2);
+
+            // DON'T DRAW JUMPING PLAYER FIRST
+            if (!player.jumping) {
+                entities.add(player);
             }
-            // PLAY STATE
-            else {
 
-                // DRAW TILES
-                tileM.draw(g2);
+            // POPULATE ENTITY LIST
+            for (Entity n : npc[currentMap]) {
+                if (n != null) {
+                    entities.add(n);
+                }
+            }
+            for (Entity o : obj[currentMap]) {
+                if (o != null) {
+                    entities.add(o);
+                }
+            }
+            for (Entity oi : obj_i[currentMap]) {
+                if (oi != null) {
+                    entities.add(oi);
+                }
+            }
+            for (Entity pa : particleList) {
+                if (pa != null) {
+                    entities.add(pa);
+                }
+            }
 
-                // DRAW PLAYER
+            // SORT DRAW ORDER BY Y COORD
+            entities.sort(new Comparator<Entity>() {
+                public int compare(Entity e1, Entity e2) {
+                    return Integer.compare(e1.worldY, e2.worldY);
+                }
+            });
+
+            // DRAW ENTITIES
+            for (Entity e : entities) {
+                e.draw(g2);
+            }
+
+            // DRAW JUMPING PLAYER OVER ENTITIES
+            if (player.jumping) {
                 player.draw(g2);
-
-                // DRAW UI
-                ui.draw(g2);
-
-                // DON'T DRAW JUMPING PLAYER FIRST
-                if (!player.jumping) {
-                    entities.add(player);
-                }
-
-                // POPULATE ENTITY LIST
-                for (Entity n : npc[currentMap]) {
-                    if (n != null) {
-                        entities.add(n);
-                    }
-                }
-                for (Entity o : obj[currentMap]) {
-                    if (o != null) {
-                        entities.add(o);
-                    }
-                }
-                for (Entity oi : obj_i[currentMap]) {
-                    if (oi != null) {
-                        entities.add(oi);
-                    }
-                }
-                for (Entity pa : particleList) {
-                    if (pa != null) {
-                        entities.add(pa);
-                    }
-                }
-
-                // SORT DRAW ORDER BY Y COORD
-                entities.sort(new Comparator<Entity>() {
-                    public int compare(Entity e1, Entity e2) {
-                        return Integer.compare(e1.worldY, e2.worldY);
-                    }
-                });
-
-                // DRAW ENTITIES
-                for (Entity e : entities) {
-                    e.draw(g2);
-                }
-
-                // DRAW JUMPING PLAYER OVER ENTITIES
-                if (player.jumping) {
-                    player.draw(g2);
-                }
-
-                // EMPTY ENTITY LIST
-                entities.clear();
-
-                // DRAW UI
-                ui.draw(g2);
             }
+
+            // EMPTY ENTITY LIST
+            entities.clear();
+
+            // DRAW UI
+            ui.draw(g2);
         }
     }
 

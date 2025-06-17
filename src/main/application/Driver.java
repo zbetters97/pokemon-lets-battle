@@ -9,8 +9,7 @@ public class Driver {
 
     public static void main(String[] args) {
 
-        window =
-                new JFrame();
+        window = new JFrame();
 
         // WINDOW PROPERTIES
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
