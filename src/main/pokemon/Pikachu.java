@@ -24,8 +24,14 @@ public class Pikachu extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.THUNDERSHOCK),
-                new Move(Moves.GROWL)
+                new Move
+                */
+                new Move(Moves.THUNDERBOLT),
+                new Move(Moves.SLAM),
+                new Move(Moves.THUNDERWAVE),
+                new Move(Moves.SEISMICTOSS)
         ));
 
         moveLevels = Map.ofEntries(

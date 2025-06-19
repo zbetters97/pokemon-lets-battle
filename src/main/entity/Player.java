@@ -89,7 +89,7 @@ public class Player extends Entity {
         hitboxDefaultWidth = hitbox.width;
         hitboxDefaultHeight = hitbox.height;
 
-        name = "ASH";
+        name = "STADIUM";
         trainerClass = 5;
         skillLevel = skill_elite;
 

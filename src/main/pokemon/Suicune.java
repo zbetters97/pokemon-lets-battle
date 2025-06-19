@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Suicune extends Pokemon {
@@ -21,10 +22,18 @@ public class Suicune extends Pokemon {
     }
 
     protected void mapMoves() {
-
+        /*
         moveset.add(
                 new Move(Moves.LEER)
         );
+         */
+
+        moveset.addAll(Arrays.asList(
+                new Move(Moves.BUBBLEBEAM),
+                new Move(Moves.GUST),
+                new Move(Moves.MIST),
+                new Move(Moves.ICEFANG)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(8, Moves.BUBBLEBEAM),

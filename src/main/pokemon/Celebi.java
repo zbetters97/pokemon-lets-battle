@@ -24,9 +24,15 @@ public class Celebi extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.LEECHSEED),
                 new Move(Moves.CONFUSION),
                 new Move(Moves.RECOVER),
+                new Move(Moves.HEALBELL)
+                 */
+                new Move(Moves.GIGADRAIN),
+                new Move(Moves.ANCIENTPOWER),
+                new Move(Moves.FUTURESIGHT),
                 new Move(Moves.HEALBELL)
         ));
 

@@ -24,10 +24,16 @@ public class Charizard extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.DRAGONCLAW),
                 new Move(Moves.EMBER),
                 new Move(Moves.SCRATCH),
                 new Move(Moves.GROWL)
+                */
+                new Move(Moves.FLY),
+                new Move(Moves.SWORDSDANCE),
+                new Move(Moves.FIRESPIN),
+                new Move(Moves.FIREBLAST)
         ));
 
         moveLevels = Map.ofEntries(

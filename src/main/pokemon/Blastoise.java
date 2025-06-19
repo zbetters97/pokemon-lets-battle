@@ -24,10 +24,16 @@ public class Blastoise extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.FLASHCANNON),
                 new Move(Moves.BUBBLE),
                 new Move(Moves.TACKLE),
                 new Move(Moves.TAILWHIP)
+                */
+                new Move(Moves.HYDROPUMP),
+                new Move(Moves.SKULLBASH),
+                new Move(Moves.WITHDRAW),
+                new Move(Moves.SEISMICTOSS)
         ));
 
         moveLevels = Map.ofEntries(

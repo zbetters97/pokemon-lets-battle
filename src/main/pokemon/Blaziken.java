@@ -24,10 +24,16 @@ public class Blaziken extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.FIREPUNCH),
                 new Move(Moves.EMBER),
                 new Move(Moves.SCRATCH),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.DOUBLEKICK),
+                new Move(Moves.PECK),
+                new Move(Moves.BLAZEKICK),
+                new Move(Moves.BULKUP)
         ));
 
         moveLevels = Map.ofEntries(

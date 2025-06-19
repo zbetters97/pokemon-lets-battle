@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Groudon extends Pokemon {
@@ -22,9 +23,18 @@ public class Groudon extends Pokemon {
 
     protected void mapMoves() {
 
+        /*
         moveset.add(
                 new Move(Moves.MUDSHOT)
         );
+        */
+
+        moveset.addAll(Arrays.asList(
+                new Move(Moves.EARTHQUAKE),
+                new Move(Moves.ANCIENTPOWER),
+                new Move(Moves.BULKUP),
+                new Move(Moves.SOLARBEAM)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(5, Moves.SCARYFACE),

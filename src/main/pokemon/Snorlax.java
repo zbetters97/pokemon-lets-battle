@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Snorlax extends Pokemon {
@@ -22,9 +23,18 @@ public class Snorlax extends Pokemon {
 
     protected void mapMoves() {
 
+        /*
         moveset.add(
                 new Move(Moves.TACKLE)
         );
+        */
+
+        moveset.addAll(Arrays.asList(
+                new Move(Moves.MEGAKICK),
+                new Move(Moves.ROCKBLAST),
+                new Move(Moves.METRONOME),
+                new Move(Moves.REST)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(4, Moves.DEFENSECURL),

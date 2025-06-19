@@ -24,10 +24,16 @@ public class Feraligatr extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.SCRATCH),
                 new Move(Moves.LEER),
                 new Move(Moves.WATERGUN),
                 new Move(Moves.RAGE)
+                 */
+                new Move(Moves.WATERGUN),
+                new Move(Moves.DIG),
+                new Move(Moves.DYNAMICPUNCH),
+                new Move(Moves.LEER)
         ));
 
         moveLevels = Map.ofEntries(

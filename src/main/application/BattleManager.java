@@ -868,6 +868,7 @@ public class BattleManager extends Thread {
         // 1/4 chance can't move due to PAR
         int val = 1 + (int) (Math.random() * 4);
         if (val == 1) {
+            gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
             pkm.getStatus().printStatus(gp, pkm.getName());
             return false;
         }
@@ -885,6 +886,7 @@ public class BattleManager extends Thread {
             return true;
         }
         else {
+            gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
             pkm.getStatus().printStatus(gp, pkm.getName());
             return false;
         }
@@ -903,6 +905,7 @@ public class BattleManager extends Thread {
         else {
             // increase counter
             pkm.setStatusCounter(pkm.getStatusCounter() + 1);
+            gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
             pkm.getStatus().printStatus(gp, pkm.getName());
 
             return false;

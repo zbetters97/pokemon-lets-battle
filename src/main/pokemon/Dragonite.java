@@ -24,10 +24,16 @@ public class Dragonite extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.FIREPUNCH),
                 new Move(Moves.THUNDERPUNCH),
                 new Move(Moves.ROOST),
                 new Move(Moves.TWISTER)
+                 */
+                new Move(Moves.SLAM),
+                new Move(Moves.DRAGONRAGE),
+                new Move(Moves.THUNDER),
+                new Move(Moves.AGILITY)
         ));
 
         moveLevels = Map.ofEntries(

@@ -24,8 +24,14 @@ public class Deoxys extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.LEER),
                 new Move(Moves.WRAP)
+                 */
+                new Move(Moves.NIGHTSHADE),
+                new Move(Moves.PSYCHOSHIFT),
+                new Move(Moves.PURSUIT),
+                new Move(Moves.RECOVER)
         ));
 
         moveLevels = Map.ofEntries(

@@ -4,6 +4,7 @@ import data.Progress;
 import entity.Entity;
 import entity.npc.NPC_Nurse;
 import moves.Move;
+import moves.Moves;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Protection;
 import properties.Type;
@@ -3053,6 +3054,8 @@ public class UI {
         int tempX = (int) (gp.tileSize * 0.3);
         int tempY = (int) (gp.tileSize * 10.5);
 
+        Move move = fighter.getMoveSet().isEmpty() ? new Move(Moves.STRUGGLE) : fighter.getMoveSet().get(commandNum);
+
         // MOVE STAT BOX
         x = -5;
         y = (int) (gp.tileSize * 9.5);
@@ -3076,8 +3079,8 @@ public class UI {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 55F));
         tempX += gp.tileSize * 5.35;
         tempY -= gp.tileSize;
-        int power = fighter.getMoveSet().get(commandNum).getPower();
-        if (power <= 0 || 999 <= power) {
+        int power = move.getPower();
+        if (power <= 2 || 999 <= power) {
             text = "---";
         }
         else {
@@ -3086,11 +3089,12 @@ public class UI {
         g2.drawString(text, tempX, tempY);
 
         tempY += gp.tileSize;
-        if (fighter.getMoveSet().get(commandNum).getAccuracy() <= 0) {
+        int accuracy = move.getAccuracy();
+        if (accuracy <= 0) {
             text = "---";
         }
         else {
-            text = Integer.toString(fighter.getMoveSet().get(commandNum).getAccuracy());
+            text = Integer.toString(accuracy);
         }
         g2.drawString(text, tempX, tempY);
 
@@ -3172,7 +3176,7 @@ public class UI {
         y += gp.tileSize * 0.8;
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
         g2.setColor(Color.BLACK);
-        for (String line : fighter.getMoveSet().get(commandNum).getInfo().split("\n")) {
+        for (String line : move.getInfo().split("\n")) {
             g2.drawString(line, x, y);
             y += gp.tileSize * 0.8;
         }
@@ -5037,6 +5041,7 @@ public class UI {
         int x = (int) (gp.tileSize * 12.1);
         int y = (int) (gp.screenHeight - (height * 1.02));
         int power;
+        int accuracy;
 
         drawSubWindow(x, y, width, height, 12, 10, gp.btlManager.fighter[player].getMoveSet().get(commandNum).getType().getColor(), battle_gray);
 
@@ -5049,7 +5054,7 @@ public class UI {
 
         power = gp.btlManager.fighter[player].getMoveSet().get(commandNum).getPower();
         y += gp.tileSize;
-        if (power <= 0) {
+        if (power <= 2 || 999 <= power) {
             text = "PWR ---";
         }
         else {
@@ -5057,10 +5062,22 @@ public class UI {
         }
         drawText(text, x, y, battle_white, Color.BLACK);
 
+        y += gp.tileSize;
+        accuracy = gp.btlManager.fighter[player].getMoveSet().get(commandNum).getAccuracy();
+        if (accuracy <= 0) {
+            text = "ACC ---";
+        }
+        else {
+            text = "ACC " + accuracy;
+        }
+        drawText(text, x, y, battle_white, Color.BLACK);
+
+        /*
         y += gp.tileSize * 1.1;
         text = gp.btlManager.fighter[player].getMoveSet().get(commandNum).getType().getName();
         x = getXForCenteredTextOnWidth(text, width - 15, x);
         drawText(text, x, y, battle_white, Color.BLACK);
+        */
     }
 
     private void battle_Move_Desc() {
@@ -5545,7 +5562,7 @@ public class UI {
 
             if (fighterNum == i && boxNum > 2) {
                 slotX = x + (int) (gp.tileSize * 0.5);
-                slotY = y - (int) (gp.tileSize * 0.7);
+                slotY = y - (int) (gp.tileSize * 0.5);
                 if (selectedFighter != null) {
                     g2.drawImage(selectedFighter.getMenuSprite(), slotX - 15, slotY, null);
                 }
@@ -6389,6 +6406,7 @@ public class UI {
             gp.gameState = gp.playState;
         }
     }
+
     private void drawBattleTransition() {
 
         // DARKEN SCREEN

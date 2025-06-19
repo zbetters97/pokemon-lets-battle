@@ -24,10 +24,16 @@ public class Exploud extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.THUNDERFANG),
                 new Move(Moves.FIREFANG),
                 new Move(Moves.ICEFANG),
                 new Move(Moves.POUND)
+                 */
+                new Move(Moves.HYPERBEAM),
+                new Move(Moves.SUPERSONIC),
+                new Move(Moves.ASTONISH),
+                new Move(Moves.STOMP)
         ));
 
         moveLevels = Map.ofEntries(

@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Mew extends Pokemon {
@@ -22,9 +23,16 @@ public class Mew extends Pokemon {
 
     protected void mapMoves() {
 
-        moveset.add(
-                new Move(Moves.POUND)
-        );
+        moveset.addAll(Arrays.asList(
+                /*
+                new Move(Moves.POUND),
+                new Move(Moves.METRONOME)
+                */
+                new Move(Moves.PSYCHIC),
+                new Move(Moves.ANCIENTPOWER),
+                new Move(Moves.METRONOME),
+                new Move(Moves.BARRIER)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(10, Moves.MEGAPUNCH),

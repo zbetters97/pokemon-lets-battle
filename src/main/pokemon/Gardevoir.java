@@ -24,10 +24,16 @@ public class Gardevoir extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.GROWL),
                 new Move(Moves.CONFUSION),
                 new Move(Moves.DOUBLETEAM),
                 new Move(Moves.TELEPORT)
+                 */
+                new Move(Moves.CALMMIND),
+                new Move(Moves.PSYCHIC),
+                new Move(Moves.HYPNOSIS),
+                new Move(Moves.DREAMEATER)
         ));
 
         moveLevels = Map.ofEntries(

@@ -24,8 +24,14 @@ public class Ninjask extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.SCRATCH),
                 new Move(Moves.HARDEN)
+                 */
+                new Move(Moves.FURYCUTTER),
+                new Move(Moves.SWORDSDANCE),
+                new Move(Moves.SLASH),
+                new Move(Moves.DOUBLETEAM)
         ));
 
         moveLevels = Map.ofEntries(

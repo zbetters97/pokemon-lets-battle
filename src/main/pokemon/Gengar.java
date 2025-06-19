@@ -24,8 +24,14 @@ public class Gengar extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.LICK),
                 new Move(Moves.HYPNOSIS)
+                 */
+                new Move(Moves.THUNDERBOLT),
+                new Move(Moves.NIGHTSHADE),
+                new Move(Moves.HYPNOSIS),
+                new Move(Moves.CONFUSERAY)
         ));
 
         moveLevels = Map.ofEntries(

@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Kyogre extends Pokemon {
@@ -22,9 +23,18 @@ public class Kyogre extends Pokemon {
 
     protected void mapMoves() {
 
+        /*
         moveset.add(
                 new Move(Moves.WATERPULSE)
         );
+        */
+
+        moveset.addAll(Arrays.asList(
+                new Move(Moves.ICEBEAM),
+                new Move(Moves.HYDROPUMP),
+                new Move(Moves.ANCIENTPOWER),
+                new Move(Moves.CALMMIND)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(5, Moves.SCARYFACE),

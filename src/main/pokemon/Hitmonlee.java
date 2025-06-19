@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Hitmonlee extends Pokemon {
@@ -21,11 +22,19 @@ public class Hitmonlee extends Pokemon {
     }
 
     protected void mapMoves() {
-
+/*
         moveset.add(
+
 //       		new Move(Moves.REVENGE),
                 new Move(Moves.DOUBLEKICK)
-        );
+                );
+ */
+        moveset.addAll(Arrays.asList(
+                new Move(Moves.HIGHJUMPKICK),
+                new Move(Moves.MEGAKICK),
+                new Move(Moves.METRONOME),
+                new Move(Moves.SEISMICTOSS)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(5, Moves.MEDITATE),

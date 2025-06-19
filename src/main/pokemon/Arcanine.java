@@ -24,11 +24,17 @@ public class Arcanine extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.THUNDERFANG),
                 new Move(Moves.BITE),
 //       		new Move(Moves.ROAR),
                 new Move(Moves.ODORSLEUTH),
                 new Move(Moves.FIREFANG)
+                 */
+                new Move(Moves.FIREBLAST),
+                new Move(Moves.TAKEDOWN),
+                new Move(Moves.DRAGONRAGE),
+                new Move(Moves.EXTREMESPEED)
         ));
 
         moveLevels = Map.ofEntries(

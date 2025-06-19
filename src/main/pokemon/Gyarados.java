@@ -25,7 +25,13 @@ public class Gyarados extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(List.of(
+                /*
                 new Move(Moves.THRASH)
+                */
+                new Move(Moves.SURF),
+                new Move(Moves.DRAGONRAGE),
+                new Move(Moves.BITE),
+                new Move(Moves.FIREBLAST)
         ));
 
         moveLevels = Map.ofEntries(

@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Mewtwo extends Pokemon {
@@ -22,9 +23,18 @@ public class Mewtwo extends Pokemon {
 
     protected void mapMoves() {
 
+        /*
         moveset.add(
                 new Move(Moves.CONFUSION)
         );
+        */
+
+        moveset.addAll(Arrays.asList(
+                new Move(Moves.PSYCHOCUT),
+                new Move(Moves.AURASPHERE),
+                new Move(Moves.MIRACLEEYE),
+                new Move(Moves.AMNESIA)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(8, Moves.BARRIER),

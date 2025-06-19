@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Raikou extends Pokemon {
@@ -22,9 +23,18 @@ public class Raikou extends Pokemon {
 
     protected void mapMoves() {
 
+        /*
         moveset.add(
                 new Move(Moves.LEER)
         );
+        */
+
+        moveset.addAll(Arrays.asList(
+                new Move(Moves.SPARK),
+                new Move(Moves.QUICKATTACK),
+                new Move(Moves.REFLECT),
+                new Move(Moves.CRUNCH)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(8, Moves.THUNDERSHOCK),
