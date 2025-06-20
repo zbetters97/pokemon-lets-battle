@@ -51,7 +51,7 @@ public class BattleManager extends Thread {
     public Pokemon[] fighter = new Pokemon[2];
     private final Pokemon[] newFighter = new Pokemon[2];
     private final ArrayList<Pokemon> otherFighters = new ArrayList<>();
-    private Move playerMove, cpuMove;
+    public Move playerMove, cpuMove;
     public Move newMove = null, oldMove = null;
     private Weather weather = Weather.CLEAR;
     private int weatherDays = -1;
@@ -353,9 +353,16 @@ public class BattleManager extends Thread {
             typeDialogue("Go, " + fighter[0].getName() + "!");
             pause(100);
 
-            running = false;
-            gp.ui.player = 1;
-            gp.ui.battleState = gp.ui.battle_Options;
+            // Player 2 waiting for move
+            int delay = getDelay();
+            if (delay == 2) {
+                setQueue();
+            }
+            else {
+                running = false;
+                gp.ui.player = 1;
+                gp.ui.battleState = gp.ui.battle_Options;
+            }
         }
         // MID/SHIFT SWAP OUT
         else {
@@ -593,6 +600,10 @@ public class BattleManager extends Thread {
     }
 
     private int getDelay() {
+        // 0: neither is waiting
+        // 1: player is waiting
+        // 2: cpu is waiting
+        // 3: both are waiting
 
         int delay = 0;
 
@@ -713,7 +724,7 @@ public class BattleManager extends Thread {
 
             if (move.getPower() > 0 && move.getPP() != 0) {
 
-                int damage = calculateDamage(fighter[1], fighter[0], move);
+                int damage = calculateDamage(fighter[1], fighter[0], move, 1);
                 damageMoves.put(move, damage);
 
                 if (damage >= fighter[0].getHP() && move.getPriority() > 0) {
@@ -999,6 +1010,7 @@ public class BattleManager extends Thread {
 
         getWeatherMoveDelay(atkMove);
 
+        // Pokemon can't move if wrapped
         if (atk.hasActiveMove(Moves.WRAP)) {
 
             gp.playSE(gp.battle_SE, "hit-normal");
@@ -1011,6 +1023,7 @@ public class BattleManager extends Thread {
             decreaseHP(atk, damage);
             typeDialogue(atk.getName() + " is\nhurt by Wrap!");
         }
+        // Normal move or charging move ready on second turn
         else if (atkMove.isReady()) {
 
             typeDialogue(atk.getName() + " used\n" + atkMove + "!", false);
@@ -1028,10 +1041,12 @@ public class BattleManager extends Thread {
                 typeDialogue("It had no effect!");
             }
         }
+        // Charging move used, needs cooldown
         else if (atkMove.getRecharge()) {
             typeDialogue(atkMove.getDelay(atk.getName()));
             atkMove.setTurnCount(atkMove.getTurns());
         }
+        // Charging move with no cooldown, used on first turn
         else {
             typeDialogue(atk.getName() + " used\n" + atkMove + "!");
             atk.setProtection(atkMove.getProtection());
@@ -1080,7 +1095,7 @@ public class BattleManager extends Thread {
      **/
     public void attack(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 
-        if (hit(atk, trg, move)) {
+        if (hit(atk, trg, move) || move.isToSelf()) {
             switch (move.getMType()) {
                 case STATUS:
                     statusMove(atk, trg, move);
@@ -1125,50 +1140,51 @@ public class BattleManager extends Thread {
 
         boolean hit;
 
+        // Check if target's protection can be bypassed
         switch (trg.getProtection()) {
-            // Check if target's protection can be bypassed
             case BOUNCE, FLY, SKYDROP:
-                return (move.getMove() != Moves.GUST &&
-                        move.getMove() != Moves.SKYUPPERCUT &&
-                        move.getMove() != Moves.THUNDER &&
-                        move.getMove() != Moves.TWISTER);
+                return (move.getMove() == Moves.GUST &&
+                        move.getMove() == Moves.SKYUPPERCUT &&
+                        move.getMove() == Moves.THUNDER &&
+                        move.getMove() == Moves.TWISTER);
             case DIG:
-                return (move.getMove() != Moves.EARTHQUAKE &&
-                        move.getMove() != Moves.FISSURE &&
-                        move.getMove() != Moves.MAGNITUDE);
+                return (move.getMove() == Moves.EARTHQUAKE &&
+                        move.getMove() == Moves.FISSURE &&
+                        move.getMove() == Moves.MAGNITUDE);
             case DIVE:
-                return (move.getMove() != Moves.SURF);
+                return (move.getMove() == Moves.SURF);
             default:
                 break;
         }
 
+        // Target is protected
         if (trg.hasActiveMove(Moves.PROTECT)) {
             hit = false;
         }
-        // if move never misses, return true
+        // Move never misses, always hit
         else if (move.getAccuracy() == -1) {
             hit = true;
         }
+        // Attacker has Miracle Eye or Odor Sleuth, always hit
+        else if (atk.hasActiveMove(Moves.MIRACLEEYE) || atk.hasActiveMove(Moves.ODORSLEUTH)) {
+            hit = true;
+        }
         else {
-            if (trg.hasActiveMove(Moves.MIRACLEEYE) || trg.hasActiveMove(Moves.ODORSLEUTH)) {
-                hit = true;
+            double accuracy;
+
+            // Ignore evasion if attacker has Foresight
+            if (atk.hasActiveMove(Moves.FORESIGHT)) {
+                accuracy = getAccuracy(atk, move) * atk.getAccuracy();
             }
             else {
-                double accuracy;
-
-                if (trg.hasActiveMove(Moves.FORESIGHT)) {
-                    accuracy = getAccuracy(atk, move) * atk.getAccuracy();
-                }
-                else {
-                    accuracy = getAccuracy(atk, move) * (atk.getAccuracy() / trg.getEvasion());
-                }
-
-                Random r = new Random();
-                float chance = r.nextFloat();
-
-                // chance of missing is accuracy / 100
-                hit = chance <= ((float) accuracy / 100);
+                accuracy = getAccuracy(atk, move) * (atk.getAccuracy() / trg.getEvasion());
             }
+
+            Random r = new Random();
+            float chance = r.nextFloat();
+
+            // Chance of missing is accuracy / 100
+            hit = chance <= ((float) accuracy / 100);
         }
 
         return hit;
@@ -1629,22 +1645,27 @@ public class BattleManager extends Thread {
         switch (move.getMove()) {
             case COMETPUNCH, FURYATTACK, FURYSWIPES:
                 int turns = new Random().nextInt(5 - 2 + 1) + 2;
-                int i = 1;
-                while (i <= turns) {
-                    damage += (int) Math.floor((dealDamage(atk, trg, move) * crit));
+                int i = 0;
+                while (i < turns) {
+
+                    // Only the first hit has a crit chance
+                    damage += i != 0 ? dealDamage(atk, trg, move, 1.0) : dealDamage(atk, trg, move, crit);
+
                     pause(800);
+
+                    i++;
 
                     if (trg.getHP() <= 0) {
                         break;
                     }
-
-                    i++;
                 }
 
-                typeDialogue("Hit " + i + " times!");
+                String times = i == 1 ? "time!" : "times!";
+                typeDialogue("Hit " + i + " " + times);
+
                 break;
             default:
-                damage = (int) Math.floor((dealDamage(atk, trg, move) * crit));
+                damage = dealDamage(atk, trg, move, crit);
                 break;
         }
 
@@ -1684,7 +1705,7 @@ public class BattleManager extends Thread {
         getRecoil(atk, move, damage);
     }
 
-    private int dealDamage(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
+    private int dealDamage(Pokemon atk, Pokemon trg, Move move, double crit) throws InterruptedException {
 
         double effectiveness = getEffectiveness(trg, move.getType());
         String hitSE = getHitSE(effectiveness);
@@ -1692,7 +1713,7 @@ public class BattleManager extends Thread {
 
         trg.setHit(true);
 
-        int damage = calculateDamage(atk, trg, move);
+        int damage = calculateDamage(atk, trg, move, crit);
 
         if (trg.hasActiveMove(Moves.REFLECT) && move.getMType() == MoveType.PHYSICAL) {
             damage /= 2;
@@ -1722,7 +1743,7 @@ public class BattleManager extends Thread {
         return damage;
     }
 
-    private int calculateDamage(Pokemon atk, Pokemon trg, Move move) {
+    private int calculateDamage(Pokemon atk, Pokemon trg, Move move, double crit) {
         /** DAMAGE FORMULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Damage **/
 
         double damage;
@@ -1738,7 +1759,7 @@ public class BattleManager extends Thread {
         double random = (double) (r.nextInt(100 - 85 + 1) + 85) / 100.0;
 
         damage = ((Math.floor(((((Math.floor((2 * level) / 5)) + 2) *
-                power * (A / D)) / 50)) + 2) * STAB * type * random);
+                power * (A / D)) / 50)) + 2) * crit * STAB * type * random);
 
         switch (move.getMove()) {
             case DRAGONRAGE:
@@ -2315,7 +2336,7 @@ public class BattleManager extends Thread {
 
         Move move = new Move(Moves.FUTURESIGHT);
 
-        int damage = dealDamage(atk, trg, move);
+        int damage = dealDamage(atk, trg, move, 1);
 
         String hitSE = getHitSE(getEffectiveness(trg, move.getType()));
 
@@ -2521,14 +2542,35 @@ public class BattleManager extends Thread {
             playerMove = null;
         }
 
-        if (delay == 1 || delay == 3) {
-            fightStage = fight_Start;
+        // Single player
+        if (cpu) {
+            // Player is waiting, skip option select
+            if (delay == 1 || delay == 3) {
+                setQueue();
+                fightStage = fight_Start;
+            }
+            else {
+                running = false;
+                fightStage = fight_Start;
+                gp.ui.player = 0;
+                gp.ui.battleState = gp.ui.battle_Options;
+            }
         }
+        // Multiplayer
         else {
-            running = false;
-            fightStage = fight_Start;
-            gp.ui.player = 0;
-            gp.ui.battleState = gp.ui.battle_Options;
+            // Both players are waiting, skip option select
+            if (delay == 3) {
+                setQueue();
+                fightStage = fight_Start;
+            }
+            else {
+                running = false;
+                fightStage = fight_Start;
+
+                // Player 2 selects option if player 1 is waiting
+                gp.ui.player = delay == 1 ? 1 : 0;
+                gp.ui.battleState = gp.ui.battle_Options;
+            }
         }
     }
 
@@ -3064,8 +3106,7 @@ public class BattleManager extends Thread {
                 for (Move m : p.getMoveSet()) {
 
                     if (m.getPower() > 0 && m.getPP() != 0) {
-
-                        int damage = calculateDamage(p, fighter[0], m);
+                        int damage = calculateDamage(p, fighter[0], m, 1);
                         damageMoves.put(m, damage);
                     }
                 }

@@ -72,8 +72,12 @@ public class SaveLoad {
             }
 
             // PLAYER ITEM
-            if (gp.player.keyItem != null) ds.pKeyItem = gp.player.keyItem.name;
-            else ds.pKeyItem = "NULL";
+            if (gp.player.keyItem != null) {
+                ds.pKeyItem = gp.player.keyItem.name;
+            }
+            else {
+                ds.pKeyItem = "NULL";
+            }
 
             // PLAYER POKE PARTY
             ArrayList<String> moveNames = new ArrayList<>();
@@ -96,14 +100,26 @@ public class SaveLoad {
                 ds.pPokePartyMoveNames.add(new ArrayList<>(moveNames));
                 ds.pPokePartyMovePP.add(new ArrayList<>(movePP));
 
-                if (p.getStatus() != null) ds.pPokePartyStatus.add(p.getStatus().getName());
-                else ds.pPokePartyStatus.add("NULL");
+                if (p.getStatus() != null) {
+                    ds.pPokePartyStatus.add(p.getStatus().getName());
+                }
+                else {
+                    ds.pPokePartyStatus.add("NULL");
+                }
 
-                if (p.getItem() != null) ds.pPokePartyItem.add(p.getItem().name);
-                else ds.pPokePartyItem.add("NULL");
+                if (p.getItem() != null) {
+                    ds.pPokePartyItem.add(p.getItem().name);
+                }
+                else {
+                    ds.pPokePartyItem.add("NULL");
+                }
 
-                if (p.getBall() != null) ds.pPokePartyBall.add(p.getBall().name);
-                else ds.pPokePartyBall.add("NULL");
+                if (p.getBall() != null) {
+                    ds.pPokePartyBall.add(p.getBall().name);
+                }
+                else {
+                    ds.pPokePartyBall.add("NULL");
+                }
 
                 ds.pPokePartyAlive.add(p.isAlive());
 
@@ -137,14 +153,26 @@ public class SaveLoad {
                         ds.pPCPartyMoveNames.add(new ArrayList<>(moveNames));
                         ds.pPCPartyMovePP.add(new ArrayList<>(movePP));
 
-                        if (p.getStatus() != null) ds.pPCPartyStatus.add(p.getStatus().getName());
-                        else ds.pPCPartyStatus.add("NULL");
+                        if (p.getStatus() != null) {
+                            ds.pPCPartyStatus.add(p.getStatus().getName());
+                        }
+                        else {
+                            ds.pPCPartyStatus.add("NULL");
+                        }
 
-                        if (p.getItem() != null) ds.pPCPartyItem.add(p.getItem().name);
-                        else ds.pPCPartyItem.add("NULL");
+                        if (p.getItem() != null) {
+                            ds.pPCPartyItem.add(p.getItem().name);
+                        }
+                        else {
+                            ds.pPCPartyItem.add("NULL");
+                        }
 
-                        if (p.getBall() != null) ds.pPCPartyBall.add(p.getBall().name);
-                        else ds.pPCPartyBall.add("NULL");
+                        if (p.getBall() != null) {
+                            ds.pPCPartyBall.add(p.getBall().name);
+                        }
+                        else {
+                            ds.pPCPartyBall.add("NULL");
+                        }
 
                         ds.pPCPartyAlive.add(p.isAlive());
                         ds.pPCPartyIndexBox.add(i);
@@ -195,7 +223,8 @@ public class SaveLoad {
 
                     if (gp.npc[mapNum][i] == null) {
                         ds.npcNames[mapNum][i] = "NULL";
-                    } else {
+                    }
+                    else {
                         ds.npcNames[mapNum][i] = gp.npc[mapNum][i].name;
                         ds.npcDirections[mapNum][i] = gp.npc[mapNum][i].direction;
                         ds.npcWorldX[mapNum][i] = gp.npc[mapNum][i].worldX;
@@ -223,11 +252,19 @@ public class SaveLoad {
                                 }
                                 moves.add(new ArrayList<>(npcMoveNames));
 
-                                if (pk.getItem() != null) item.add(pk.getItem().name);
-                                else item.add("NULL");
+                                if (pk.getItem() != null) {
+                                    item.add(pk.getItem().name);
+                                }
+                                else {
+                                    item.add("NULL");
+                                }
 
-                                if (pk.getBall() != null) ball.add(pk.getBall().name);
-                                else ball.add("NULL");
+                                if (pk.getBall() != null) {
+                                    ball.add(pk.getBall().name);
+                                }
+                                else {
+                                    ball.add("NULL");
+                                }
 
                                 npcMoveNames.clear();
                             }
@@ -247,7 +284,8 @@ public class SaveLoad {
                             moves.clear();
                             item.clear();
                             ball.clear();
-                        } else {
+                        }
+                        else {
                             ds.nPokePartyID.add(null);
                             ds.nPokePartySex.add(null);
                             ds.nPokePartyStats.add(null);
@@ -264,7 +302,8 @@ public class SaveLoad {
 
                     if (gp.obj[mapNum][i] == null) {
                         ds.mapObjectNames[mapNum][i] = "NULL";
-                    } else {
+                    }
+                    else {
                         ds.mapObjectNames[mapNum][i] = gp.obj[mapNum][i].name;
                         ds.mapObjectWorldX[mapNum][i] = gp.obj[mapNum][i].worldX;
                         ds.mapObjectWorldY[mapNum][i] = gp.obj[mapNum][i].worldY;
@@ -272,9 +311,11 @@ public class SaveLoad {
 
                         if (gp.obj[mapNum][i].name.equals("Door")) {
                             ds.mapObjectDoors[mapNum][i] = gp.obj[mapNum][i].power;
-                        } else if (gp.obj[mapNum][i].name.equals("Ledge")) {
+                        }
+                        else if (gp.obj[mapNum][i].name.equals("Ledge")) {
                             ds.mapObjectLedges[mapNum][i] = gp.obj[mapNum][i].power;
-                        } else {
+                        }
+                        else {
                             ds.mapObjectDoors[mapNum][i] = -1;
                             ds.mapObjectLedges[mapNum][i] = -1;
                         }
@@ -287,7 +328,8 @@ public class SaveLoad {
 
                     if (gp.iTile[mapNum][i] == null) {
                         ds.iTileNames[mapNum][i] = "NULL";
-                    } else {
+                    }
+                    else {
                         ds.iTileNames[mapNum][i] = gp.iTile[mapNum][i].name;
                         ds.iTileWorldX[mapNum][i] = gp.iTile[mapNum][i].worldX;
                         ds.iTileWorldY[mapNum][i] = gp.iTile[mapNum][i].worldY;
@@ -299,7 +341,8 @@ public class SaveLoad {
             // WRITE THE DS OBJECT
             oos.writeObject(ds);
             oos.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -329,6 +372,7 @@ public class SaveLoad {
             gp.player.money = ds.pMoney;
             gp.player.dexSeen = ds.pDexSeen;
             gp.player.dexOwn = ds.pDexOwn;
+            gp.player.inGrass = false;
 
             // PLAYER BAG
             gp.player.inventory_keyItems.clear();
@@ -388,7 +432,8 @@ public class SaveLoad {
 
                 if (!ds.pPokePartyStatus.get(i).equals("NULL")) {
                     status = Status.getStatus(ds.pPokePartyStatus.get(i));
-                } else {
+                }
+                else {
                     status = null;
                 }
 
@@ -401,12 +446,14 @@ public class SaveLoad {
 
                 if (!ds.pPokePartyBall.get(i).equals("NULL")) {
                     ball = gp.eGenerator.getItem(ds.pPokePartyBall.get(i));
-                } else {
+                }
+                else {
                     ball = null;
                 }
                 if (!ds.pPokePartyItem.get(i).equals("NULL")) {
                     item = gp.eGenerator.getItem(ds.pPokePartyItem.get(i));
-                } else {
+                }
+                else {
                     item = null;
                 }
 
@@ -441,7 +488,8 @@ public class SaveLoad {
 
                 if (!ds.pPCPartyStatus.get(i).equals("NULL")) {
                     status = Status.getStatus(ds.pPCPartyStatus.get(i));
-                } else {
+                }
+                else {
                     status = null;
                 }
 
@@ -454,12 +502,14 @@ public class SaveLoad {
 
                 if (!ds.pPCPartyBall.get(i).equals("NULL")) {
                     ball = gp.eGenerator.getItem(ds.pPCPartyBall.get(i));
-                } else {
+                }
+                else {
                     ball = null;
                 }
                 if (!ds.pPCPartyItem.get(i).equals("NULL")) {
                     item = gp.eGenerator.getItem(ds.pPCPartyItem.get(i));
-                } else {
+                }
+                else {
                     item = null;
                 }
 
@@ -482,7 +532,8 @@ public class SaveLoad {
 
                     if (ds.npcNames[mapNum][i].equals("NULL")) {
                         gp.npc[mapNum][i] = null;
-                    } else if (gp.npc[mapNum][i] != null) {
+                    }
+                    else if (gp.npc[mapNum][i] != null) {
                         gp.npc[mapNum][i].direction = ds.npcDirections[mapNum][i];
                         gp.npc[mapNum][i].worldX = ds.npcWorldX[mapNum][i];
                         gp.npc[mapNum][i].worldY = ds.npcWorldY[mapNum][i];
@@ -517,12 +568,14 @@ public class SaveLoad {
 
                                 if (!ds.nPokePartyBall.get(i).get(c).equals("NULL")) {
                                     ball = gp.eGenerator.getItem(ds.nPokePartyBall.get(i).get(c));
-                                } else {
+                                }
+                                else {
                                     ball = null;
                                 }
                                 if (!ds.nPokePartyItem.get(i).get(c).equals("NULL")) {
                                     item = gp.eGenerator.getItem(ds.nPokePartyItem.get(i).get(c));
-                                } else {
+                                }
+                                else {
                                     item = null;
                                 }
 
@@ -545,7 +598,8 @@ public class SaveLoad {
 
                     if (ds.mapObjectNames[mapNum][i].equals("NULL")) {
                         gp.obj[mapNum][i] = null;
-                    } else if (gp.obj[mapNum][i] != null) {
+                    }
+                    else if (gp.obj[mapNum][i] != null) {
 
                         if (gp.obj[mapNum][i].name.equals("Door")) {
                             gp.obj[mapNum][i] = gp.eGenerator.getDoor(
@@ -553,14 +607,16 @@ public class SaveLoad {
                                     ds.mapObjectWorldY[mapNum][i] / gp.tileSize,
                                     ds.mapObjectDoors[mapNum][i]
                             );
-                        } else if (gp.obj[mapNum][i].name.equals("Ledge")) {
+                        }
+                        else if (gp.obj[mapNum][i].name.equals("Ledge")) {
                             gp.obj[mapNum][i] = gp.eGenerator.getLedge(
                                     ds.mapObjectWorldX[mapNum][i] / gp.tileSize,
                                     ds.mapObjectWorldY[mapNum][i] / gp.tileSize,
                                     ds.mapObjectDirections[mapNum][i],
                                     ds.mapObjectLedges[mapNum][i]
                             );
-                        } else {
+                        }
+                        else {
                             gp.obj[mapNum][i] = gp.eGenerator.getObject(
                                     ds.mapObjectNames[mapNum][i],
                                     ds.mapObjectWorldX[mapNum][i] / gp.tileSize,
@@ -577,7 +633,8 @@ public class SaveLoad {
 
                     if (ds.iTileNames[mapNum][i].equals("NULL")) {
                         gp.iTile[mapNum][i] = null;
-                    } else if (gp.iTile[mapNum][i] != null) {
+                    }
+                    else if (gp.iTile[mapNum][i] != null) {
                         gp.iTile[mapNum][i] = gp.iGenerator.getTile(ds.iTileNames[mapNum][i]);
                         gp.iTile[mapNum][i].worldX = ds.iTileWorldX[mapNum][i];
                         gp.iTile[mapNum][i].worldY = ds.iTileWorldY[mapNum][i];
@@ -587,7 +644,8 @@ public class SaveLoad {
             }
 
             ois.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -651,7 +709,8 @@ public class SaveLoad {
 
                 if (!ds.pPokePartyStatus.get(i).equals("NULL")) {
                     status = Status.getStatus(ds.pPokePartyStatus.get(i));
-                } else {
+                }
+                else {
                     status = null;
                 }
 
@@ -664,12 +723,14 @@ public class SaveLoad {
 
                 if (!ds.pPokePartyBall.get(i).equals("NULL")) {
                     ball = gp.eGenerator.getItem(ds.pPokePartyBall.get(i));
-                } else {
+                }
+                else {
                     ball = null;
                 }
                 if (!ds.pPokePartyItem.get(i).equals("NULL")) {
                     item = gp.eGenerator.getItem(ds.pPokePartyItem.get(i));
-                } else {
+                }
+                else {
                     item = null;
                 }
 
@@ -685,7 +746,8 @@ public class SaveLoad {
             }
 
             ois.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -703,7 +765,8 @@ public class SaveLoad {
 
                 return ds.pName;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -723,7 +786,8 @@ public class SaveLoad {
 
                 return ds.toString();
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 

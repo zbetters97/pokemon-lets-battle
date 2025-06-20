@@ -4999,8 +4999,7 @@ public class UI {
             else {
                 gp.keyH.playCursorSE();
 
-                if (gp.btlManager.cpu || player == 1) {
-
+                if (gp.btlManager.cpu || player == 1 || gp.btlManager.cpuMove != null) {
                     gp.btlManager.fightStage = gp.btlManager.fight_Start;
                     gp.btlManager.setQueue();
                     gp.btlManager.running = true;

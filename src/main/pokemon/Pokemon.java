@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -210,11 +211,14 @@ public class Pokemon {
             case ERATIC:
                 if (1 < level && level < 50) {
                     xp = Math.floor((n3 * (100.0 - n)) / 50.0);
-                } else if (50 <= level && level < 68) {
+                }
+                else if (50 <= level && level < 68) {
                     xp = Math.floor((n3 * (150.0 - level)) / 100.0);
-                } else if (68 <= level && level < 98) {
+                }
+                else if (68 <= level && level < 98) {
                     xp = n3 * (Math.floor(1911 - (10 * n)) / 3);
-                } else if (98 <= level && level <= 100) {
+                }
+                else if (98 <= level && level <= 100) {
                     xp = Math.floor((n3 * (160.0 - level)) / 100.0);
                 }
                 break;
@@ -222,9 +226,11 @@ public class Pokemon {
             case FLUCTUATING:
                 if (1 < level && level < 15) {
                     xp = Math.floor((n3 * (Math.floor((n + 1.0) / 3.0) + 24.0)) / 50.0);
-                } else if (15 <= level && level < 36) {
+                }
+                else if (15 <= level && level < 36) {
                     xp = Math.floor((n3 * (n + 14.0)) / 50.0);
-                } else if (36 <= level && level <= 100) {
+                }
+                else if (36 <= level && level <= 100) {
                     xp = Math.floor((n3 * (Math.floor(n / 2.0) + 32.0)) / 50.0);
                 }
                 break;
@@ -245,14 +251,18 @@ public class Pokemon {
                 break;
         }
 
-        if (xp < 0 || level == 1) xp = 0.0;
+        if (xp < 0 || level == 1) {
+            xp = 0.0;
+        }
 
         return (int) Math.floor(xp);
     }
 
     protected int setNXP() {
         int nextXP = setBXP(level + 1) - setBXP(level);
-        if (nextXP < 0) nextXP = 0;
+        if (nextXP < 0) {
+            nextXP = 0;
+        }
         return nextXP;
     }
 
@@ -270,7 +280,9 @@ public class Pokemon {
         hp = ((((2 * baseHP + hpIV + ev / 4) * level) / 100) + level + 10);
 
         chp += (hp - oldBHP);
-        if (chp > hp) chp = hp;
+        if (chp > hp) {
+            chp = hp;
+        }
 
         attack = getStat(baseAttack, attackIV);
         defense = getStat(baseDefense, defenseIV);
@@ -395,8 +407,12 @@ public class Pokemon {
 
     public void setIV(int iv) {
 
-        if (iv < 0) iv = 0;
-        else if (iv > 31) iv = 31;
+        if (iv < 0) {
+            iv = 0;
+        }
+        else if (iv > 31) {
+            iv = 31;
+        }
 
         hpIV = iv;
         attackIV = iv;
@@ -459,7 +475,8 @@ public class Pokemon {
 
         if (moveset.size() == 4) {
             return false;
-        } else {
+        }
+        else {
             moveset.add(move);
             return true;
         }
@@ -495,9 +512,12 @@ public class Pokemon {
             m.resetPP();
             m.resetMoveTurns();
         }
-        for (Move m : activeMoves) {
+
+        Iterator<Move> iterator = activeMoves.iterator();
+        while (iterator.hasNext()) {
+            Move m = iterator.next();
             m.setTurnCount(m.getTurns());
-            activeMoves.remove(m);
+            iterator.remove();
         }
     }
 
@@ -921,8 +941,9 @@ public class Pokemon {
 
     public void addHP(int hp) {
         this.chp += hp;
-        if (this.chp > this.hp)
+        if (this.chp > this.hp) {
             this.chp = this.hp;
+        }
     }
 
     public int getBXP() {
@@ -1215,8 +1236,12 @@ public class Pokemon {
     }
 
     public String getName() {
-        if (nickname != null) return nickname;
-        else return name.toUpperCase();
+        if (nickname != null) {
+            return nickname;
+        }
+        else {
+            return name.toUpperCase();
+        }
     }
 
     public BufferedImage getFrontSprite() {
@@ -1236,8 +1261,12 @@ public class Pokemon {
     }
 
     public Color getSexColor() {
-        if (sex == '♂') return Color.BLUE;
-        else return Color.RED;
+        if (sex == '♂') {
+            return Color.BLUE;
+        }
+        else {
+            return Color.RED;
+        }
     }
 
     public int getLevel() {
@@ -1268,7 +1297,8 @@ public class Pokemon {
             if (this.types.contains(type)) {
                 isType = true;
             }
-        } else if (this.type == type) {
+        }
+        else if (this.type == type) {
             isType = true;
         }
 
@@ -1378,18 +1408,21 @@ public class Pokemon {
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    } else {
+                    }
+                    else {
                         cAttack = Math.floor(attack * ((2.0 + attackStg) / 2.0));
                         output = outputChange(stat, change);
                     }
-                } else if (level < 0) {
+                }
+                else if (level < 0) {
                     while (attackStg > difference && attackStg > -6) {
                         attackStg--;
                         change--;
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    } else {
+                    }
+                    else {
                         cAttack = Math.floor(attack * (2.0 / (2.0 - attackStg)));
                         output = outputChange(stat, change);
                     }
@@ -1408,18 +1441,21 @@ public class Pokemon {
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    } else {
+                    }
+                    else {
                         cDefense = Math.floor(defense * ((2.0 + defenseStg) / 2.0));
                         output = outputChange(stat, change);
                     }
-                } else if (level < 0) {
+                }
+                else if (level < 0) {
                     while (defenseStg > difference && defenseStg > -6) {
                         defenseStg--;
                         change--;
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    } else {
+                    }
+                    else {
                         cDefense = Math.floor(defense * (2.0 / (2.0 - defenseStg)));
                         output = outputChange(stat, change);
                     }
@@ -1437,18 +1473,21 @@ public class Pokemon {
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    } else {
+                    }
+                    else {
                         cSpAttack = Math.floor(spAttack * ((2.0 + spAttackStg) / 2.0));
                         output = outputChange(stat, change);
                     }
-                } else if (level < 0) {
+                }
+                else if (level < 0) {
                     while (spAttackStg > difference && spAttackStg > -6) {
                         spAttackStg--;
                         change--;
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    } else {
+                    }
+                    else {
                         cSpAttack = Math.floor(spAttack * (2.0 / (2.0 - spAttackStg)));
                         output = outputChange(stat, change);
                     }
@@ -1466,18 +1505,21 @@ public class Pokemon {
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    } else {
+                    }
+                    else {
                         cSpDefense = Math.floor(spDefense * ((2.0 + spDefenseStg) / 2.0));
                         output = outputChange(stat, change);
                     }
-                } else if (level < 0) {
+                }
+                else if (level < 0) {
                     while (spDefenseStg > difference && spDefenseStg > -6) {
                         spDefenseStg--;
                         change--;
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    } else {
+                    }
+                    else {
                         cSpDefense = Math.floor(spDefense * (2.0 / (2.0 - spDefenseStg)));
                         output = outputChange(stat, change);
                     }
@@ -1495,18 +1537,21 @@ public class Pokemon {
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    } else {
+                    }
+                    else {
                         cSpeed = Math.floor(speed * ((2.0 + speedStg) / 2.0));
                         output = outputChange(stat, change);
                     }
-                } else if (level < 0) {
+                }
+                else if (level < 0) {
                     while (speedStg > difference && speedStg > -6) {
                         speedStg--;
                         change--;
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    } else {
+                    }
+                    else {
                         cSpeed = Math.floor(speed * (2.0 / (2.0 - speedStg)));
                         output = outputChange(stat, change);
                     }
@@ -1524,18 +1569,21 @@ public class Pokemon {
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    } else {
+                    }
+                    else {
                         accuracy = Math.floor(1 * ((3.0 + accuracyStg) / 3.0));
                         output = outputChange(stat, change);
                     }
-                } else if (level < 0) {
+                }
+                else if (level < 0) {
                     while (accuracyStg > difference && accuracyStg > -6) {
                         accuracyStg--;
                         change--;
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    } else {
+                    }
+                    else {
                         accuracy = Math.floor(1 * (3.0 / (3.0 - accuracyStg)));
                         output = outputChange(stat, change);
                     }
@@ -1544,7 +1592,7 @@ public class Pokemon {
 
             case "evasion":
 
-                difference = attackStg + level;
+                difference = evasionStg + level;
 
                 if (level > 0) {
                     while (evasionStg < difference && evasionStg < 6) {
@@ -1553,18 +1601,21 @@ public class Pokemon {
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    } else {
+                    }
+                    else {
                         evasion = Math.floor(1 * ((3.0 + evasionStg) / 3.0));
                         output = outputChange(stat, change);
                     }
-                } else if (level < 0) {
+                }
+                else if (level < 0) {
                     while (evasionStg > difference && evasionStg > -6) {
                         evasionStg--;
                         change--;
                     }
                     if (change == 0) {
                         output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    } else {
+                    }
+                    else {
                         evasion = Math.floor(1 * (3.0 / (3.0 - evasionStg)));
                         output = outputChange(stat, change);
                     }
@@ -1579,12 +1630,24 @@ public class Pokemon {
 
         String output = "";
 
-        if (level == 1) output = getName() + "'s " + stat + "\nrose!";
-        else if (level == 2) output = getName() + "'s " + stat + "\ngreatly rose!";
-        else if (level >= 3) output = getName() + "'s " + stat + "\ndrastically rose!";
-        else if (level == -1) output = getName() + "'s " + stat + "\nfell!";
-        else if (level == -2) output = getName() + "'s " + stat + "\ngreatly fell!";
-        else if (level <= -3) output = getName() + "'s " + stat + "\nseverely fell!";
+        if (level == 1) {
+            output = getName() + "'s " + stat + "\nrose!";
+        }
+        else if (level == 2) {
+            output = getName() + "'s " + stat + "\ngreatly rose!";
+        }
+        else if (level >= 3) {
+            output = getName() + "'s " + stat + "\ndrastically rose!";
+        }
+        else if (level == -1) {
+            output = getName() + "'s " + stat + "\nfell!";
+        }
+        else if (level == -2) {
+            output = getName() + "'s " + stat + "\ngreatly fell!";
+        }
+        else if (level <= -3) {
+            output = getName() + "'s " + stat + "\nseverely fell!";
+        }
 
         return output;
     }
@@ -1616,7 +1679,8 @@ public class Pokemon {
         try {
             image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
             image = GamePanel.utility.scaleImage(image, width, height);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println(e);
             e.printStackTrace();
         }
