@@ -125,7 +125,8 @@ public class Pokemon {
         cxp = xp;
         nxp = setNXP();
 
-        this.hp = (int) (Math.floor(((2 * hp + hpIV + Math.floor(0.25 * ev)) * level) / 100) + level + 10);
+        // Check if hp is 1 for Shedinja
+        this.hp = hp == 1 ? 1 : (int) (Math.floor(((2 * hp + hpIV + Math.floor(0.25 * ev)) * level) / 100) + level + 10);
         chp = this.hp;
 
         baseHP = hp;
@@ -616,305 +617,107 @@ public class Pokemon {
 
         Pokemon pokemon = null;
 
-        switch (id) {
-            case BULBUSAUR:
-                pokemon = new Bulbasaur(level, ball);
-                break;
-            case IVYSAUR:
-                pokemon = new Ivysaur(level, ball);
-                break;
-            case VENUSAUR:
-                pokemon = new Venusaur(level, ball);
-                break;
-            case CHARMANDER:
-                pokemon = new Charmander(level, ball);
-                break;
-            case CHARMELEON:
-                pokemon = new Charmeleon(level, ball);
-                break;
-            case CHARIZARD:
-                pokemon = new Charizard(level, ball);
-                break;
-            case SQUIRTLE:
-                pokemon = new Squirtle(level, ball);
-                break;
-            case WARTORTLE:
-                pokemon = new Wartortle(level, ball);
-                break;
-            case BLASTOISE:
-                pokemon = new Blastoise(level, ball);
-                break;
-            case PIKACHU:
-                pokemon = new Pikachu(level, ball);
-                break;
-            case RAICHU:
-                pokemon = new Raichu(level, ball);
-                break;
-            case ZUBAT:
-                pokemon = new Zubat(level, ball);
-                break;
-            case GOLBAT:
-                pokemon = new Golbat(level, ball);
-                break;
-            case GROWLITHE:
-                pokemon = new Growlithe(level, ball);
-                break;
-            case ARCANINE:
-                pokemon = new Arcanine(level, ball);
-                break;
-            case ABRA:
-                pokemon = new Abra(level, ball);
-                break;
-            case KADABRA:
-                pokemon = new Kadabra(level, ball);
-                break;
-            case ALAKAZAM:
-                pokemon = new Alakazam(level, ball);
-                break;
-            case MACHOP:
-                pokemon = new Machop(level, ball);
-                break;
-            case MACHOKE:
-                pokemon = new Machoke(level, ball);
-                break;
-            case MACHAMP:
-                pokemon = new Machamp(level, ball);
-                break;
-            case GEODUDE:
-                pokemon = new Geodude(level, ball);
-                break;
-            case GRAVELER:
-                pokemon = new Graveler(level, ball);
-                break;
-            case GOLEM:
-                pokemon = new Golem(level, ball);
-                break;
-            case PONYTA:
-                pokemon = new Ponyta(level, ball);
-                break;
-            case RAPIDASH:
-                pokemon = new Rapidash(level, ball);
-                break;
-            case GASTLY:
-                pokemon = new Gastly(level, ball);
-                break;
-            case HAUNTER:
-                pokemon = new Haunter(level, ball);
-                break;
-            case GENGAR:
-                pokemon = new Gengar(level, ball);
-                break;
-            case HITMONLEE:
-                pokemon = new Hitmonlee(level, ball);
-                break;
-            case HITMONCHAN:
-                pokemon = new Hitmonchan(level, ball);
-                break;
-            case HORSEA:
-                pokemon = new Horsea(level, ball);
-                break;
-            case SEADRA:
-                pokemon = new Seadra(level, ball);
-                break;
-            case MAGIKARP:
-                pokemon = new Magikarp(level, ball);
-                break;
-            case GYARADOS:
-                pokemon = new Gyarados(level, ball);
-                break;
-            case LAPRAS:
-                pokemon = new Lapras(level, ball);
-                break;
-            case SNORLAX:
-                pokemon = new Snorlax(level, ball);
-                break;
-            case ARTICUNO:
-                pokemon = new Articuno(level, ball);
-                break;
-            case ZAPDOS:
-                pokemon = new Zapdos(level, ball);
-                break;
-            case MOLTRES:
-                pokemon = new Moltres(level, ball);
-                break;
-            case DRATINI:
-                pokemon = new Dratini(level, ball);
-                break;
-            case DRAGONAIR:
-                pokemon = new Dragonair(level, ball);
-                break;
-            case DRAGONITE:
-                pokemon = new Dragonite(level, ball);
-                break;
-            case MEWTWO:
-                pokemon = new Mewtwo(level, ball);
-                break;
-            case MEW:
-                pokemon = new Mew(level, ball);
-                break;
-            case CHIKORITA:
-                pokemon = new Chikorita(level, ball);
-                break;
-            case BAYLEEF:
-                pokemon = new Bayleef(level, ball);
-                break;
-            case MEGANIUM:
-                pokemon = new Meganium(level, ball);
-                break;
-            case CYNDAQUIL:
-                pokemon = new Cyndaquil(level, ball);
-                break;
-            case QUILAVA:
-                pokemon = new Quilava(level, ball);
-                break;
-            case TYPHLOSION:
-                pokemon = new Typhlosion(level, ball);
-                break;
-            case TOTODILE:
-                pokemon = new Totodile(level, ball);
-                break;
-            case CROCONAW:
-                pokemon = new Croconaw(level, ball);
-                break;
-            case FERALIGATR:
-                pokemon = new Feraligatr(level, ball);
-                break;
-            case CROBAT:
-                pokemon = new Crobat(level, ball);
-                break;
-            case KINGDRA:
-                pokemon = new Kingdra(level, ball);
-                break;
-            case RAIKOU:
-                pokemon = new Raikou(level, ball);
-                break;
-            case ENTEI:
-                pokemon = new Entei(level, ball);
-                break;
-            case SUICUNE:
-                pokemon = new Suicune(level, ball);
-                break;
-            case LUGIA:
-                pokemon = new Lugia(level, ball);
-                break;
-            case HOOH:
-                pokemon = new Hooh(level, ball);
-                break;
-            case CELEBI:
-                pokemon = new Celebi(level, ball);
-                break;
-            case TREECKO:
-                pokemon = new Treecko(level, ball);
-                break;
-            case GROVYLE:
-                pokemon = new Grovyle(level, ball);
-                break;
-            case SCEPTILE:
-                pokemon = new Sceptile(level, ball);
-                break;
-            case TORCHIC:
-                pokemon = new Torchic(level, ball);
-                break;
-            case COMBUSKEN:
-                pokemon = new Combusken(level, ball);
-                break;
-            case BLAZIKEN:
-                pokemon = new Blaziken(level, ball);
-                break;
-            case MUDKIP:
-                pokemon = new Mudkip(level, ball);
-                break;
-            case MARSHTOMP:
-                pokemon = new Marshtomp(level, ball);
-                break;
-            case SWAMPERT:
-                pokemon = new Swampert(level, ball);
-                break;
-            case POOCHYENA:
-                pokemon = new Poochyena(level, ball);
-                break;
-            case MIGHTYENA:
-                pokemon = new Mightyena(level, ball);
-                break;
-            case ZIGZAGOON:
-                pokemon = new Zigzagoon(level, ball);
-                break;
-            case LINOONE:
-                pokemon = new Linoone(level, ball);
-                break;
-            case RALTS:
-                pokemon = new Ralts(level, ball);
-                break;
-            case KIRLIA:
-                pokemon = new Kirlia(level, ball);
-                break;
-            case GARDEVOIR:
-                pokemon = new Gardevoir(level, ball);
-                break;
-            case NINCADA:
-                pokemon = new Nincada(level, ball);
-                break;
-            case NINJASK:
-                pokemon = new Ninjask(level, ball);
-                break;
-            case SHEDINJA:
-                pokemon = new Shedinja(level, ball);
-                break;
-            case WHISMUR:
-                pokemon = new Whismur(level, ball);
-                break;
-            case LOUDRED:
-                pokemon = new Loudred(level, ball);
-                break;
-            case EXPLOUD:
-                pokemon = new Exploud(level, ball);
-                break;
-            case SPHEAL:
-                pokemon = new Spheal(level, ball);
-                break;
-            case SEALEO:
-                pokemon = new Sealeo(level, ball);
-                break;
-            case WALREIN:
-                pokemon = new Walrein(level, ball);
-                break;
-            case BAGON:
-                pokemon = new Bagon(level, ball);
-                break;
-            case SHELGON:
-                pokemon = new Shelgon(level, ball);
-                break;
-            case SALAMENCE:
-                pokemon = new Salamence(level, ball);
-                break;
-            case BELDUM:
-                pokemon = new Beldum(level, ball);
-                break;
-            case METANG:
-                pokemon = new Metang(level, ball);
-                break;
-            case METAGROSS:
-                pokemon = new Metagross(level, ball);
-                break;
-            case KYOGRE:
-                pokemon = new Kyogre(level, ball);
-                break;
-            case GROUDON:
-                pokemon = new Groudon(level, ball);
-                break;
-            case RAYQUAZA:
-                pokemon = new Rayquaza(level, ball);
-                break;
-            case JIRACHI:
-                pokemon = new Jirachi(level, ball);
-                break;
-            case DEOXYS:
-                pokemon = new Deoxys(level, ball);
-                break;
-
-            default:
-                break;
-        }
+        pokemon = switch (id) {
+            case BULBUSAUR -> new Bulbasaur(level, ball);
+            case IVYSAUR -> new Ivysaur(level, ball);
+            case VENUSAUR -> new Venusaur(level, ball);
+            case CHARMANDER -> new Charmander(level, ball);
+            case CHARMELEON -> new Charmeleon(level, ball);
+            case CHARIZARD -> new Charizard(level, ball);
+            case SQUIRTLE -> new Squirtle(level, ball);
+            case WARTORTLE -> new Wartortle(level, ball);
+            case BLASTOISE -> new Blastoise(level, ball);
+            case PIKACHU -> new Pikachu(level, ball);
+            case RAICHU -> new Raichu(level, ball);
+            case ZUBAT -> new Zubat(level, ball);
+            case GOLBAT -> new Golbat(level, ball);
+            case GROWLITHE -> new Growlithe(level, ball);
+            case ARCANINE -> new Arcanine(level, ball);
+            case ABRA -> new Abra(level, ball);
+            case KADABRA -> new Kadabra(level, ball);
+            case ALAKAZAM -> new Alakazam(level, ball);
+            case MACHOP -> new Machop(level, ball);
+            case MACHOKE -> new Machoke(level, ball);
+            case MACHAMP -> new Machamp(level, ball);
+            case GEODUDE -> new Geodude(level, ball);
+            case GRAVELER -> new Graveler(level, ball);
+            case GOLEM -> new Golem(level, ball);
+            case PONYTA -> new Ponyta(level, ball);
+            case RAPIDASH -> new Rapidash(level, ball);
+            case GASTLY -> new Gastly(level, ball);
+            case HAUNTER -> new Haunter(level, ball);
+            case GENGAR -> new Gengar(level, ball);
+            case HITMONLEE -> new Hitmonlee(level, ball);
+            case HITMONCHAN -> new Hitmonchan(level, ball);
+            case HORSEA -> new Horsea(level, ball);
+            case SEADRA -> new Seadra(level, ball);
+            case MAGIKARP -> new Magikarp(level, ball);
+            case GYARADOS -> new Gyarados(level, ball);
+            case LAPRAS -> new Lapras(level, ball);
+            case SNORLAX -> new Snorlax(level, ball);
+            case ARTICUNO -> new Articuno(level, ball);
+            case ZAPDOS -> new Zapdos(level, ball);
+            case MOLTRES -> new Moltres(level, ball);
+            case DRATINI -> new Dratini(level, ball);
+            case DRAGONAIR -> new Dragonair(level, ball);
+            case DRAGONITE -> new Dragonite(level, ball);
+            case MEWTWO -> new Mewtwo(level, ball);
+            case MEW -> new Mew(level, ball);
+            case CHIKORITA -> new Chikorita(level, ball);
+            case BAYLEEF -> new Bayleef(level, ball);
+            case MEGANIUM -> new Meganium(level, ball);
+            case CYNDAQUIL -> new Cyndaquil(level, ball);
+            case QUILAVA -> new Quilava(level, ball);
+            case TYPHLOSION -> new Typhlosion(level, ball);
+            case TOTODILE -> new Totodile(level, ball);
+            case CROCONAW -> new Croconaw(level, ball);
+            case FERALIGATR -> new Feraligatr(level, ball);
+            case CROBAT -> new Crobat(level, ball);
+            case KINGDRA -> new Kingdra(level, ball);
+            case RAIKOU -> new Raikou(level, ball);
+            case ENTEI -> new Entei(level, ball);
+            case SUICUNE -> new Suicune(level, ball);
+            case LUGIA -> new Lugia(level, ball);
+            case HOOH -> new Hooh(level, ball);
+            case CELEBI -> new Celebi(level, ball);
+            case TREECKO -> new Treecko(level, ball);
+            case GROVYLE -> new Grovyle(level, ball);
+            case SCEPTILE -> new Sceptile(level, ball);
+            case TORCHIC -> new Torchic(level, ball);
+            case COMBUSKEN -> new Combusken(level, ball);
+            case BLAZIKEN -> new Blaziken(level, ball);
+            case MUDKIP -> new Mudkip(level, ball);
+            case MARSHTOMP -> new Marshtomp(level, ball);
+            case SWAMPERT -> new Swampert(level, ball);
+            case POOCHYENA -> new Poochyena(level, ball);
+            case MIGHTYENA -> new Mightyena(level, ball);
+            case ZIGZAGOON -> new Zigzagoon(level, ball);
+            case LINOONE -> new Linoone(level, ball);
+            case RALTS -> new Ralts(level, ball);
+            case KIRLIA -> new Kirlia(level, ball);
+            case GARDEVOIR -> new Gardevoir(level, ball);
+            case NINCADA -> new Nincada(level, ball);
+            case NINJASK -> new Ninjask(level, ball);
+            case SHEDINJA -> new Shedinja(level, ball);
+            case WHISMUR -> new Whismur(level, ball);
+            case LOUDRED -> new Loudred(level, ball);
+            case EXPLOUD -> new Exploud(level, ball);
+            case SPHEAL -> new Spheal(level, ball);
+            case SEALEO -> new Sealeo(level, ball);
+            case WALREIN -> new Walrein(level, ball);
+            case BAGON -> new Bagon(level, ball);
+            case SHELGON -> new Shelgon(level, ball);
+            case SALAMENCE -> new Salamence(level, ball);
+            case BELDUM -> new Beldum(level, ball);
+            case METANG -> new Metang(level, ball);
+            case METAGROSS -> new Metagross(level, ball);
+            case KYOGRE -> new Kyogre(level, ball);
+            case GROUDON -> new Groudon(level, ball);
+            case RAYQUAZA -> new Rayquaza(level, ball);
+            case JIRACHI -> new Jirachi(level, ball);
+            case DEOXYS -> new Deoxys(level, ball);
+            default -> null;
+        };
 
         return pokemon;
     }
