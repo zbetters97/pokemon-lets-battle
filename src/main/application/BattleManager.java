@@ -319,7 +319,7 @@ public class BattleManager extends Thread {
 
         gp.ui.battleState = gp.ui.battle_Dialogue;
 
-        // FORCED SWAP OUT
+        // Forced swap out
         if (defeated) {
 
             // Remove from EXP share list
@@ -333,7 +333,7 @@ public class BattleManager extends Thread {
             running = false;
             gp.ui.battleState = gp.ui.battle_Options;
         }
-        // MID SWAP OUT IN 2 PLAYER
+        // Mid-battle swap out for player 1 in multiplayer
         else if (!cpu && pcBattle) {
 
             // Remove new fighter from EXP share list
@@ -358,15 +358,15 @@ public class BattleManager extends Thread {
             if (delay == 2) {
                 setQueue();
             }
+            // Player 2 not waiting
             else {
                 running = false;
                 gp.ui.player = 1;
                 gp.ui.battleState = gp.ui.battle_Options;
             }
         }
-        // MID/SHIFT SWAP OUT
+        // Mid-battle swap out / shift swap for player 1 in singleplayer
         else {
-
             // Remove new fighter from EXP share list
             otherFighters.remove(newFighter[0]);
 
@@ -384,11 +384,11 @@ public class BattleManager extends Thread {
             typeDialogue("Go, " + fighter[0].getName() + "!");
             pause(100);
 
-            // MID SWAP OUT
+            // Mid-battle swap out
             if (newFighter[1] == null) {
                 setQueue();
             }
-            // SHIFT SWAP OUT
+            // Shift swap out
             else {
                 running = false;
                 gp.ui.battleState = gp.ui.battle_Options;
@@ -414,7 +414,7 @@ public class BattleManager extends Thread {
 
         gp.ui.battleState = gp.ui.battle_Dialogue;
 
-        // FORCED SWAP OUT
+        // CPU swap out or player 2 swap out
         if (cpu || defeated) {
 
             fighter[1] = newFighter[1];
@@ -428,7 +428,7 @@ public class BattleManager extends Thread {
                 gp.ui.battleState = gp.ui.battle_Options;
             }
         }
-        // MID SWAP OUT IN 2 PLAYER
+        // Mid-battle swap out for player 2
         else if (pcBattle) {
 
             if (fighter[1].getAbility() == Ability.NATURALCURE) {
@@ -443,7 +443,7 @@ public class BattleManager extends Thread {
             setQueue();
         }
 
-        // PLAYER NOT SENDING NEW FIGHTER
+        // Player 1 did not choose to send a new fighter
         if (!battleQueue.contains(queue_PlayerSwap)) {
             newFighter[1] = null;
             getFighterAbility();
