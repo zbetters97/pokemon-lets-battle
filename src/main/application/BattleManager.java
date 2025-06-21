@@ -311,7 +311,7 @@ public class BattleManager extends Thread {
 
         boolean defeated = false;
 
-        // If player's pokemon is fainted
+        // If player's pokemon fainted
         if (fighter[0] == null || !fighter[0].isAlive()) {
             fighter[0] = null;
             defeated = true;
@@ -319,57 +319,23 @@ public class BattleManager extends Thread {
 
         gp.ui.battleState = gp.ui.battle_Dialogue;
 
-        // Forced swap out
+        // Remove incoming fighter from EXP share list
+        otherFighters.remove(newFighter[0]);
+
+        // Forced swap out for player 1
         if (defeated) {
-
-            // Remove from EXP share list
-            otherFighters.remove(newFighter[0]);
-
             fighter[0] = newFighter[0];
             gp.playSE(gp.cry_SE, fighter[0].toString());
             typeDialogue("Go, " + fighter[0].getName() + "!");
             pause(100);
+
+            getFighterAbility();
 
             running = false;
             gp.ui.battleState = gp.ui.battle_Options;
         }
-        // Mid-battle swap out for player 1 in multiplayer
-        else if (!cpu && pcBattle) {
-
-            // Remove new fighter from EXP share list
-            otherFighters.remove(newFighter[0]);
-
-            // Add old fighter to EXP share list
-            if (!otherFighters.contains(fighter[0])) {
-                otherFighters.add(fighter[0]);
-            }
-
-            if (fighter[0].getAbility() == Ability.NATURALCURE) {
-                fighter[0].removeStatus();
-            }
-
-            fighter[0] = newFighter[0];
-            gp.playSE(gp.cry_SE, fighter[0].toString());
-            typeDialogue("Go, " + fighter[0].getName() + "!");
-            pause(100);
-
-            // Player 2 waiting for move
-            int delay = getDelay();
-            if (delay == 2) {
-                setQueue();
-            }
-            // Player 2 not waiting
-            else {
-                running = false;
-                gp.ui.player = 1;
-                gp.ui.battleState = gp.ui.battle_Options;
-            }
-        }
-        // Mid-battle swap out / shift swap for player 1 in singleplayer
+        // Mid-battle swap out for player 1
         else {
-            // Remove new fighter from EXP share list
-            otherFighters.remove(newFighter[0]);
-
             // Add old fighter to EXP share list
             if (!otherFighters.contains(fighter[0])) {
                 otherFighters.add(fighter[0]);
@@ -384,12 +350,32 @@ public class BattleManager extends Thread {
             typeDialogue("Go, " + fighter[0].getName() + "!");
             pause(100);
 
-            // Mid-battle swap out
-            if (newFighter[1] == null) {
+            // Multiplayer battle
+            if (!cpu && pcBattle) {
+                int delay = getDelay();
+
+                // Player 2 waiting for move
+                if (delay == 2) {
+                    setQueue();
+                    getFighterAbility();
+                }
+                // Player 2 not waiting
+                else {
+                    getFighterAbility();
+
+                    gp.ui.player = 1;
+                    running = false;
+                    gp.ui.battleState = gp.ui.battle_Options;
+                }
+            }
+            // Mid-battle swap out in single player
+            else if (newFighter[1] == null) {
                 setQueue();
+                getFighterAbility();
             }
             // Shift swap out
             else {
+                getFighterAbility();
                 running = false;
                 gp.ui.battleState = gp.ui.battle_Options;
             }
@@ -403,6 +389,7 @@ public class BattleManager extends Thread {
 
         boolean defeated = false;
 
+        // If CPU pokemon fainted
         if (!fighter[1].isAlive()) {
             fighter[1] = null;
             defeated = true;
@@ -414,7 +401,7 @@ public class BattleManager extends Thread {
 
         gp.ui.battleState = gp.ui.battle_Dialogue;
 
-        // CPU swap out or player 2 swap out
+        // CPU swap out or player 2 forced swap out
         if (cpu || defeated) {
 
             fighter[1] = newFighter[1];
@@ -422,15 +409,18 @@ public class BattleManager extends Thread {
             typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");
             pause(100);
 
-            // PLAYER NOT SENDING NEW FIGHTER
-            if (!battleQueue.contains(queue_PlayerSwap)) {
+            // Player 1 not sending new fighter (only for single player)
+            if (cpu && !battleQueue.contains(queue_PlayerSwap)) {
+                newFighter[1] = null;
+
+                getFighterAbility();
+
                 running = false;
                 gp.ui.battleState = gp.ui.battle_Options;
             }
         }
         // Mid-battle swap out for player 2
         else if (pcBattle) {
-
             if (fighter[1].getAbility() == Ability.NATURALCURE) {
                 fighter[1].removeStatus();
             }
@@ -441,12 +431,9 @@ public class BattleManager extends Thread {
             pause(100);
 
             setQueue();
-        }
-
-        // Player 1 did not choose to send a new fighter
-        if (!battleQueue.contains(queue_PlayerSwap)) {
-            newFighter[1] = null;
             getFighterAbility();
+
+            newFighter[1] = null;
         }
 
         gp.player.trackSeenPokemon(fighter[1]);
@@ -1238,32 +1225,30 @@ public class BattleManager extends Thread {
 
     private void setStatus(Pokemon atk, Pokemon trg, Status status) throws InterruptedException {
 
-        if (trg.getHP() > 0) {
+        if (trg.getHP() <= 0 || trg.getStatus() != null) {
+            return;
+        }
 
-            if (trg.getStatus() == null) {
+        if (trg.getAbility() == Ability.LIMBER && status == Status.PARALYZE) {
+            typeDialogue("It had no effect!");
+        }
+        else {
+            trg.setStatus(status);
 
-                if (trg.getAbility() == Ability.LIMBER && status == Status.PARALYZE) {
-                    typeDialogue("It had no effect!");
-                }
-                else {
-                    trg.setStatus(status);
+            gp.playSE(gp.battle_SE, status.getStatus());
+            typeDialogue(trg.getName() + status.printCondition());
 
-                    gp.playSE(gp.battle_SE, status.getStatus());
-                    typeDialogue(trg.getName() + status.printCondition());
-
-                    if (trg.getAbility() == Ability.QUICKFEET && !trg.getAbility().isActive()) {
-                        trg.getAbility().setActive(true);
-                        setAttribute(trg, List.of("speed"), 2);
-                    }
-                    else if (trg.getAbility() == Ability.GUTS && !trg.getAbility().isActive()) {
-                        trg.getAbility().setActive(true);
-                        setAttribute(trg, List.of("attack"), 2);
-                    }
-                    else if ((trg.getAbility() == Ability.SYNCHRONIZE) &&
-                            (status == Status.BURN || status == Status.PARALYZE || status == Status.POISON)) {
-                        setStatus(trg, atk, status);
-                    }
-                }
+            if (trg.getAbility() == Ability.QUICKFEET && !trg.getAbility().isActive()) {
+                trg.getAbility().setActive(true);
+                setAttribute(trg, List.of("speed"), 2);
+            }
+            else if (trg.getAbility() == Ability.GUTS && !trg.getAbility().isActive()) {
+                trg.getAbility().setActive(true);
+                setAttribute(trg, List.of("attack"), 2);
+            }
+            else if ((trg.getAbility() == Ability.SYNCHRONIZE) &&
+                    (status == Status.BURN || status == Status.PARALYZE || status == Status.POISON)) {
+                setStatus(trg, atk, status);
             }
         }
     }
@@ -1311,9 +1296,12 @@ public class BattleManager extends Thread {
 
     private void setAttribute(Pokemon pkm, List<String> stats, int level) throws InterruptedException {
 
-        // loop through each specified attribute to be changed
-        for (String stat : stats) {
+        if (pkm.getHP() <= 0) {
+            return;
+        }
 
+        // Loop through each specified attribute to be changed
+        for (String stat : stats) {
             if (level > 0) {
                 gp.playSE(gp.battle_SE, "stat-up");
                 typeDialogue(pkm.changeStat(stat, level));
@@ -1609,29 +1597,18 @@ public class BattleManager extends Thread {
 
         getDamage(atk, trg, move);
 
-        // BOTH POKÉMON ALIVE
+        // Both pokemon alive
         if (trg.getHP() > 0 && atk.getHP() > 0) {
-
             applyEffect(atk, trg, move);
-
             if (!battleQueue.isEmpty() && battleQueue.peek() != queue_ActiveMoves && flinched(trg, move)) {
                 battleQueue.removeFirst();
             }
         }
-        // BOTH POKEMON FAINTED
-        else if (trg.getHP() <= 0 && atk.getHP() <= 0) {
-            battleQueue.remove(queue_PlayerMove);
-            battleQueue.remove(queue_CPUMove);
-        }
-        // TARGET FAINTED
-        else if (trg.getHP() <= 0) {
-            applyEffect(atk, trg, move);
-            battleQueue.remove(queue_PlayerMove);
-            battleQueue.remove(queue_CPUMove);
-        }
-        // ATTACKER FAINTED
-        else if (atk.getHP() <= 0) {
-            applyEffect(atk, trg, move);
+        // One or both pokemon fainted
+        else {
+            if (trg.getHP() > 0 || atk.getHP() > 0) {
+                applyEffect(atk, trg, move);
+            }
             battleQueue.remove(queue_PlayerMove);
             battleQueue.remove(queue_CPUMove);
         }
@@ -2192,44 +2169,51 @@ public class BattleManager extends Thread {
 
     private void applyEffect(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 
-        switch (move.getMove()) {
-            case BRICKBREAK:
-                if (trg.hasActiveMove(Moves.REFLECT)) {
-                    trg.removeActiveMove(Moves.REFLECT);
-                    typeDialogue(atk.getName() + " broke\nthe foe's shield!");
-                }
-                else if (trg.hasActiveMove(Moves.LIGHTSCREEN)) {
-                    trg.removeActiveMove(Moves.LIGHTSCREEN);
-                    typeDialogue(atk.getName() + " broke\nthe foe's shield!");
-                }
-                break;
-            case OUTRAGE, PETALDANCE, THRASH:
-                if (!move.isWaiting()) {
-                    setStatus(trg, atk, Status.CONFUSE);
-                }
-                return;
-            case RAPIDSPIN:
-                if (trg.hasActiveMove(Moves.LEECHSEED)) {
-                    trg.removeActiveMove(Moves.LEECHSEED);
-                    typeDialogue(trg.getName() + " broke free\nof LEECH SEED!");
-                }
-                return;
-            case WAKEUPSLAP:
-                if (trg.hasStatus(Status.SLEEP)) {
-                    removeStatus(trg);
-                }
-                return;
-            default:
-                break;
+        if (trg.getHP() > 0) {
+            switch (move.getMove()) {
+                case BRICKBREAK:
+                    if (trg.hasActiveMove(Moves.REFLECT)) {
+                        trg.removeActiveMove(Moves.REFLECT);
+                        typeDialogue(atk.getName() + " broke\nthe foe's shield!");
+                    }
+                    else if (trg.hasActiveMove(Moves.LIGHTSCREEN)) {
+                        trg.removeActiveMove(Moves.LIGHTSCREEN);
+                        typeDialogue(atk.getName() + " broke\nthe foe's shield!");
+                    }
+                    break;
+                case OUTRAGE, PETALDANCE, THRASH:
+                    if (!move.isWaiting() && !trg.hasStatus(Status.CONFUSE)) {
+                        setStatus(trg, atk, Status.CONFUSE);
+                    }
+                    return;
+                case WAKEUPSLAP:
+                    if (trg.hasStatus(Status.SLEEP)) {
+                        removeStatus(trg);
+                    }
+                    return;
+                default:
+                    break;
+            }
+        }
+
+        if (move.getMove() == Moves.RAPIDSPIN && atk.hasActiveMove(Moves.LEECHSEED)) {
+            atk.removeActiveMove(Moves.LEECHSEED);
+            typeDialogue(atk.getName() + " broke free\nof LEECH SEED!");
+        }
+
+        if (trg.getAbility() == Ability.STATIC && move.getMType() == MoveType.PHYSICAL &&
+                atk.getStatus() == null && Math.random() < 0.30) {
+            setStatus(trg, atk, Status.PARALYZE);
         }
 
         // move causes attribute or status effect
         double probability = move.getProbability();
         if (probability != 0.0) {
 
+            // Increase probability if user has Serene Grace
             probability *= atk.getAbility() == Ability.SERENEGRACE ? 2.0 : 1.0;
 
-            // chance for effect to apply
+            // Chance for effect to apply
             if (new Random().nextDouble() <= probability) {
                 if (move.getStats() != null) {
                     setAttribute(move.isToSelf() ? atk : trg, move.getStats(), move.getLevel());
@@ -2238,11 +2222,6 @@ public class BattleManager extends Thread {
                     setStatus(atk, trg, move.getEffect());
                 }
             }
-        }
-
-        if (trg.getAbility() == Ability.STATIC && move.getMType() == MoveType.PHYSICAL &&
-                atk.getStatus() == null && Math.random() < 0.30) {
-            setStatus(trg, atk, Status.PARALYZE);
         }
     }
 
@@ -2906,7 +2885,6 @@ public class BattleManager extends Thread {
                     winner = -1;
 
                     if (cpu) {
-
                         newFighter[1] = getCPUFighter();
                         battleQueue.add(queue_CPUSwap);
 
