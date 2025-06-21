@@ -228,16 +228,6 @@ public class BattleManager extends Thread {
         pause(100);
 
         getFighterAbility();
-        checkWeatherCondition();
-
-        if (weather == Weather.RAIN) {
-            if (fighter[0].getAbility() == Ability.SWIFTSWIM) {
-                setAttribute(fighter[0], List.of("speed"), 2);
-            }
-            if (fighter[1].getAbility() == Ability.SWIFTSWIM) {
-                setAttribute(fighter[1], List.of("speed"), 2);
-            }
-        }
 
         gp.player.trackSeenPokemon(fighter[1]);
 
@@ -253,6 +243,8 @@ public class BattleManager extends Thread {
         if (fighter[1].getAbility() == Ability.INTIMIDATE) {
             setAttribute(fighter[0], List.of("attack"), -1);
         }
+
+        Weather oldWeather = weather;
 
         // If both fighters have a weather ability
         if (fighter[0].getAbility().getWeather() != null && fighter[1].getAbility().getWeather() != null) {
@@ -282,6 +274,11 @@ public class BattleManager extends Thread {
         }
         else if (fighter[1].getAbility().getWeather() != null) {
             weather = fighter[1].getAbility().getWeather();
+        }
+
+        if (oldWeather != weather) {
+            weatherDays = -1;
+            checkWeatherCondition();
         }
     }
 
@@ -1048,7 +1045,7 @@ public class BattleManager extends Thread {
         switch (weather) {
             case SUNLIGHT:
                 if (move.getMove() == Moves.SOLARBEAM) {
-                    move.setTurnCount(1);
+                    move.setTurnCount(0);
                 }
                 break;
             case RAIN:
@@ -1301,8 +1298,15 @@ public class BattleManager extends Thread {
         }
 
         // Loop through each specified attribute to be changed
+        boolean canChange = true;
         for (String stat : stats) {
-            if (level > 0) {
+            canChange = pkm.canChangeStat(stat, level);
+
+            if (!canChange) {
+                String change = level > 0 ? "higher" : "lower";
+                typeDialogue(pkm.getName() + "'s " + stat + "\nwon't go any " + change + "!");
+            }
+            else if (level > 0) {
                 gp.playSE(gp.battle_SE, "stat-up");
                 typeDialogue(pkm.changeStat(stat, level));
             }
@@ -1340,6 +1344,13 @@ public class BattleManager extends Thread {
             case RAIN:
                 gp.playSE(gp.battle_SE, "rain");
                 typeDialogue("Rain started to fall!");
+
+                if (fighter[0].getAbility() == Ability.SWIFTSWIM) {
+                    setAttribute(fighter[0], List.of("speed"), 2);
+                }
+                if (fighter[1].getAbility() == Ability.SWIFTSWIM) {
+                    setAttribute(fighter[1], List.of("speed"), 2);
+                }
                 break;
             case HAIL:
                 gp.playSE(gp.battle_SE, "hail");
@@ -3554,7 +3565,7 @@ public class BattleManager extends Thread {
             pause(textSpeed);
         }
 
-        pause(1000);
+        pause(800);
 
         gp.ui.battleDialogue = "";
     }

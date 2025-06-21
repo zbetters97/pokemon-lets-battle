@@ -1192,236 +1192,164 @@ public class Pokemon {
         return (int) (Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * ev)) * level)) + 5;
     }
 
+    public boolean canChangeStat(String stat, int level) {
+
+        boolean canChange = canChange = switch (stat) {
+            case "attack" -> level > 0 ? attackStg + level <= 6 : attackStg + level >= -6;
+            case "defense" -> level > 0 ? defenseStg + level <= 6 : defenseStg + level >= -6;
+            case "spAttack" -> level > 0 ? spAttackStg + level <= 6 : spAttackStg + level >= -6;
+            case "spDefense" -> level > 0 ? spDefenseStg + level <= 6 : spDefenseStg + level >= -6;
+            case "speed" -> level > 0 ? speedStg + level <= 6 : speedStg + level >= -6;
+            case "accuracy" -> level > 0 ? accuracyStg + level <= 6 : accuracyStg + level >= -6;
+            case "evasion" -> level > 0 ? evasionStg + level <= 6 : evasionStg + level >= -6;
+            default -> true;
+        };
+
+        return canChange;
+    }
+
     public String changeStat(String stat, int level) {
 
-        String output = "";
+        if (!canChangeStat(stat, level)) {
+            return "";
+        }
 
+        String output = "";
         int difference;
         int change = 0;
 
         switch (stat) {
             case "attack":
-
                 difference = attackStg + level;
-
                 if (level > 0) {
                     while (attackStg < difference && attackStg < 6) {
                         attackStg++;
                         change++;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    }
-                    else {
-                        cAttack = Math.floor(attack * ((2.0 + attackStg) / 2.0));
-                        output = outputChange(stat, change);
-                    }
+                    cAttack = Math.floor(attack * ((2.0 + attackStg) / 2.0));
+                    output = outputChange(stat, change);
                 }
                 else if (level < 0) {
                     while (attackStg > difference && attackStg > -6) {
                         attackStg--;
                         change--;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    }
-                    else {
-                        cAttack = Math.floor(attack * (2.0 / (2.0 - attackStg)));
-                        output = outputChange(stat, change);
-                    }
+                    cAttack = Math.floor(attack * (2.0 / (2.0 - attackStg)));
+                    output = outputChange(stat, change);
                 }
-
                 break;
-
             case "defense":
-
                 difference = defenseStg + level;
-
                 if (level > 0) {
                     while (defenseStg < difference && defenseStg < 6) {
                         defenseStg++;
                         change++;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    }
-                    else {
-                        cDefense = Math.floor(defense * ((2.0 + defenseStg) / 2.0));
-                        output = outputChange(stat, change);
-                    }
+                    cDefense = Math.floor(defense * ((2.0 + defenseStg) / 2.0));
+                    output = outputChange(stat, change);
                 }
                 else if (level < 0) {
                     while (defenseStg > difference && defenseStg > -6) {
                         defenseStg--;
                         change--;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    }
-                    else {
-                        cDefense = Math.floor(defense * (2.0 / (2.0 - defenseStg)));
-                        output = outputChange(stat, change);
-                    }
+                    cDefense = Math.floor(defense * (2.0 / (2.0 - defenseStg)));
+                    output = outputChange(stat, change);
                 }
                 break;
-
             case "sp. attack":
-
                 difference = spAttackStg + level;
-
                 if (level > 0) {
                     while (spAttackStg < difference && spAttackStg < 6) {
                         spAttackStg++;
                         change++;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    }
-                    else {
-                        cSpAttack = Math.floor(spAttack * ((2.0 + spAttackStg) / 2.0));
-                        output = outputChange(stat, change);
-                    }
+                    cSpAttack = Math.floor(spAttack * ((2.0 + spAttackStg) / 2.0));
+                    output = outputChange(stat, change);
                 }
                 else if (level < 0) {
                     while (spAttackStg > difference && spAttackStg > -6) {
                         spAttackStg--;
                         change--;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    }
-                    else {
-                        cSpAttack = Math.floor(spAttack * (2.0 / (2.0 - spAttackStg)));
-                        output = outputChange(stat, change);
-                    }
+                    cSpAttack = Math.floor(spAttack * (2.0 / (2.0 - spAttackStg)));
+                    output = outputChange(stat, change);
                 }
                 break;
-
             case "sp. defense":
-
                 difference = spDefenseStg + level;
-
                 if (level > 0) {
                     while (spDefenseStg < difference && spDefenseStg < 6) {
                         spDefenseStg++;
                         change++;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    }
-                    else {
-                        cSpDefense = Math.floor(spDefense * ((2.0 + spDefenseStg) / 2.0));
-                        output = outputChange(stat, change);
-                    }
+                    cSpDefense = Math.floor(spDefense * ((2.0 + spDefenseStg) / 2.0));
+                    output = outputChange(stat, change);
                 }
                 else if (level < 0) {
                     while (spDefenseStg > difference && spDefenseStg > -6) {
                         spDefenseStg--;
                         change--;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    }
-                    else {
-                        cSpDefense = Math.floor(spDefense * (2.0 / (2.0 - spDefenseStg)));
-                        output = outputChange(stat, change);
-                    }
+                    cSpDefense = Math.floor(spDefense * (2.0 / (2.0 - spDefenseStg)));
+                    output = outputChange(stat, change);
                 }
                 break;
-
             case "speed":
-
                 difference = speedStg + level;
-
                 if (level > 0) {
                     while (speedStg < difference && speedStg < 6) {
                         speedStg++;
                         change++;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    }
-                    else {
-                        cSpeed = Math.floor(speed * ((2.0 + speedStg) / 2.0));
-                        output = outputChange(stat, change);
-                    }
+                    cSpeed = Math.floor(speed * ((2.0 + speedStg) / 2.0));
+                    output = outputChange(stat, change);
                 }
                 else if (level < 0) {
                     while (speedStg > difference && speedStg > -6) {
                         speedStg--;
                         change--;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    }
-                    else {
-                        cSpeed = Math.floor(speed * (2.0 / (2.0 - speedStg)));
-                        output = outputChange(stat, change);
-                    }
+                    cSpeed = Math.floor(speed * (2.0 / (2.0 - speedStg)));
+                    output = outputChange(stat, change);
                 }
                 break;
-
             case "accuracy":
-
                 difference = accuracyStg + level;
-
                 if (level > 0) {
                     while (accuracyStg < difference && accuracyStg < 6) {
                         accuracyStg++;
                         change++;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    }
-                    else {
-                        accuracy = Math.floor(1 * ((3.0 + accuracyStg) / 3.0));
-                        output = outputChange(stat, change);
-                    }
+                    accuracy = Math.floor(1 * ((3.0 + accuracyStg) / 3.0));
+                    output = outputChange(stat, change);
                 }
                 else if (level < 0) {
                     while (accuracyStg > difference && accuracyStg > -6) {
                         accuracyStg--;
                         change--;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    }
-                    else {
-                        accuracy = Math.floor(1 * (3.0 / (3.0 - accuracyStg)));
-                        output = outputChange(stat, change);
-                    }
+                    accuracy = Math.floor(1 * (3.0 / (3.0 - accuracyStg)));
+                    output = outputChange(stat, change);
                 }
                 break;
-
             case "evasion":
-
                 difference = evasionStg + level;
-
                 if (level > 0) {
                     while (evasionStg < difference && evasionStg < 6) {
                         evasionStg++;
                         change++;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any higher!";
-                    }
-                    else {
-                        evasion = Math.floor(1 * ((3.0 + evasionStg) / 3.0));
-                        output = outputChange(stat, change);
-                    }
+                    evasion = Math.floor(1 * ((3.0 + evasionStg) / 3.0));
+                    output = outputChange(stat, change);
                 }
                 else if (level < 0) {
                     while (evasionStg > difference && evasionStg > -6) {
                         evasionStg--;
                         change--;
                     }
-                    if (change == 0) {
-                        output = getName() + "'s " + stat + "\nwon't go any lower!";
-                    }
-                    else {
-                        evasion = Math.floor(1 * (3.0 / (3.0 - evasionStg)));
-                        output = outputChange(stat, change);
-                    }
+                    evasion = Math.floor(1 * (3.0 / (3.0 - evasionStg)));
+                    output = outputChange(stat, change);
                 }
                 break;
         }
