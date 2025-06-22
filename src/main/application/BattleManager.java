@@ -64,14 +64,13 @@ public class BattleManager extends Thread {
     public Deque<Integer> battleQueue = new ArrayDeque<>();
     private final int queue_PlayerSwap = 1;
     private final int queue_CPUSwap = 2;
-    private final int queue_GetCPUMove = 3;
-    private final int queue_Rotation = 4;
-    private final int queue_PlayerMove = 5;
-    private final int queue_CPUMove = 6;
-    private final int queue_ActiveMoves = 7;
-    private final int queue_StatusDamage = 8;
-    private final int queue_WeatherDamage = 9;
-    private final int queue_TurnReset = 10;
+    private final int queue_Rotation = 3;
+    private final int queue_PlayerMove = 4;
+    private final int queue_CPUMove = 5;
+    private final int queue_ActiveMoves = 6;
+    private final int queue_StatusDamage = 7;
+    private final int queue_WeatherDamage = 8;
+    private final int queue_TurnReset = 9;
 
     // BATTLE STATES
     public int battleMode;
@@ -102,7 +101,7 @@ public class BattleManager extends Thread {
      * SETUP METHOD
      **/
     public void setup(int currentBattle, int music, Entity trainer, Pokemon pokemon,
-                      String condition, boolean cpu, boolean pcBattle) {
+                      String condition, boolean cpu,  boolean pcBattle) {
 
         gp.stopMusic();
 
@@ -110,6 +109,7 @@ public class BattleManager extends Thread {
 
         battleMode = currentBattle;
         this.trainer = trainer;
+        System.out.println(this.trainer.skillLevel);
         fighter[1] = pokemon;
         weather = condition != null ? Weather.valueOf(condition) : Weather.CLEAR;
         weatherDays = -1;
@@ -214,6 +214,7 @@ public class BattleManager extends Thread {
                 break;
         }
 
+        // Get player's first available pokemon
         for (Pokemon p : gp.player.pokeParty) {
             if (p.isAlive()) {
                 fighter[0] = p;
@@ -232,6 +233,7 @@ public class BattleManager extends Thread {
         gp.player.trackSeenPokemon(fighter[1]);
 
         running = false;
+        getCPUMove();
         gp.ui.battleState = gp.ui.battle_Options;
     }
 
@@ -276,6 +278,7 @@ public class BattleManager extends Thread {
             weather = fighter[1].getAbility().getWeather();
         }
 
+        // Weather has changed
         if (oldWeather != weather) {
             weatherDays = -1;
             checkWeatherCondition();
@@ -328,6 +331,7 @@ public class BattleManager extends Thread {
 
             getFighterAbility();
 
+            getCPUMove();
             running = false;
             gp.ui.battleState = gp.ui.battle_Options;
         }
@@ -373,6 +377,7 @@ public class BattleManager extends Thread {
             // Shift swap out
             else {
                 getFighterAbility();
+                getCPUMove();
                 running = false;
                 gp.ui.battleState = gp.ui.battle_Options;
             }
@@ -411,6 +416,7 @@ public class BattleManager extends Thread {
                 newFighter[1] = null;
 
                 getFighterAbility();
+                getCPUMove();
 
                 running = false;
                 gp.ui.battleState = gp.ui.battle_Options;
@@ -438,40 +444,37 @@ public class BattleManager extends Thread {
 
     public boolean swapPokemon(int partySlot) {
 
-        Entity player = gp.player;
+        int playerNum = gp.ui.player;
 
-        // If CPU is sending new fighter
-        if (gp.ui.player == 1) {
-            player = trainer;
-            battleQueue.add(queue_CPUSwap);
-        }
-        // If player is sending new fighter
-        else {
-            battleQueue.add(queue_PlayerSwap);
-        }
+        Entity player = playerNum == 0 ? gp.player : trainer;
+        Pokemon chosenFighter = player.pokeParty.get(partySlot);
 
-        // If same pokemon, don't swap
-        if (fighter[gp.ui.player] == player.pokeParty.get(partySlot)) {
+        // Player 1 swap or CPU / Player 2 swap
+        int queue = playerNum == 0 ? queue_PlayerSwap : queue_CPUSwap;
+        battleQueue.add(queue);
+
+        // If same pokemon as current, don't swap
+        if (fighter[playerNum] == chosenFighter) {
             return false;
         }
 
-        if (player.pokeParty.get(partySlot).isAlive()) {
+        // If pokemon is alive
+        if (chosenFighter.isAlive()) {
+            fighter[playerNum].resetStats();
+            fighter[playerNum].resetStatStages();
+            fighter[playerNum].resetMoveTurns();
+            fighter[playerNum].clearActiveMoves();
 
-            fighter[gp.ui.player].resetStats();
-            fighter[gp.ui.player].resetStatStages();
-            fighter[gp.ui.player].resetMoveTurns();
-            fighter[gp.ui.player].clearActiveMoves();
+            newFighter[playerNum] = chosenFighter;
 
-            newFighter[gp.ui.player] = player.pokeParty.get(partySlot);
-
-            // Swap pokemon if there is more than 1
-            if (gp.player.pokeParty.size() > 1) {
+            // Swap pokemon if there is more than 1 in party
+            if (player.pokeParty.size() > 1) {
                 Collections.swap(player.pokeParty, 0, partySlot);
             }
 
             return true;
         }
-        // If pokemon is dead, don't swap
+        // If pokemon is fainted, don't swap
         else {
             return false;
         }
@@ -482,7 +485,6 @@ public class BattleManager extends Thread {
      **/
     public void setQueue() {
         battleQueue.addAll(Arrays.asList(
-                queue_GetCPUMove,
                 queue_Rotation,
                 queue_ActiveMoves,
                 queue_StatusDamage,
@@ -496,16 +498,12 @@ public class BattleManager extends Thread {
         while (!battleQueue.isEmpty()) {
 
             int action = battleQueue.poll();
-
             switch (action) {
                 case queue_PlayerSwap:
                     swapFighter_Player();
                     break;
                 case queue_CPUSwap:
                     swapFighter_CPU();
-                    break;
-                case queue_GetCPUMove:
-                    getCPUMove();
                     break;
                 case queue_Rotation:
                     setRotation();
@@ -2534,6 +2532,8 @@ public class BattleManager extends Thread {
 
         // Single player
         if (cpu) {
+            getCPUMove();
+
             // Player is waiting, skip option select
             if (delay == 1 || delay == 3) {
                 setQueue();

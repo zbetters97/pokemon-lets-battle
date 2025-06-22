@@ -4999,6 +4999,7 @@ public class UI {
             else {
                 gp.keyH.playCursorSE();
 
+                // CPU Battle, player 2 is choosing, or player 2 is waiting for a move
                 if (gp.btlManager.cpu || player == 1 || gp.btlManager.cpuMove != null) {
                     gp.btlManager.fightStage = gp.btlManager.fight_Start;
                     gp.btlManager.setQueue();
@@ -5009,6 +5010,7 @@ public class UI {
                     commandNum = 0;
                     player = 0;
                 }
+                // Multiplayer battle, player 1 selected, let player 2 select next
                 else {
                     battleState = battle_Options;
                     commandNum = 0;
@@ -5961,9 +5963,12 @@ public class UI {
                 pc_Fight_Mode();
                 break;
             case 2:
-                pc_Fight_Music();
+                pc_Fight_Difficulty();
                 break;
             case 3:
+                pc_Fight_Music();
+                break;
+            case 4:
                 pc_Fight_Confirm();
                 break;
         }
@@ -6079,10 +6084,7 @@ public class UI {
         y += gp.tileSize * 1.1;
         String dialogue = "Choose your battle mode:";
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
-        for (String line : dialogue.split("\n")) {
-            drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
-            y += 40;
-        }
+        drawText(dialogue, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
         x = (int) (gp.tileSize * 9.8);
         y = (int) (gp.tileSize * 5.3);
@@ -6099,7 +6101,7 @@ public class UI {
                 gp.keyH.aPressed = false;
                 gp.keyH.playCursorSE();
                 commandNum = 0;
-                subState = 2;
+                subState = 3;
                 cpuMode = false;
             }
         }
@@ -6150,6 +6152,104 @@ public class UI {
             gp.playSE(gp.world_SE, "pc-exit");
             commandNum = 0;
             subState = 0;
+            cpuMode = true;
+        }
+    }
+
+    private void pc_Fight_Difficulty() {
+
+        int x = gp.tileSize * 2;
+        int y = gp.tileSize * 9;
+        int width = gp.tileSize * 12;
+        int height = (int) (gp.tileSize * 2.5);
+        drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
+
+        x += gp.tileSize * 0.6;
+        y += gp.tileSize * 1.1;
+        String dialogue = "Choose CPU difficulty:";
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
+        drawText(dialogue, x, y, Color.BLACK, Color.LIGHT_GRAY);
+
+        x = (int) (gp.tileSize * 9.8);
+        y = (int) (gp.tileSize * 4.3);
+        width = (int) (gp.tileSize * 4.2);
+        height = (int) (gp.tileSize * 4.4);
+        drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
+
+        x += gp.tileSize * 0.8;
+        y += gp.tileSize + 5;
+        drawText("NOVICE", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (commandNum == 0) {
+            drawText(">", x - 20, y, Color.BLACK, Color.LIGHT_GRAY);
+            if (gp.keyH.aPressed) {
+                gp.keyH.aPressed = false;
+                gp.keyH.playCursorSE();
+                gp.player_2.setSkillLevel(1);
+                commandNum = 0;
+                subState = 3;
+            }
+        }
+
+        y += gp.tileSize;
+        drawText("EXPERT", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (commandNum == 1) {
+            drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+
+            if (gp.keyH.aPressed) {
+                gp.keyH.aPressed = false;
+                gp.keyH.playCursorSE();
+                gp.player_2.setSkillLevel(2);
+                commandNum = 0;
+                subState = 3;
+            }
+        }
+
+        y += gp.tileSize;
+        drawText("LEGEND", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (commandNum == 2) {
+            drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+
+            if (gp.keyH.aPressed) {
+                gp.keyH.aPressed = false;
+                gp.keyH.playCursorSE();
+                gp.player_2.setSkillLevel(3);
+                commandNum = 0;
+                subState = 3;
+            }
+        }
+
+        y += gp.tileSize;
+        drawText("BACK", x, y, Color.BLACK, Color.LIGHT_GRAY);
+        if (commandNum == 3) {
+            drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+
+            if (gp.keyH.aPressed) {
+                gp.keyH.aPressed = false;
+                gp.playSE(gp.world_SE, "pc-exit");
+                commandNum = 1;
+                subState = 1;
+            }
+        }
+
+        if (gp.keyH.upPressed) {
+            gp.keyH.upPressed = false;
+            if (commandNum > 0) {
+                gp.keyH.playCursorSE();
+                commandNum--;
+            }
+        }
+        if (gp.keyH.downPressed) {
+            gp.keyH.downPressed = false;
+            if (commandNum < 3) {
+                gp.keyH.playCursorSE();
+                commandNum++;
+            }
+        }
+        if (gp.keyH.bPressed) {
+            gp.keyH.bPressed = false;
+            gp.playSE(gp.world_SE, "pc-exit");
+            commandNum = 1;
+            subState = 1;
             cpuMode = true;
         }
     }
@@ -6216,7 +6316,7 @@ public class UI {
                 gp.keyH.aPressed = false;
                 gp.keyH.playCursorSE();
                 commandNum = 0;
-                subState = 3;
+                subState = 4;
             }
         }
 
@@ -6228,8 +6328,8 @@ public class UI {
             if (gp.keyH.aPressed) {
                 gp.keyH.aPressed = false;
                 gp.playSE(gp.world_SE, "pc-exit");
-                commandNum = cpuMode ? 1 : 0;
-                subState = 1;
+                commandNum = cpuMode ? gp.player_2.skillLevel - 1 : 0;
+                subState = cpuMode ? 2 : 1;
                 bagNum = 0;
             }
         }
@@ -6251,8 +6351,8 @@ public class UI {
         if (gp.keyH.bPressed) {
             gp.keyH.bPressed = false;
             gp.playSE(gp.world_SE, "pc-exit");
-            commandNum = cpuMode ? 1 : 0;
-            subState = 1;
+            commandNum = cpuMode ? gp.player_2.skillLevel - 1 : 0;
+            subState = cpuMode ? 2 : 1;
             bagNum = 0;
         }
     }
@@ -6293,7 +6393,14 @@ public class UI {
         drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
         y += gp.tileSize;
-        text = (cpuMode ? "CPU Battle" : "2 Player Battle");
+        if (cpuMode) {
+            String difficulty = gp.player_2.skillLevel == 1 ? "NOVICE" : gp.player_2.skillLevel == 2 ? "EXPERT" : "LEGEND";
+            text = "CPU Battle (" + difficulty + ")";
+            drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+        }
+        else {
+            text = "2 Player Battle";
+        }
         drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 
         text = new File(gp.se.getSELibrary(9)[bagNum])
@@ -6342,7 +6449,7 @@ public class UI {
                 gp.keyH.aPressed = false;
                 gp.playSE(gp.world_SE, "pc-exit");
                 commandNum = 0;
-                subState = 2;
+                subState = cpuMode ? 3 : 2;
             }
         }
 
@@ -6364,7 +6471,7 @@ public class UI {
             gp.keyH.bPressed = false;
             gp.playSE(gp.world_SE, "pc-exit");
             commandNum = 0;
-            subState = 2;
+            subState = 3;
         }
     }
     /** END PC SCREEN **/

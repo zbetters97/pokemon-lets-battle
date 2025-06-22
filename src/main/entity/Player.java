@@ -89,12 +89,16 @@ public class Player extends Entity {
         hitboxDefaultWidth = hitbox.width;
         hitboxDefaultHeight = hitbox.height;
 
-        name = "STADIUM";
+        name = "Ash";
         trainerClass = 5;
         skillLevel = skill_elite;
 
         pokeParty = new ArrayList<>();
         assignParty();
+    }
+
+    public void setSkillLevel(int skillLevel) {
+        this.skillLevel = skillLevel;
     }
 /** END PLAYER CONSTRUCTOR **/
 
