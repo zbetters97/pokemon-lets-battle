@@ -121,6 +121,7 @@ public class UI {
     private final BufferedImage ball_inactive;
     public int fighterNum = 0;
     private int attackCounter = 0;
+    private int statCounter = 0;
     private int hitCounter = -1;
     private int hpCounter = 0;
     public boolean isFighterCaptured = false;
@@ -2824,12 +2825,13 @@ public class UI {
 
         width = (int) (gp.tileSize * 1.5);
         height = (int) (gp.tileSize * 0.6);
-        x += (gp.tileSize * 0.4);
 
         // MULTI-TYPE POKEMON
         if (fighter.getTypes() != null) {
-            List<Type> types = fighter.getTypes();
 
+            x += (gp.tileSize * 0.4);
+
+            List<Type> types = fighter.getTypes();
             for (Type t : types) {
                 y = (int) (gp.tileSize * 2.125);
                 drawSubWindow(x, y, width, height, 10, 3, t.getColor(), Color.BLACK);
@@ -2848,6 +2850,7 @@ public class UI {
             Type type = fighter.getType();
 
             y = (int) (gp.tileSize * 2.125);
+            x = (int) (gp.tileSize * 8.75);
             drawSubWindow(x, y, width, height, 10, 3, type.getColor(), Color.BLACK);
 
             g2.setFont(g2.getFont().deriveFont(Font.BOLD, 23F));
@@ -4454,123 +4457,138 @@ public class UI {
         g2.drawImage(battle_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);
         g2.drawImage(battle_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 
-        if (gp.btlManager.fighter[0] != null &&
-                gp.btlManager.fighter[0].getProtection() == Protection.NONE) {
+        int fighterNum = 0;
+        for (Pokemon fighter : gp.btlManager.fighter) {
 
-            if (gp.btlManager.fighter[0].getAttacking()) {
-                animateAttack_One();
+            // Skip fainted or protected fighters (Fly, Dig, etc.)
+            if (fighter == null || fighter.getProtection() != Protection.NONE) {
+                fighterNum++;
+                continue;
+            }
+
+            boolean isFighterOne = fighterNum == 0;
+
+            // Fighter is attacking, play animation
+            if (fighter.getAttacking()) {
+                animateAttack(fighterNum);
             }
             else {
-                fighter_one_X = fighter_one_endX;
+                if (isFighterOne) {
+                    fighter_one_X = fighter_one_endX;
+                }
+                else {
+                    fighter_two_X = fighter_two_endX;
+                }
             }
 
-            if (!gp.btlManager.fighter[0].isAlive()) {
-                animateFaint_One();
-            }
+            // Fighter has been hit
+            if (fighter.getHit()) {
 
-            if (gp.btlManager.fighter[0].getHit()) {
                 hitCounter++;
+
                 if (hitCounter > 30) {
-                    gp.btlManager.fighter[0].setHit(false);
+                    fighter.setHit(false);
                     hitCounter = -1;
                 }
+                // Flash alpha
                 else if (hitCounter % 5 == 0) {
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
                 }
             }
 
-            g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-        }
-        if (gp.btlManager.fighter[1] != null &&
-                gp.btlManager.fighter[1].getProtection() == Protection.NONE) {
+            // Fighter has attribute change, fade sprite
+            if (fighter.getStatChanging()) {
+                statCounter++;
 
-            if (isFighterCaptured) {
-                g2.drawImage(gp.btlManager.ballUsed.image3, fighter_two_X + (int) (gp.tileSize * 1.9), fighter_two_Y + (int) (gp.tileSize * 3.3), null);
+                if (statCounter > 65) {
+                    fighter.setStatChanging(false);
+                    statCounter = -1;
+                }
+                // Flash alpha
+                else {
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+                }
             }
+
+            // Fighter has fainted, play faint animation
+            if (!fighter.isAlive()) {
+                animateFaint(fighterNum);
+            }
+            // Draw fighter sprite
             else {
-                if (gp.btlManager.fighter[1].getAttacking()) {
-                    animateAttack_Two();
+                if (isFighterOne) {
+                    g2.drawImage(fighter.getBackSprite(), fighter_one_X, fighter_one_Y, null);
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
                 }
                 else {
-                    fighter_two_X = fighter_two_endX;
-                }
-
-                if (!gp.btlManager.fighter[1].isAlive()) {
-                    animateFaint_Two();
-                }
-                else {
-                    if (gp.btlManager.fighter[1].getHit()) {
-                        hitCounter++;
-                        if (hitCounter > 30) {
-                            gp.btlManager.fighter[1].setHit(false);
-                            hitCounter = -1;
-                        }
-                        else if (hitCounter % 5 == 0) {
-                            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
-                        }
-                    }
-
-                    g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
+                    g2.drawImage(fighter.getFrontSprite(), fighter_two_X, fighter_two_Y, null);
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
                 }
             }
+
+            // Move to next fighter
+            fighterNum++;
         }
     }
 
-    private void animateFaint_One() {
-        if (fighter_one_Y < gp.screenHeight) {
-            fighter_one_Y += 16;
-        }
-    }
+    private void animateAttack(int fighter) {
 
-    private void animateFaint_Two() {
+        attackCounter++;
 
-        if (fighter_two_Y < gp.screenHeight) {
-            fighter_two_Y += 14;
-            faintCounter += 14;
-            if (faintCounter >= gp.btlManager.fighter[1].getFrontSprite().getHeight()) {
-                faintCounter = gp.btlManager.fighter[1].getFrontSprite().getHeight() - 1;
+        if (fighter == 0) {
+            if (attackCounter > 20) {
+                fighter_one_X -= 3;
+            }
+            else {
+                fighter_one_X += 3;
             }
         }
         else {
-            faintCounter = 0;
-        }
-
-        int width = gp.btlManager.fighter[1].getFrontSprite().getWidth();
-        int height = gp.btlManager.fighter[1].getFrontSprite().getHeight();
-        BufferedImage faintImg = gp.btlManager.fighter[1].getFrontSprite().getSubimage(0, 0, width, height - faintCounter);
-
-        g2.drawImage(faintImg, fighter_two_X, fighter_two_Y, null);
-    }
-
-    private void animateAttack_One() {
-        attackCounter++;
-        if (attackCounter > 20) {
-            fighter_one_X -= 3;
-        }
-        else {
-            fighter_one_X += 3;
+            if (attackCounter > 20) {
+                fighter_two_X += 3;
+            }
+            else {
+                fighter_two_X -= 3;
+            }
         }
 
         if (attackCounter == 41) {
             attackCounter = 0;
-            gp.btlManager.fighter[0].setAttacking(false);
+            gp.btlManager.fighter[fighter].setAttacking(false);
         }
     }
 
-    private void animateAttack_Two() {
-        attackCounter++;
-        if (attackCounter > 20) {
-            fighter_two_X += 3;
-        }
-        else {
-            fighter_two_X -= 3;
-        }
+    private void animateFaint(int fighterNum) {
 
-        if (attackCounter == 41) {
-            attackCounter = 0;
-            gp.btlManager.fighter[1].setAttacking(false);
+        // Player 1 fainted
+        if (fighterNum == 0) {
+            if (fighter_one_Y < gp.screenHeight) {
+                fighter_one_Y += 16;
+            }
+
+            g2.drawImage(gp.btlManager.fighter[fighterNum].getBackSprite(), fighter_one_X, fighter_one_Y, null);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        }
+        // CPU / Player 2 fainted
+        else {
+            // Move Pokemon sprite down
+            if (fighter_two_Y < gp.screenHeight) {
+                fighter_two_Y += 14;
+                faintCounter += 14;
+
+                if (faintCounter >= gp.btlManager.fighter[fighterNum].getFrontSprite().getHeight()) {
+                    faintCounter = gp.btlManager.fighter[fighterNum].getFrontSprite().getHeight() - 1;
+                }
+            }
+            else {
+                faintCounter = 0;
+            }
+
+            // Cut off bottom of sprite to fade it out
+            int width = gp.btlManager.fighter[fighterNum].getFrontSprite().getWidth();
+            int height = gp.btlManager.fighter[fighterNum].getFrontSprite().getHeight();
+            BufferedImage faintImg = gp.btlManager.fighter[fighterNum].getFrontSprite().getSubimage(0, 0, width, height - faintCounter);
+            g2.drawImage(faintImg, fighter_two_X, fighter_two_Y, null);
         }
     }
 

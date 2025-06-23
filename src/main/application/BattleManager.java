@@ -704,41 +704,91 @@ public class BattleManager extends Thread {
 
         for (Move move : fighter[1].getMoveSet()) {
 
+            // Get damage-dealing moves with valid PP
             if (move.getPower() > 0 && move.getPP() != 0) {
 
+                // Calculate damage each move deals to opponent
                 int damage = calculateDamage(fighter[1], fighter[0], move, 1);
                 damageMoves.put(move, damage);
 
-                if (damage >= fighter[0].getHP() && move.getPriority() > 0) {
+                // If move is KO, add to KO list and track accuracy
+                if (damage >= fighter[0].getHP()) {
+
+                    // KO move with high priority, use it
+                    if (move.getPriority() > 0) {
+                        bestMove = move;
+                        return move;
+                    }
+
                     int accuracy = (int) getAccuracy(fighter[1], move);
                     koMoves.put(move, accuracy);
                 }
             }
         }
 
-        if (koMoves.isEmpty()) {
+        // Find knockout move with highest accuracy
+        if (!koMoves.isEmpty()) {
 
-            if (damageMoves.isEmpty()) {
+            // Multiple knockout moves found
+            if (koMoves.size() > 1) {
+                bestMove = Collections.max(koMoves.entrySet(),
+                        Comparator.comparingInt(Map.Entry::getValue)).getKey();
 
-                for (Move move : fighter[1].getMoveSet()) {
+                // If knockout move has delay
+                if (bestMove.getTurns() > 0) {
 
-                    if (move.getMType() == MoveType.STATUS) {
-                        bestMove = move;
-                        return bestMove;
+                    // Find best move with no delay
+                    for (Move move : koMoves.keySet()) {
+                        if (move.getTurns() == 0) {
+                            bestMove = move;
+                            break;
+                        }
                     }
                 }
-
-                int ranMove = (int) (Math.random() * (fighter[1].getMoveSet().size()));
-                bestMove = fighter[1].getMoveSet().get(ranMove);
             }
+            // Return only knockout move found
             else {
-                bestMove = Collections.max(damageMoves.entrySet(),
-                        Comparator.comparingInt(Map.Entry::getValue)).getKey();
+                bestMove = koMoves.keySet().iterator().next();
             }
         }
+        // Find most powerful damage-dealing move
+        else if (!damageMoves.isEmpty()) {
+
+            // Multiple damage moves found
+            if (damageMoves.size() > 1) {
+                bestMove = Collections.max(damageMoves.entrySet(),
+                        Comparator.comparingInt(Map.Entry::getValue)).getKey();
+
+                // If damage move has delay
+                if (bestMove.getTurns() > 0) {
+
+                    // Find best move with no delay
+                    for (Move move : damageMoves.keySet()) {
+                        if (move.getTurns() == 0) {
+                            bestMove = move;
+                            break;
+                        }
+                    }
+                }
+            }
+            // Return only damage move found
+            else {
+                bestMove = damageMoves.keySet().iterator().next();
+            }
+        }
+        // No knockout or damage moves found
         else {
-            bestMove = Collections.max(koMoves.entrySet(),
-                    Comparator.comparingInt(Map.Entry::getValue)).getKey();
+            // Find move that applies status
+            for (Move move : fighter[1].getMoveSet()) {
+                if (move.getMType() == MoveType.STATUS) {
+                    bestMove = move;
+                    return bestMove;
+                }
+            }
+
+            // No status moves found, choose random
+            int ranMove = (int) (Math.random() * (fighter[1].getMoveSet().size()));
+            bestMove = fighter[1].getMoveSet().get(ranMove);
         }
 
         return bestMove;
@@ -861,6 +911,7 @@ public class BattleManager extends Thread {
         // 1/4 chance can't move due to PAR
         int val = 1 + (int) (Math.random() * 4);
         if (val == 1) {
+            pkm.setStatChanging(true);
             gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
             pkm.getStatus().printStatus(gp, pkm.getName());
             return false;
@@ -879,6 +930,7 @@ public class BattleManager extends Thread {
             return true;
         }
         else {
+            pkm.setStatChanging(true);
             gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
             pkm.getStatus().printStatus(gp, pkm.getName());
             return false;
@@ -898,6 +950,7 @@ public class BattleManager extends Thread {
         else {
             // increase counter
             pkm.setStatusCounter(pkm.getStatusCounter() + 1);
+            pkm.setStatChanging(true);
             gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
             pkm.getStatus().printStatus(gp, pkm.getName());
 
@@ -907,6 +960,7 @@ public class BattleManager extends Thread {
 
     private boolean confused(Pokemon pkm) throws InterruptedException {
 
+        pkm.setStatChanging(true);
         gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
         typeDialogue(pkm.getName() + " is\n" + pkm.getStatus().getStatus() + "...");
 
@@ -1229,6 +1283,7 @@ public class BattleManager extends Thread {
         }
         else {
             trg.setStatus(status);
+            trg.setStatChanging(true);
 
             gp.playSE(gp.battle_SE, status.getStatus());
             typeDialogue(trg.getName() + status.printCondition());
@@ -1303,8 +1358,13 @@ public class BattleManager extends Thread {
             if (!canChange) {
                 String change = level > 0 ? "higher" : "lower";
                 typeDialogue(pkm.getName() + "'s " + stat + "\nwon't go any " + change + "!");
+                continue;
             }
-            else if (level > 0) {
+
+            // Set value for UI to animate stat change
+            pkm.setStatChanging(true);
+
+            if (level > 0) {
                 gp.playSE(gp.battle_SE, "stat-up");
                 typeDialogue(pkm.changeStat(stat, level));
             }
@@ -2663,7 +2723,7 @@ public class BattleManager extends Thread {
         }
 
         int gainedXP = calculateEXPGain();
-        
+
         if (!otherFighters.isEmpty()) {
 
             gainedXP = (int) Math.ceil((double) gainedXP / (otherFighters.size() + 1));
@@ -3118,6 +3178,7 @@ public class BattleManager extends Thread {
                 fighters.put(p, p.getLevel());
             }
         }
+
         bestFighter = Collections.max(fighters.entrySet(),
                 Comparator.comparingInt(Map.Entry::getValue)).getKey();
 

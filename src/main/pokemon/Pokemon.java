@@ -96,7 +96,7 @@ public class Pokemon {
     protected int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg, evasionStg;
 
     protected int statusCounter, statusLimit;
-    protected boolean isAlive = true, attacking = false, hit = false;
+    protected boolean isAlive = true, attacking = false, statChanging = false, hit = false;
 
     protected List<Move> moveset, activeMoves;
     protected Map<Integer, Moves> moveLevels;
@@ -990,6 +990,14 @@ public class Pokemon {
 
     public void setHit(boolean hit) {
         this.hit = hit;
+    }
+
+    public boolean getStatChanging() {
+        return statChanging;
+    }
+
+    public void setStatChanging(boolean statChanging) {
+        this.statChanging = statChanging;
     }
 
     public boolean isAlive() {
