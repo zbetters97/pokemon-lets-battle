@@ -2722,38 +2722,23 @@ public class BattleManager extends Thread {
             gp.startMusic(1, 2);
         }
 
-        int gainedXP = calculateEXPGain();
+        int gainedXP = (int) Math.ceil((double) calculateEXPGain() / (otherFighters.size() + 1));
+        typeDialogue(fighter[0].getName() + " gained\n" + gainedXP + " Exp. Points!", false);
 
-        if (!otherFighters.isEmpty()) {
+        int xp = fighter[0].getXP() + gainedXP;
+        int xpTimer = (int) Math.ceil(2500.0 / (double) gainedXP);
+        increaseEXP(fighter[0], xp, xpTimer);
 
-            gainedXP = (int) Math.ceil((double) gainedXP / (otherFighters.size() + 1));
-            int xp = fighter[0].getXP() + gainedXP;
-            int xpTimer = (int) Math.ceil(2800.0 / (double) gainedXP);
-
-            typeDialogue(fighter[0].getName() + " gained\n" + gainedXP + " Exp. Points!", false);
-            increaseEXP(fighter[0], xp, xpTimer);
-
-            for (Pokemon p : otherFighters) {
-
-                typeDialogue(p.getName() + " gained\n" + gainedXP + " Exp. Points!");
-
-                xp = p.getXP() + gainedXP;
-                increaseEXP(p, xp, 0);
-            }
-
-            otherFighters.clear();
-        }
-        else {
-
-            int xp = fighter[0].getXP() + gainedXP;
-            int xpTimer = (int) Math.ceil(2500.0 / (double) gainedXP);
-
-            typeDialogue(fighter[0].getName() + " gained\n" + gainedXP + " Exp. Points!", false);
-            increaseEXP(fighter[0], xp, xpTimer);
+        // Shared EXP
+        for (Pokemon p : otherFighters) {
+            xp = p.getXP() + gainedXP;
+            increaseEXP(p, xp, 0);
+            typeDialogue(p.getName() + " gained\n" + gainedXP + " Exp. Points!", true);
         }
 
+        // Reset shared EXP Pokemon
+        otherFighters.clear();
         getOtherFighters();
-        pause(500);
     }
 
     private int calculateEXPGain() {
@@ -2779,6 +2764,7 @@ public class BattleManager extends Thread {
 
             p.setXP(p.getXP() + 1);
 
+            // Pause to show exp gain
             pause(timer);
 
             // FIGHTER LEVELED UP
@@ -2935,7 +2921,6 @@ public class BattleManager extends Thread {
                     gp.gameState = gp.pauseState;
                     gp.ui.pauseState = gp.ui.pause_Party;
                     gp.ui.partyState = gp.ui.party_Main_Select;
-
                 }
                 // TRAINER 1 OUT OF POKÉMON
                 else {
@@ -2955,12 +2940,16 @@ public class BattleManager extends Thread {
 
                     winner = -1;
 
+                    // CPU battle
                     if (cpu) {
+
+                        // Get new CPU pokemon
                         newFighter[1] = getCPUFighter();
                         battleQueue.add(queue_CPUSwap);
 
+                        // If trainer 1 has more than 1 pokemon, and option set to Shift...
+                        // ...ask trainer 1 if they want to swap
                         if (gp.player.getAvailablePokemon() > 1 && shift) {
-
                             typeDialogue("Trainer " + trainer.name + " is about\nto sent out " +
                                     newFighter[1].getName() + "!", true);
 
@@ -2970,14 +2959,17 @@ public class BattleManager extends Thread {
                             waitForKeyPress();
                             getSwapAnswer();
                         }
+                        // Trainer 1 has only 1 pokemon or option not set to Shift
                         else {
                             gp.ui.resetFighterPositions();
                             gp.ui.battleState = gp.ui.battle_Dialogue;
                         }
                     }
+                    // Multiplayer battle
                     else {
                         running = false;
 
+                        // Get new trainer 2 pokemon
                         gp.gameState = gp.pauseState;
                         gp.ui.player = 1;
                         gp.ui.partyDialogue = "Choose a POKéMON.";
@@ -2999,6 +2991,7 @@ public class BattleManager extends Thread {
                     winner = -1;
                     running = false;
 
+                    // Get new trainer 1 pokemon
                     gp.gameState = gp.pauseState;
                     gp.ui.player = 0;
                     gp.ui.partyDialogue = "Choose a POKéMON.";
@@ -3020,6 +3013,7 @@ public class BattleManager extends Thread {
                     running = false;
                     gp.ui.player = 1;
 
+                    // Get new CPU pokemon
                     if (cpu) {
                         newFighter[1] = getCPUFighter();
                         battleQueue.add(queue_CPUSwap);
@@ -3043,6 +3037,7 @@ public class BattleManager extends Thread {
                 }
                 // BOTH TRAINERS DEFEATED
                 else {
+                    typeDialogue("It's a draw!", true);
                     pause(500);
                     endBattle();
                 }
