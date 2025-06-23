@@ -313,7 +313,7 @@ public class Pokemon {
         level = old.level;
 
         xp = setBXP(level);
-        cxp = xp;
+        cxp = old.cxp;
         nxp = setNXP();
 
         hpIV = old.hpIV;
@@ -367,6 +367,7 @@ public class Pokemon {
         this.level = level;
 
         xp = setBXP(level);
+
         this.cxp = cxp;
         nxp = setNXP();
 

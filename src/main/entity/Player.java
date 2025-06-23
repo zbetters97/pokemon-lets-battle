@@ -15,7 +15,6 @@ import entity.object.object_interactive.OBJ_Boulder;
 import entity.object.object_interactive.OBJ_Rock;
 import entity.object.object_interactive.OBJ_Tree;
 import entity.object.object_interactive.OBJ_Water;
-import moves.Moves;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Pokedex;
 
@@ -496,31 +495,6 @@ public class Player extends Entity {
                     jumping = false;
                 }
             }
-        }
-    }
-
-    public void cycleSprites() {
-
-        spriteCounter++;
-        if (spriteCounter > animationSpeed) {
-
-            // CYLCE WALKING/SWIMMING SPRITES
-            if (spriteNum == 1 && spriteCycle == 0) {
-                spriteNum = 2;
-                spriteCycle = 1;
-            }
-            else if (spriteNum == 1 && spriteCycle == 1) {
-                spriteNum = 3;
-                spriteCycle = 0;
-            }
-            else if (spriteNum == 2) {
-                spriteNum = 1;
-            }
-            else if (spriteNum == 3) {
-                spriteNum = 1;
-            }
-
-            spriteCounter = 0;
         }
     }
 

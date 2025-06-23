@@ -208,7 +208,8 @@ public class Entity {
         checkCollision();
         if (!collisionOn && withinBounds()) {
             moving = true;
-        } else {
+        }
+        else {
             spriteNum = 1;
         }
     }
@@ -263,11 +264,17 @@ public class Entity {
             if (spriteNum == 1 && spriteCycle == 0) {
                 spriteNum = 2;
                 spriteCycle = 1;
-            } else if (spriteNum == 1 && spriteCycle == 1) {
+            }
+            else if (spriteNum == 1 && spriteCycle == 1) {
                 spriteNum = 3;
                 spriteCycle = 0;
-            } else if (spriteNum == 2) spriteNum = 1;
-            else if (spriteNum == 3) spriteNum = 1;
+            }
+            else if (spriteNum == 2) {
+                spriteNum = 1;
+            }
+            else if (spriteNum == 3) {
+                spriteNum = 1;
+            }
 
             spriteCounter = 0;
         }
@@ -282,10 +289,18 @@ public class Entity {
         if (actionLockCounter >= rate) {
 
             int dir = 1 + (int) (Math.random() * 4);
-            if (dir == 1) direction = "up";
-            else if (dir == 2) direction = "down";
-            else if (dir == 3) direction = "left";
-            else if (dir == 4) direction = "right";
+            if (dir == 1) {
+                direction = "up";
+            }
+            else if (dir == 2) {
+                direction = "down";
+            }
+            else if (dir == 3) {
+                direction = "left";
+            }
+            else if (dir == 4) {
+                direction = "right";
+            }
 
             actionLockCounter = 0;
         }
@@ -409,8 +424,9 @@ public class Entity {
 
         int tileDistance = (Math.abs(worldXStart - tempWorldX) + Math.abs(worldYStart - tempWorldY)) / gp.tileSize;
 
-        if (tileDistance > bounds)
+        if (tileDistance > bounds) {
             withinBounds = false;
+        }
 
         return withinBounds;
     }
@@ -421,8 +437,9 @@ public class Entity {
 
         int tileDistance = (Math.abs(worldXStart - gp.player.worldX) + Math.abs(worldYStart - gp.player.worldY)) / gp.tileSize;
 
-        if (tileDistance > bounds)
+        if (tileDistance > bounds) {
             playerWithinBounds = false;
+        }
 
         return playerWithinBounds;
     }
@@ -447,8 +464,9 @@ public class Entity {
         // SET PATH
         gp.pFinder.setNodes(startCol, startRow, goalCol, goalRow);
 
-        if (gp.pFinder.search())
+        if (gp.pFinder.search()) {
             pathFound = true;
+        }
 
         return pathFound;
     }
@@ -476,38 +494,52 @@ public class Entity {
 
             // FIND DIRECTION TO NEXT NODE
             // UP OR DOWN
-            if (eTopY > nextY && eLeftX >= nextX && eRightX < nextX + gp.tileSize)
+            if (eTopY > nextY && eLeftX >= nextX && eRightX < nextX + gp.tileSize) {
                 direction = "up";
-            else if (eTopY < nextY && eLeftX >= nextX && eRightX < nextX + gp.tileSize)
+            }
+            else if (eTopY < nextY && eLeftX >= nextX && eRightX < nextX + gp.tileSize) {
                 direction = "down";
-                // LEFT OR RIGHT
+            }
+            // LEFT OR RIGHT
             else if (eTopY >= nextY && eBottomY < nextY + gp.tileSize) {
-                if (eLeftX > nextX) direction = "left";
-                if (eLeftX < nextX) direction = "right";
+                if (eLeftX > nextX) {
+                    direction = "left";
+                }
+                if (eLeftX < nextX) {
+                    direction = "right";
+                }
             }
             // UP OR LEFT
             else if (eTopY > nextY && eLeftX > nextX) {
                 direction = "up";
                 checkCollision();
-                if (collisionOn) direction = "left";
+                if (collisionOn) {
+                    direction = "left";
+                }
             }
             // UP OR RIGHT
             else if (eTopY > nextY && eLeftX < nextX) {
                 direction = "up";
                 checkCollision();
-                if (collisionOn) direction = "right";
+                if (collisionOn) {
+                    direction = "right";
+                }
             }
             // DOWN OR LEFT
             else if (eTopY < nextY && eLeftX > nextX) {
                 direction = "down";
                 checkCollision();
-                if (collisionOn) direction = "left";
+                if (collisionOn) {
+                    direction = "left";
+                }
             }
             // DOWN OR RIGHT
             else if (eTopY < nextY && eLeftX < nextX) {
                 direction = "down";
                 checkCollision();
-                if (collisionOn) direction = "right";
+                if (collisionOn) {
+                    direction = "right";
+                }
             }
         }
         // NO PATH FOUND
@@ -536,14 +568,17 @@ public class Entity {
         if (battleFound) {
             followPath(getGoalCol(gp.player), getGoalRow(gp.player));
 
-            if (!moving) move();
+            if (!moving) {
+                move();
+            }
             if (pathCompleted) {
                 speed = defaultSpeed;
                 startBattle(0);
             }
 
             return true;
-        } else {
+        }
+        else {
             if (findPlayer(direction, tileDistance)) {
 
                 gp.player.stopMoving();
@@ -552,7 +587,8 @@ public class Entity {
                 if (battleIconTimer == 1) {
                     gp.stopMusic();
                     gp.startMusic(0, gp.se.getFile(0, "May"));
-                } else if (battleIconTimer > 60) {
+                }
+                else if (battleIconTimer > 60) {
                     speed = 2;
                     battleFound = true;
                     battleIconTimer = 0;
@@ -592,27 +628,36 @@ public class Entity {
             switch (direction) {
                 case "up":
                     if (worldY - gp.player.worldY >= 0 && worldX - gp.player.worldX == 0) {
-                        if (pathOpen(direction)) playerFound = true;
+                        if (pathOpen(direction)) {
+                            playerFound = true;
+                        }
                     }
                     break;
                 case "down":
                     if (worldY - gp.player.worldY < 0 && worldX - gp.player.worldX == 0) {
-                        if (pathOpen(direction)) playerFound = true;
+                        if (pathOpen(direction)) {
+                            playerFound = true;
+                        }
                     }
                     break;
                 case "left":
                     if (worldX - gp.player.worldX >= 0 && worldY - gp.player.worldY == 0) {
-                        if (pathOpen(direction)) playerFound = true;
+                        if (pathOpen(direction)) {
+                            playerFound = true;
+                        }
                     }
                     break;
                 case "right":
                     if (worldX - gp.player.worldX < 0 && worldY - gp.player.worldY == 0) {
-                        if (pathOpen(direction)) playerFound = true;
+                        if (pathOpen(direction)) {
+                            playerFound = true;
+                        }
                     }
 
                     break;
             }
-        } else {
+        }
+        else {
             playerFound = false;
         }
 
@@ -626,32 +671,36 @@ public class Entity {
                 for (int i = 0; i <= getTileDistance(gp.player); i++) {
                     int wX = worldX / gp.tileSize;
                     int wY = (worldY - gp.tileSize * i) / gp.tileSize;
-                    if (tileHasCollision(wX, wY))
+                    if (tileHasCollision(wX, wY)) {
                         return false;
+                    }
                 }
                 break;
             case "down":
                 for (int i = 0; i <= getTileDistance(gp.player); i++) {
                     int wX = worldX / gp.tileSize;
                     int wY = (worldY + gp.tileSize * i) / gp.tileSize;
-                    if (tileHasCollision(wX, wY))
+                    if (tileHasCollision(wX, wY)) {
                         return false;
+                    }
                 }
                 break;
             case "left":
                 for (int i = 0; i <= getTileDistance(gp.player); i++) {
                     int wX = (worldX - gp.tileSize * i) / gp.tileSize;
                     int wY = worldY / gp.tileSize;
-                    if (tileHasCollision(wX, wY))
+                    if (tileHasCollision(wX, wY)) {
                         return false;
+                    }
                 }
                 break;
             case "right":
                 for (int i = 0; i <= getTileDistance(gp.player); i++) {
                     int wX = (worldX + gp.tileSize * i) / gp.tileSize;
                     int wY = worldY / gp.tileSize;
-                    if (tileHasCollision(wX, wY))
+                    if (tileHasCollision(wX, wY)) {
                         return false;
+                    }
                 }
                 break;
         }
@@ -679,13 +728,16 @@ public class Entity {
             if (getXdistance(gp.player) >= getYdistance(gp.player)) {
                 if (gp.player.getCenterX() < getCenterX()) {
                     direction = "left";
-                } else {
+                }
+                else {
                     direction = "right";
                 }
-            } else if (getXdistance(gp.player) < getYdistance(gp.player)) {
+            }
+            else if (getXdistance(gp.player) < getYdistance(gp.player)) {
                 if (gp.player.getCenterY() < getCenterY()) {
                     direction = "up";
-                } else {
+                }
+                else {
                     direction = "down";
                 }
             }
@@ -729,7 +781,8 @@ public class Entity {
 
         if (pokeParty.isEmpty()) {
             return false;
-        } else {
+        }
+        else {
             for (Pokemon p : pokeParty) {
                 p.setAlive(true);
                 p.setHP(p.getBHP());
@@ -781,55 +834,58 @@ public class Entity {
             gp.ui.bagNum = 0;
             gp.ui.partyDialogue = p.getName() + " was given a\n" + item.name + " to hold.";
             gp.ui.partyState = gp.ui.party_Main_Dialogue;
-        } else {
+        }
+        else {
             gp.keyH.playErrorSE();
         }
     }
 
     public void addItem(Entity item, Entity person) {
 
+        ArrayList<Entity> inventory = getInventoryType(item, person);
+
+        if (inventory == null) {
+            return;
+        }
+
         Entity newItem = gp.eGenerator.getItem(item.name);
 
-        ArrayList<Entity> inventory = null;
-
-        if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;
-        else if (item.collectableType == type_item) inventory = person.inventory_items;
-        else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;
-        else if (item.collectableType == type_move) inventory = person.inventory_moves;
-        else return;
-
         int index = searchInventory(newItem, inventory);
-        if (index != -1) inventory.get(index).amount++;
-        else inventory.add(newItem);
+        if (index != -1) {
+            inventory.get(index).amount++;
+        }
+        else {
+            inventory.add(newItem);
+        }
     }
 
     public void addItem(Entity item, Entity person, int quantity) {
 
+        ArrayList<Entity> inventory = getInventoryType(item, person);
+
+        if (inventory == null) {
+            return;
+        }
+
         Entity newItem = gp.eGenerator.getItem(item.name);
         newItem.amount = quantity;
 
-        ArrayList<Entity> inventory = null;
-
-        if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;
-        else if (item.collectableType == type_item) inventory = person.inventory_items;
-        else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;
-        else if (item.collectableType == type_move) inventory = person.inventory_moves;
-        else return;
-
         int index = searchInventory(newItem, inventory);
-        if (index != -1) inventory.get(index).amount += quantity;
-        else inventory.add(newItem);
+        if (index != -1) {
+            inventory.get(index).amount += quantity;
+        }
+        else {
+            inventory.add(newItem);
+        }
     }
 
     public void removeItem(Entity item, Entity person) {
 
-        ArrayList<Entity> inventory = null;
+        ArrayList<Entity> inventory = getInventoryType(item, person);
 
-        if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;
-        else if (item.collectableType == type_item) inventory = person.inventory_items;
-        else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;
-        else if (item.collectableType == type_move) inventory = person.inventory_moves;
-        else return;
+        if (inventory == null) {
+            return;
+        }
 
         int index = searchInventory(item, inventory);
         if (index != -1) {
@@ -845,12 +901,11 @@ public class Entity {
 
     public void removeItem(Entity item, Entity person, int quantity) {
 
-        ArrayList<Entity> inventory = null;
-        if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;
-        else if (item.collectableType == type_item) inventory = person.inventory_items;
-        else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;
-        else if (item.collectableType == type_move) inventory = person.inventory_moves;
-        else return;
+        ArrayList<Entity> inventory = getInventoryType(item, person);
+
+        if (inventory == null) {
+            return;
+        }
 
         int index = searchInventory(item, inventory);
         if (index != -1) {
@@ -866,18 +921,34 @@ public class Entity {
 
     public Entity getItem(Entity item, Entity person) {
 
-        ArrayList<Entity> inventory = null;
+        ArrayList<Entity> inventory = getInventoryType(item, person);
 
-        if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;
-        else if (item.collectableType == type_item) inventory = person.inventory_items;
-        else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;
-        else if (item.collectableType == type_move) inventory = person.inventory_moves;
-        else return null;
+        if (inventory == null) {
+            return null;
+        }
 
         int index = searchInventory(item, inventory);
 
-        if (index != -1) return inventory.get(index);
-        else return null;
+        if (index != -1) {
+            return inventory.get(index);
+        }
+        else {
+            return null;
+        }
+    }
+
+    private ArrayList<Entity> getInventoryType(Entity item, Entity person) {
+
+        // Find the correct inventory array for the item
+        ArrayList<Entity> inventory = switch (item.collectableType) {
+            case type_keyItem -> person.inventory_keyItems;
+            case type_item -> person.inventory_items;
+            case type_ball -> person.inventory_pokeballs;
+            case type_move -> person.inventory_moves;
+            default -> null;
+        };
+
+        return inventory;
     }
 
     public int searchInventory(Entity item, ArrayList<Entity> inventory) {
@@ -904,7 +975,8 @@ public class Entity {
             gp.ui.bagNum = 0;
             gp.ui.partyDialogue = p.getName() + " was revived!";
             gp.ui.partyState = gp.ui.party_Main_Dialogue;
-        } else {
+        }
+        else {
             gp.keyH.playErrorSE();
         }
     }
@@ -925,7 +997,8 @@ public class Entity {
             gp.ui.bagNum = 0;
             gp.ui.partyDialogue = p.getName() + " gained " + gainedHP + " HP.";
             gp.ui.partyState = gp.ui.party_Main_Dialogue;
-        } else {
+        }
+        else {
             gp.keyH.playErrorSE();
         }
     }
@@ -941,7 +1014,8 @@ public class Entity {
             gp.ui.bagNum = 0;
             gp.ui.partyDialogue = p.getName() + " was healed.";
             gp.ui.partyState = gp.ui.party_Main_Dialogue;
-        } else {
+        }
+        else {
             gp.keyH.playErrorSE();
         }
     }
@@ -964,7 +1038,8 @@ public class Entity {
 
             gp.ui.battleState = gp.ui.battle_Dialogue;
             gp.gameState = gp.battleState;
-        } else {
+        }
+        else {
             gp.ui.bagDialogue = "You can't use this here!";
             gp.ui.bagState = gp.ui.bag_Dialogue;
         }
@@ -1004,7 +1079,8 @@ public class Entity {
         try {
             image = ImageIO.read(getClass().getResourceAsStream(imagePath.toLowerCase() + ".png"));
             image = GamePanel.utility.scaleImage(image, gp.tileSize, gp.tileSize);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -1018,7 +1094,8 @@ public class Entity {
         try {
             image = ImageIO.read(getClass().getResourceAsStream(imagePath.toLowerCase() + ".png"));
             image = GamePanel.utility.scaleImage(image, width, height);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -1039,33 +1116,65 @@ public class Entity {
 
             if (hasShadow) {
                 g2.setColor(new Color(0, 0, 0, 100));
-                g2.fillOval(tempScreenX + 9, tempScreenY + 40, 30, 10);
+                g2.fillOval(tempScreenX + 9, tempScreenY + 30, 30, 10);
             }
 
             switch (direction) {
                 case "up":
-                    if (spriteNum == 1) image = up1;
-                    else if (spriteNum == 2) image = up2;
-                    else if (spriteNum == 3) image = up3;
-                    else if (spriteNum == 4) image = up4;
+                    if (spriteNum == 1) {
+                        image = up1;
+                    }
+                    else if (spriteNum == 2) {
+                        image = up2;
+                    }
+                    else if (spriteNum == 3) {
+                        image = up3;
+                    }
+                    else if (spriteNum == 4) {
+                        image = up4;
+                    }
                     break;
                 case "down":
-                    if (spriteNum == 1) image = down1;
-                    else if (spriteNum == 2) image = down2;
-                    else if (spriteNum == 3) image = down3;
-                    else if (spriteNum == 4) image = down4;
+                    if (spriteNum == 1) {
+                        image = down1;
+                    }
+                    else if (spriteNum == 2) {
+                        image = down2;
+                    }
+                    else if (spriteNum == 3) {
+                        image = down3;
+                    }
+                    else if (spriteNum == 4) {
+                        image = down4;
+                    }
                     break;
                 case "left":
-                    if (spriteNum == 1) image = left1;
-                    else if (spriteNum == 2) image = left2;
-                    else if (spriteNum == 3) image = left3;
-                    else if (spriteNum == 4) image = left4;
+                    if (spriteNum == 1) {
+                        image = left1;
+                    }
+                    else if (spriteNum == 2) {
+                        image = left2;
+                    }
+                    else if (spriteNum == 3) {
+                        image = left3;
+                    }
+                    else if (spriteNum == 4) {
+                        image = left4;
+                    }
                     break;
                 case "right":
-                    if (spriteNum == 1) image = right1;
-                    else if (spriteNum == 2) image = right2;
-                    else if (spriteNum == 3) image = right3;
-                    else if (spriteNum == 4) image = right4;
+                    if (spriteNum == 1) {
+                        image = right1;
+                    }
+                    else if (spriteNum == 2) {
+                        image = right2;
+                    }
+                    else if (spriteNum == 3) {
+                        image = right3;
+                    }
+                    else if (spriteNum == 4) {
+                        image = right4;
+                    }
                     break;
             }
 
@@ -1102,7 +1211,8 @@ public class Entity {
                     worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
                 inFrame = true;
             }
-        } else {
+        }
+        else {
 
             // WITHIN SCREEN BOUNDARY
             if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
@@ -1121,8 +1231,12 @@ public class Entity {
         tempScreenX = getScreenX();
         tempScreenY = getScreenY();
 
-        if (gp.player.worldX < gp.player.screenX) tempScreenX = worldX;
-        if (gp.player.worldY < gp.player.screenY) tempScreenY = worldY;
+        if (gp.player.worldX < gp.player.screenX) {
+            tempScreenX = worldX;
+        }
+        if (gp.player.worldY < gp.player.screenY) {
+            tempScreenY = worldY;
+        }
 
         // FROM PLAYER TO RIGHT-EDGE OF SCREEN
         int rightOffset = gp.screenWidth - gp.player.screenX;

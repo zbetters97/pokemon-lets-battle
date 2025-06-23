@@ -101,7 +101,7 @@ public class BattleManager extends Thread {
      * SETUP METHOD
      **/
     public void setup(int currentBattle, int music, Entity trainer, Pokemon pokemon,
-                      String condition, boolean cpu,  boolean pcBattle) {
+                      String condition, boolean cpu, boolean pcBattle) {
 
         gp.stopMusic();
 
@@ -109,7 +109,7 @@ public class BattleManager extends Thread {
 
         battleMode = currentBattle;
         this.trainer = trainer;
-        System.out.println(this.trainer.skillLevel);
+
         fighter[1] = pokemon;
         weather = condition != null ? Weather.valueOf(condition) : Weather.CLEAR;
         weatherDays = -1;
@@ -2663,7 +2663,7 @@ public class BattleManager extends Thread {
         }
 
         int gainedXP = calculateEXPGain();
-
+        
         if (!otherFighters.isEmpty()) {
 
             gainedXP = (int) Math.ceil((double) gainedXP / (otherFighters.size() + 1));
