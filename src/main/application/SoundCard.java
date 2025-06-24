@@ -22,6 +22,7 @@ public class SoundCard {
     private FloatControl gainControl;
     public int volumeScale = 3;
     public float volume;
+    private volatile boolean isLooping = false;
 
     public SoundCard() {
         sounds[0] = getSounds("musicwrld");
@@ -150,7 +151,10 @@ public class SoundCard {
     }
 
     public void stop() {
-        clip.stop();
+        isLooping = false;
+        if (clip != null) {
+            clip.stop();
+        }
     }
 
     public void checkVolume() {
@@ -183,8 +187,65 @@ public class SoundCard {
         gainControl.setValue(gain);
     }
 
-
     private float getGain() {
         return gainControl.getValue();
+    }
+
+    public void loopBetweenTimestamps(int startTime) {
+
+        /*
+        START TIMES (ms)
+            littleroot: 945
+            surfing: 2617
+            pokecenter: 3855
+            pokemart: 17931
+            may: 1375
+            wild battle rs: 28746
+            wild victory: 2571
+            wild catch: 4559
+            trainer battle rs: 80477
+            trainer victory rs: 13557
+         */
+
+        if (clip == null) {
+            return;
+        }
+
+        // Set looping flag to true
+        isLooping = true;
+        
+        // Get audio format and calculate total frames
+        AudioFormat format = clip.getFormat();
+        float frameRate = format.getFrameRate();
+        int totalFrames = clip.getFrameLength();
+        
+        // Convert start time to frames and ensure it's within bounds
+        int startFrame = Math.max(0, (int) (startTime * frameRate / 1000));
+        
+        // Check for invalid start frame
+        if (startFrame >= totalFrames) {
+            clip.start();
+            return;
+        }
+
+        // Remove any existing line listeners
+        clip.removeLineListener(event -> {});
+
+        // Set up a line listener to handle the looping
+        clip.addLineListener(event -> {
+            if (event.getType() == LineEvent.Type.STOP) {
+                synchronized(clip) {
+                    // Only loop if still in looping mode and clip is open
+                    if (isLooping && clip.isOpen()) {
+                        clip.setFramePosition(startFrame);
+                        clip.start();
+                    }
+                }
+            }
+        });
+
+        // Start playing from the beginning
+        clip.setFramePosition(0);
+        clip.start();
     }
 }

@@ -50,7 +50,7 @@ public class Player extends Entity {
 
     public ArrayList<Pokemon> personalDex = new ArrayList<>();
     public Pokemon[][] pcParty = new Pokemon[20][30];
-    public ArrayList<Pokemon> pcBox_1 = new ArrayList<Pokemon>(30);
+    public ArrayList<Pokemon> pcBox_1 = new ArrayList<>(30);
 
     public Action nextAction = Action.IDLE;
     public Entity activeItem = null;
@@ -101,11 +101,9 @@ public class Player extends Entity {
     }
 /** END PLAYER CONSTRUCTOR **/
 
-
     /**
      * DEFAULT HANDLERS
      **/
-
     // DEFAULT VALUES
     public void assignParty() {
         pokeParty.add(Pokemon.get(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
@@ -730,11 +728,11 @@ public class Player extends Entity {
         Pokemon wildPokemon = null;
         Pokedex randomPokemon = null;
 
-        int minLevel = 1;
-        int maxLevel = 1;
-        int level = 1;
+        int minLevel;
+        int maxLevel;
+        int level;
 
-        int chance = 1;
+        int chance;
         int total = 0;
 
         // LEVEL RANGE BASED ON LOCATION
