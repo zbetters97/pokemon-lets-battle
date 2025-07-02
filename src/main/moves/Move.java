@@ -100,6 +100,11 @@ public class Move {
     }
 
     public boolean isReady() {
+
+        if (move.getMType() == MoveType.WEATHER) {
+            return true;
+        }
+
         switch (move) {
             case FUTURESIGHT, LIGHTSCREEN, MIST, OUTRAGE, PERISHSONG, PETALDANCE, REFLECT,
                  ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH, WISH, WRAP:
@@ -107,8 +112,8 @@ public class Move {
             default:
                 if (move.getRecharge()) {
                     return turnCount == move.getTurns();
-
-                } else {
+                }
+                else {
                     return turnCount <= 0;
                 }
         }

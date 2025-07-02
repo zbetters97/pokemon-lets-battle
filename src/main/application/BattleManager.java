@@ -279,10 +279,10 @@ public class BattleManager extends Thread {
             weather = fighter[1].getAbility().getWeather();
         }
 
-        // Weather has changed
+        // Weather changed, check for Abilities
         if (oldWeather != weather) {
             weatherDays = -1;
-            checkWeatherCondition();
+            checkWeatherCondition(oldWeather);
         }
     }
 
@@ -1062,7 +1062,6 @@ public class BattleManager extends Thread {
 
         // Pokemon can't move if wrapped
         if (atk.hasActiveMove(Moves.WRAP)) {
-
             gp.playSE(gp.battle_SE, "hit-normal");
             atk.setHit(true);
 
@@ -1075,7 +1074,6 @@ public class BattleManager extends Thread {
         }
         // Normal move or charging move ready on second turn
         else if (atkMove.isReady()) {
-
             typeDialogue(atk.getName() + " used\n" + atkMove + "!", false);
 
             atk.setProtection(Protection.NONE);
@@ -1407,13 +1405,22 @@ public class BattleManager extends Thread {
      * WEATHER MOVE METHODS
      **/
     private void weatherMove(Move move) throws InterruptedException {
-        weather = move.getWeather();
-        checkWeatherCondition();
-        weatherDays = move.getTurns();
+
+        // If the move has the same weather as the current weather
+        if (move.getWeather() == weather) {
+            typeDialogue("It had no effect!");
+        }
+        else {
+            Weather oldWeather = weather;
+
+            weather = move.getWeather();
+            weatherDays = move.getTurns();
+
+            checkWeatherCondition(oldWeather);
+        }
     }
 
-    private void checkWeatherCondition() throws InterruptedException {
-
+    private void checkWeatherCondition(Weather oldWeather) throws InterruptedException {
         switch (weather) {
             case CLEAR:
                 break;
@@ -1425,12 +1432,16 @@ public class BattleManager extends Thread {
                 gp.playSE(gp.battle_SE, "rain");
                 typeDialogue("Rain started to fall!");
 
-                if (fighter[0].getAbility() == Ability.SWIFTSWIM) {
-                    setAttribute(fighter[0], List.of("speed"), 2);
+                // Weather changed, check for Abilities
+                if (weather != oldWeather) {
+                    if (fighter[0].getAbility() == Ability.SWIFTSWIM) {
+                        setAttribute(fighter[0], List.of("speed"), 2);
+                    }
+                    if (fighter[1].getAbility() == Ability.SWIFTSWIM) {
+                        setAttribute(fighter[1], List.of("speed"), 2);
+                    }
                 }
-                if (fighter[1].getAbility() == Ability.SWIFTSWIM) {
-                    setAttribute(fighter[1], List.of("speed"), 2);
-                }
+
                 break;
             case HAIL:
                 gp.playSE(gp.battle_SE, "hail");
