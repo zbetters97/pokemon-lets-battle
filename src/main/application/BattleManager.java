@@ -297,14 +297,10 @@ public class BattleManager extends Thread {
                     partyMember.getItem() != null &&
                     partyMember.getItem().name.equals(ITM_EXP_Share.colName)) {
 
-                System.out.println(partyMember.getName());
-
                 // Add party member to list of exp share fighters
                 otherFighters.add(partyMember);
             }
         }
-
-        System.out.println(otherFighters.toString());
     }
     /** END SETUP BATTLE METHODS **/
 
