@@ -17,6 +17,7 @@ public class SoundCard {
     // CLIP HOLDERS
     public Clip clip;
     private final String[][] sounds = new String[10][];
+    private final int[][] loopStarts = new int[3][];
 
     // VOLUME SLIDER
     private FloatControl gainControl;
@@ -35,6 +36,17 @@ public class SoundCard {
         sounds[7] = getSounds("world");
         sounds[8] = getSounds("entity");
         sounds[9] = getSounds("musicbtl_multi");
+
+        /* Loop start times for each music file in milliseconds
+           0 = World
+           1 = Single Battle
+           2 = PC/Multi Battle
+        */
+        loopStarts[0] = new int[]{945, 1375, 3855, 17931, 2617};
+        loopStarts[1] = new int[]{0, 28746, 2571, 4559, 80477, 13557, 42315, 43417, 11627, 39982, 23835};
+        loopStarts[2] = new int[]{9700, 0, 13317, 25242, 24281, 32978, 18505, 24273, 13053, 18867, 11511,
+                42305, 22999, 20863, 25097, 15962, 3459, 17867, 6268
+        };
     }
 
     public String[] getSELibrary(int index) {
@@ -48,6 +60,7 @@ public class SoundCard {
 
             String jarPath;
             List<String> sounds = new ArrayList<>();
+
             try {
                 jarPath = new File(Driver.class
                         .getProtectionDomain()
@@ -70,10 +83,12 @@ public class SoundCard {
                 jarFile.close();
 
                 return sounds.toArray(String[]::new);
-            } catch (URISyntaxException | IOException e) {
+            }
+            catch (URISyntaxException | IOException e) {
                 e.printStackTrace();
             }
-        } else {
+        }
+        else {
             File folder = new File("src/res/sound/" + library);
             List<String> sounds = new ArrayList<>();
 
@@ -86,6 +101,34 @@ public class SoundCard {
         }
 
         return null;
+    }
+
+    public int getSoundDuration(int category, int record) {
+
+        int duration = 0;
+
+        if (category >= 0 && record >= 0) {
+
+            URL file = getClass().getResource(sounds[category][record]);
+
+            AudioInputStream audioInputStream;
+            try {
+                assert file != null;
+                audioInputStream = AudioSystem.getAudioInputStream(file);
+                AudioFormat format = audioInputStream.getFormat();
+                long frames = audioInputStream.getFrameLength();
+                double length = (frames + 0.0) / format.getFrameRate();
+                duration = (int) Math.ceil(60.0 * length);
+                if (duration == 0) {
+                    duration = 60;
+                }
+            }
+            catch (UnsupportedAudioFileException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return duration;
     }
 
     public int getFile(int category, String file) {
@@ -112,34 +155,39 @@ public class SoundCard {
 
             gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             checkVolume();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public int getSoundDuration(int category, int record) {
+    public int getLoopStart(int category, int record) {
 
-        int duration = 0;
-
-        if (category >= 0 && record >= 0) {
-
-            URL file = getClass().getResource(sounds[category][record]);
-
-            AudioInputStream audioInputStream;
-            try {
-                assert file != null;
-                audioInputStream = AudioSystem.getAudioInputStream(file);
-                AudioFormat format = audioInputStream.getFormat();
-                long frames = audioInputStream.getFrameLength();
-                double length = (frames + 0.0) / format.getFrameRate();
-                duration = (int) Math.ceil(60.0 * length);
-                if (duration == 0) duration = 60;
-            } catch (UnsupportedAudioFileException | IOException e) {
-                e.printStackTrace();
-            }
+        // Invalid category or record
+        if (category < 0 || category > 9 || record < 0) {
+            return 0;
         }
 
-        return duration;
+        // PC / Multi Battle Music
+        if (category == 9) {
+            // Invalid record
+            if (record >= loopStarts[2].length) {
+                return 0;
+            }
+            else {
+                return loopStarts[2][record];
+            }
+        }
+        // Single Battle / World Music
+        else {
+            // Invalid record
+            if (record >= loopStarts[category].length) {
+                return 0;
+            }
+            else {
+                return loopStarts[category][record];
+            }
+        }
     }
 
     public void play() {
@@ -150,8 +198,54 @@ public class SoundCard {
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
+    public void loopBetweenTimestamps(int startTime) {
+
+        if (clip == null) {
+            return;
+        }
+
+        // Set looping flag to true
+        isLooping = true;
+
+        // Get audio format and calculate total frames
+        AudioFormat format = clip.getFormat();
+        float frameRate = format.getFrameRate();
+        int totalFrames = clip.getFrameLength();
+
+        // Convert start time to frames and ensure it's within bounds
+        int startFrame = Math.max(0, (int) (startTime * frameRate / 1000));
+
+        // Check for invalid start frame
+        if (startFrame >= totalFrames || startTime <= 0) {
+            clip.start();
+            return;
+        }
+
+        // Remove any existing line listeners
+        clip.removeLineListener(event -> {
+        });
+
+        // Set up a line listener to handle the looping
+        clip.addLineListener(event -> {
+            if (event.getType() == LineEvent.Type.STOP) {
+                synchronized (clip) {
+                    // Only loop if still in looping mode and clip is open
+                    if (isLooping && clip.isOpen()) {
+                        clip.setFramePosition(startFrame);
+                        clip.start();
+                    }
+                }
+            }
+        });
+
+        // Start playing from the beginning
+        clip.setFramePosition(0);
+        clip.start();
+    }
+
     public void stop() {
         isLooping = false;
+
         if (clip != null) {
             clip.stop();
         }
@@ -189,63 +283,5 @@ public class SoundCard {
 
     private float getGain() {
         return gainControl.getValue();
-    }
-
-    public void loopBetweenTimestamps(int startTime) {
-
-        /*
-        START TIMES (ms)
-            littleroot: 945
-            surfing: 2617
-            pokecenter: 3855
-            pokemart: 17931
-            may: 1375
-            wild battle rs: 28746
-            wild victory: 2571
-            wild catch: 4559
-            trainer battle rs: 80477
-            trainer victory rs: 13557
-         */
-
-        if (clip == null) {
-            return;
-        }
-
-        // Set looping flag to true
-        isLooping = true;
-        
-        // Get audio format and calculate total frames
-        AudioFormat format = clip.getFormat();
-        float frameRate = format.getFrameRate();
-        int totalFrames = clip.getFrameLength();
-        
-        // Convert start time to frames and ensure it's within bounds
-        int startFrame = Math.max(0, (int) (startTime * frameRate / 1000));
-        
-        // Check for invalid start frame
-        if (startFrame >= totalFrames) {
-            clip.start();
-            return;
-        }
-
-        // Remove any existing line listeners
-        clip.removeLineListener(event -> {});
-
-        // Set up a line listener to handle the looping
-        clip.addLineListener(event -> {
-            if (event.getType() == LineEvent.Type.STOP) {
-                synchronized(clip) {
-                    // Only loop if still in looping mode and clip is open
-                    if (isLooping && clip.isOpen()) {
-                        clip.setFramePosition(startFrame);
-                        clip.start();
-                    }
-                }
-            }
-        });
-
-        // Start playing from the beginning
-        clip.setFramePosition(0);
-        clip.start();
     }
 }

@@ -297,10 +297,14 @@ public class BattleManager extends Thread {
                     partyMember.getItem() != null &&
                     partyMember.getItem().name.equals(ITM_EXP_Share.colName)) {
 
+                System.out.println(partyMember.getName());
+
                 // Add party member to list of exp share fighters
                 otherFighters.add(partyMember);
             }
         }
+
+        System.out.println(otherFighters.toString());
     }
     /** END SETUP BATTLE METHODS **/
 
@@ -337,16 +341,13 @@ public class BattleManager extends Thread {
         }
         // Mid-battle swap out for player 1
         else {
-            // Add old fighter to EXP share list
-            if (!otherFighters.contains(fighter[0])) {
-                otherFighters.add(fighter[0]);
-            }
-
             if (fighter[0].getAbility() == Ability.NATURALCURE) {
                 fighter[0].removeStatus();
             }
 
+            Pokemon oldFighter = fighter[0];
             fighter[0] = newFighter[0];
+
             gp.playSE(gp.cry_SE, fighter[0].toString());
             typeDialogue("Go, " + fighter[0].getName() + "!");
             pause(100);
@@ -371,6 +372,12 @@ public class BattleManager extends Thread {
             }
             // Mid-battle swap out in single player
             else if (newFighter[1] == null) {
+
+                // Add old fighter to EXP share list
+                if (!otherFighters.contains(oldFighter)) {
+                    otherFighters.add(oldFighter);
+                }
+
                 setQueue();
                 getFighterAbility();
             }
@@ -382,6 +389,8 @@ public class BattleManager extends Thread {
                 gp.ui.battleState = gp.ui.battle_Options;
             }
         }
+
+        getOtherFighters();
 
         newFighter[0] = null;
         newFighter[1] = null;
@@ -570,6 +579,7 @@ public class BattleManager extends Thread {
 
     private void getCPUMove() {
 
+        // CPU Battle
         if (cpu) {
 
             // GET CPU MOVE IF NO CPU DELAY
@@ -2732,13 +2742,12 @@ public class BattleManager extends Thread {
         // Shared EXP
         for (Pokemon p : otherFighters) {
             xp = p.getXP() + gainedXP;
-            increaseEXP(p, xp, 0);
             typeDialogue(p.getName() + " gained\n" + gainedXP + " Exp. Points!", true);
+            increaseEXP(p, xp, 0);
         }
 
-        // Reset shared EXP Pokemon
+        // Clear list of exp share fighters
         otherFighters.clear();
-        getOtherFighters();
     }
 
     private int calculateEXPGain() {
@@ -2825,7 +2834,6 @@ public class BattleManager extends Thread {
                 gp.ui.battleState = gp.ui.battle_Evolve;
             }
             else {
-//				fightStage = fight_Swap;	
                 gp.ui.battleState = gp.ui.battle_Dialogue;
             }
 
@@ -2883,7 +2891,6 @@ public class BattleManager extends Thread {
                 gp.ui.battleState = gp.ui.battle_Evolve;
             }
             else {
-//				fightStage = fight_Swap;	
                 fightStage = fight_Start;
                 gp.ui.battleState = gp.ui.battle_Dialogue;
             }

@@ -258,14 +258,16 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startMusic(int category, int record) {
+        int loopStart = music.getLoopStart(category, record);
         music.setFile(category, record);
-        music.loopBetweenTimestamps(2571);
+        music.loopBetweenTimestamps(loopStart);
     }
 
     public void startMusic(int category, String file) {
-        music.setFile(category, se.getFile(category, file));
-        music.loopBetweenTimestamps(1375);
-
+        int record = se.getFile(category, file);
+        int loopStart = music.getLoopStart(category, record);
+        music.setFile(category, record);
+        music.loopBetweenTimestamps(loopStart);
     }
 
     public void pauseMusic() {
@@ -273,7 +275,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void playMusic() {
-        music.loopBetweenTimestamps(5000);
+        music.play();
     }
 
     public void stopMusic() {
