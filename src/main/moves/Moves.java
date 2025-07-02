@@ -188,7 +188,7 @@ public enum Moves {
     FURYATTACK("Fury Attack", MoveType.PHYSICAL, Type.NORMAL, 20, 15, 85, 0,
             "The foe is jabbed repeatedly\nwith a horn or beak two to\nfive times in a row."),
     FURYCUTTER("Fury Cutter", MoveType.PHYSICAL, Type.BUG, 20, 10, 95, 0,
-            "The foe is slashed with\nscythes or claws."),
+            "The foe is slashed with\nscythes or claws. Its power\nincreases if it hits in\nsuccession."),
     FURYSWIPES("Fury Swipes", MoveType.PHYSICAL, Type.NORMAL, 15, 18, 80, 0,
             "The foe is raked with sharp\nclaws or scythes for two to\nfive times in quick\nsuccession."),
     FUTURESIGHT("Future Sight", MoveType.OTHER, Type.PSYCHIC, 15, 80, 90, 0, 2,
@@ -832,8 +832,12 @@ public enum Moves {
     }
 
     public int getAccuracy() {
-        if (accuracy == -1) return 100;
-        else return accuracy;
+        if (accuracy == -1) {
+            return 100;
+        }
+        else {
+            return accuracy;
+        }
     }
 
     public int getPower() {

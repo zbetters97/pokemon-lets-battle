@@ -1116,7 +1116,7 @@ public class Entity {
 
             if (hasShadow) {
                 g2.setColor(new Color(0, 0, 0, 100));
-                g2.fillOval(tempScreenX + 9, tempScreenY + 30, 30, 10);
+                g2.fillOval(tempScreenX + 9, tempScreenY + 40, 30, 10);
             }
 
             switch (direction) {

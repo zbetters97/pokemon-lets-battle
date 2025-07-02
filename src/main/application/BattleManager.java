@@ -52,6 +52,7 @@ public class BattleManager extends Thread {
     private final Pokemon[] newFighter = new Pokemon[2];
     private final ArrayList<Pokemon> otherFighters = new ArrayList<>();
     public Move playerMove, cpuMove;
+    private int playerFurryCutterCount = 10, cpuFurryCutterCount = 10;
     public Move newMove = null, oldMove = null;
     private Weather weather = Weather.CLEAR;
     private int weatherDays = -1;
@@ -453,6 +454,13 @@ public class BattleManager extends Thread {
 
         Entity player = playerNum == 0 ? gp.player : trainer;
         Pokemon chosenFighter = player.pokeParty.get(partySlot);
+
+        if (playerNum == 0) {
+            playerFurryCutterCount = 10;
+        }
+        else {
+            cpuFurryCutterCount = 10;
+        }
 
         // Player 1 swap or CPU / Player 2 swap
         int queue = playerNum == 0 ? queue_PlayerSwap : queue_CPUSwap;
@@ -1163,6 +1171,14 @@ public class BattleManager extends Thread {
         else {
             typeDialogue("The attack missed!");
 
+            // Reset Furry Cutter counter
+            if (atk == fighter[0]) {
+                playerFurryCutterCount = 10;
+            }
+            else {
+                cpuFurryCutterCount = 10;
+            }
+
             if (move.getMove() == Moves.JUMPKICK || move.getMove() == Moves.HIGHJUMPKICK) {
 
                 int damage = (int) Math.floor(atk.getHP() * 0.125);
@@ -1670,6 +1686,16 @@ public class BattleManager extends Thread {
      **/
     private void damageMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 
+        // Reset Furry Cutter counter if not Furry Cutter
+        if (move.getMove() != Moves.FURYCUTTER) {
+            if (atk == fighter[0]) {
+                playerFurryCutterCount = 10;
+            }
+            else {
+                cpuFurryCutterCount = 10;
+            }
+        }
+
         getDamage(atk, trg, move);
 
         // Both pokemon alive
@@ -1869,6 +1895,21 @@ public class BattleManager extends Thread {
             case ERUPTION:
                 power = (atk.getHP() * 150.0) / atk.getBHP();
                 break;
+            case FURYCUTTER:
+                // Track consecutive uses of Furry Cutter for player or CPU
+                if (atk == fighter[0]) {
+                    power = playerFurryCutterCount;
+                    if (playerFurryCutterCount < 160) {
+                        playerFurryCutterCount *= 2;
+                    }
+                }
+                else {
+                    power = cpuFurryCutterCount;
+                    if (cpuFurryCutterCount < 160) {
+                        cpuFurryCutterCount *= 2;
+                    }
+                }
+                break;
             case FLAIL, REVERSAL:
                 double remainHP = (double) atk.getHP() / atk.getBHP();
 
@@ -1892,7 +1933,6 @@ public class BattleManager extends Thread {
                 }
 
                 break;
-
             case FLING:
                 power = atk.getItem().power;
                 atk.giveItem(null);
@@ -2644,10 +2684,12 @@ public class BattleManager extends Thread {
         if (fighter[0].getHP() <= 0) {
             fighter[0].setAlive(false);
             playerMove = null;
+            playerFurryCutterCount = 10;
         }
         if (fighter[1].getHP() <= 0) {
             fighter[1].setAlive(false);
             cpuMove = null;
+            cpuFurryCutterCount = 10;
         }
 
         // TIE
@@ -3597,6 +3639,8 @@ public class BattleManager extends Thread {
         playerMove = null;
         cpuMove = null;
         newMove = null;
+        playerFurryCutterCount = 10;
+        cpuFurryCutterCount = 10;
         ballUsed = null;
 
         weather = Weather.CLEAR;
