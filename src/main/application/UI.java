@@ -85,6 +85,7 @@ public class UI {
     // PARTY VALUES
     public String partyDialogue = "";
     private boolean partyMove = false;
+    private boolean fromParty = false;
     private int partyMoveNum = -1;
     public Entity partyItem;
     public boolean partyItemApply = false;
@@ -153,8 +154,9 @@ public class UI {
     private final int pc_Box = 1;
     private final int pc_Select = 2;
     private final int pc_Party = 3;
-    private final int pc_Summary = 4;
-    private final int pc_Fight = 5;
+    private final int pc_Party_Select = 4;
+    private final int pc_Summary = 5;
+    private final int pc_Fight = 6;
 
     // PAUSE STATE
     public int pauseState;
@@ -2799,12 +2801,12 @@ public class UI {
         int height;
         String text;
         Pokemon fighter;
-        Entity trainer = gp.player;
-        if (gp.btlManager.active && player == 1) {
-            trainer = gp.btlManager.trainer;
-        }
 
-        if (gp.gameState == gp.pcState) {
+        // Detect if player 2 or player 1
+        Entity trainer = gp.btlManager.active && player == 1 ? gp.btlManager.trainer : gp.player;
+
+        // From PC Box screen
+        if (gp.gameState == gp.pcState && !fromParty) {
             fighter = gp.player.pcParty[boxTab][fighterNum];
         }
         else {
@@ -3002,12 +3004,7 @@ public class UI {
         g2.setColor(Color.BLACK);
         g2.setFont(g2.getFont().deriveFont(Font.BOLD));
         y += gp.tileSize * 0.9;
-        if (fighter.getItem() != null) {
-            text = fighter.getItem().name;
-        }
-        else {
-            text = "NONE";
-        }
+        text = fighter.getItem() != null ? fighter.getItem().name : "NONE";
         g2.drawString(text, x, y);
 
         // ABILITY BOX
@@ -3051,28 +3048,29 @@ public class UI {
         }
         if (gp.keyH.bPressed) {
             gp.keyH.bPressed = false;
+            commandNum = 0;
 
             if (gp.gameState == gp.pcState) {
-                pcState = pc_Box;
                 partyState = 0;
+
+                // Back to PC Party screen
+                if (fromParty) {
+                    fromParty = false;
+                    pcState = pc_Party;
+                }
+                // Back to PC Box screen
+                else {
+                    pcState = pc_Box;
+                }
             }
             else {
                 partyDialogue = "Choose a POKéMON.";
                 partyState = party_Main_Select;
             }
-            commandNum = 0;
         }
     }
 
     private void party_Moves() {
-
-        Entity trainer;
-        if (gp.btlManager.active && player == 1) {
-            trainer = gp.btlManager.trainer;
-        }
-        else {
-            trainer = gp.player;
-        }
 
         party_Info();
 
@@ -3085,7 +3083,11 @@ public class UI {
         String text;
         Pokemon fighter;
 
-        if (gp.gameState == gp.pcState) {
+        // Detect if player 2 or player 1
+        Entity trainer = gp.btlManager.active && player == 1 ? gp.btlManager.trainer : gp.player;
+
+        // From PC Box screen
+        if (gp.gameState == gp.pcState && !fromParty) {
             fighter = gp.player.pcParty[boxTab][fighterNum];
         }
         else {
@@ -3130,22 +3132,12 @@ public class UI {
         tempX += gp.tileSize * 5.35;
         tempY -= gp.tileSize;
         int power = move.getPower();
-        if (power <= 2 || 999 <= power) {
-            text = "---";
-        }
-        else {
-            text = Integer.toString(power);
-        }
+        text = power <= 2 || power >= 999 ? "---" : Integer.toString(power);
         g2.drawString(text, tempX, tempY);
 
         tempY += gp.tileSize;
         int accuracy = move.getAccuracy();
-        if (accuracy <= 0) {
-            text = "---";
-        }
-        else {
-            text = Integer.toString(accuracy);
-        }
+        text = accuracy > 0 ? Integer.toString(accuracy) : "---";
         g2.drawString(text, tempX, tempY);
 
         // MOVES BOX
@@ -3276,8 +3268,17 @@ public class UI {
                 partyMoveNum = -1;
             }
             else if (gp.gameState == gp.pcState) {
-                pcState = pc_Box;
                 partyState = 0;
+
+                // Back to PC Party screen
+                if (fromParty) {
+                    fromParty = false;
+                    pcState = pc_Party;
+                }
+                // Back to PC Box screen
+                else {
+                    pcState = pc_Box;
+                }
             }
             else {
                 partyDialogue = "Choose a POKéMON.";
@@ -3289,13 +3290,8 @@ public class UI {
 
     private void party_Info() {
 
-        Entity trainer;
-        if (gp.btlManager.active && player == 1) {
-            trainer = gp.btlManager.trainer;
-        }
-        else {
-            trainer = gp.player;
-        }
+        // Detect if player 2 or player 1
+        Entity trainer = gp.btlManager.active && player == 1 ? gp.btlManager.trainer : gp.player;
 
         g2.setColor(battle_white);
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
@@ -3307,7 +3303,8 @@ public class UI {
         String text;
         Pokemon fighter;
 
-        if (gp.gameState == gp.pcState) {
+        // From PC Box screen
+        if (gp.gameState == gp.pcState && !fromParty) {
             fighter = gp.player.pcParty[boxTab][fighterNum];
         }
         else {
@@ -3399,10 +3396,9 @@ public class UI {
         int y;
         String text;
         Pokemon fighter;
-        Entity trainer = gp.player;
-        if (gp.btlManager.active && player == 1) {
-            trainer = gp.btlManager.trainer;
-        }
+
+        // Detect if player 2 or player 1
+        Entity trainer = gp.btlManager.active && player == 1 ? gp.btlManager.trainer : gp.player;
 
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 50F));
 
@@ -3416,12 +3412,9 @@ public class UI {
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
 
-        if (subState == 0) {
-            text = "->";
-        }
-        else {
-            text = "<-";
-        }
+        // MOVE OR SKILL
+        text = subState == 0 ? "->" : "<-";
+
         x += gp.tileSize * 2.7;
         y = (int) (gp.tileSize * 1.3);
         drawText(text, x, y, Color.WHITE, Color.BLACK);
@@ -3436,14 +3429,8 @@ public class UI {
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
 
-        x = (int) (gp.tileSize * 0.4);
-        y = (int) (gp.tileSize * 1.3);
-        drawText("< " + KeyEvent.getKeyText(gp.btn_L), x, y, battle_white, Color.BLACK);
-        x = (int) (gp.screenWidth - (gp.tileSize * 1.2));
-        y = (int) (gp.tileSize * 1.3);
-        drawText(KeyEvent.getKeyText(gp.btn_R) + " >", x, y, battle_white, Color.BLACK);
-
-        if (gp.gameState == gp.pcState) {
+        // PC BOX SUMMARY
+        if (gp.gameState == gp.pcState && !fromParty) {
 
             if (0 < fighterNum && gp.player.pcParty[boxTab][fighterNum - 1] != null) {
 
@@ -3451,6 +3438,10 @@ public class UI {
                 y = 0;
                 fighter = gp.player.pcParty[boxTab][fighterNum - 1];
                 g2.drawImage(fighter.getMenuSprite(), x, y, null);
+
+                x = (int) (gp.tileSize * 0.4);
+                y = (int) (gp.tileSize * 1.3);
+                drawText("< " + KeyEvent.getKeyText(gp.btn_L), x, y, battle_white, Color.BLACK);
 
                 if (gp.keyH.lPressed && !partyMove) {
                     gp.keyH.lPressed = false;
@@ -3467,6 +3458,10 @@ public class UI {
                 fighter = gp.player.pcParty[boxTab][fighterNum + 1];
                 g2.drawImage(fighter.getMenuSprite(), x, y, null);
 
+                x = (int) (gp.screenWidth - (gp.tileSize * 1.2));
+                y = (int) (gp.tileSize * 1.3);
+                drawText(KeyEvent.getKeyText(gp.btn_R) + " >", x, y, battle_white, Color.BLACK);
+
                 if (gp.keyH.rPressed && !partyMove) {
                     gp.keyH.rPressed = false;
                     gp.keyH.playCursorSE();
@@ -3475,6 +3470,7 @@ public class UI {
                 }
             }
         }
+        // TRAINER PARTY OR PC PARTY SUMMARY
         else {
             if (0 < fighterNum) {
 
@@ -3482,6 +3478,10 @@ public class UI {
                 y = 0;
                 fighter = trainer.pokeParty.get(fighterNum - 1);
                 g2.drawImage(fighter.getMenuSprite(), x, y, null);
+
+                x = (int) (gp.tileSize * 0.4);
+                y = (int) (gp.tileSize * 1.3);
+                drawText("< " + KeyEvent.getKeyText(gp.btn_L), x, y, battle_white, Color.BLACK);
 
                 if (gp.keyH.lPressed && !partyMove) {
                     gp.keyH.lPressed = false;
@@ -3497,6 +3497,10 @@ public class UI {
                 y = 0;
                 fighter = trainer.pokeParty.get(fighterNum + 1);
                 g2.drawImage(fighter.getMenuSprite(), x, y, null);
+
+                x = (int) (gp.screenWidth - (gp.tileSize * 1.2));
+                y = (int) (gp.tileSize * 1.3);
+                drawText(KeyEvent.getKeyText(gp.btn_R) + " >", x, y, battle_white, Color.BLACK);
 
                 if (gp.keyH.rPressed && !partyMove) {
                     gp.keyH.rPressed = false;
@@ -3518,10 +3522,9 @@ public class UI {
         int width;
         int height;
         String text;
-        Entity trainer = gp.player;
-        if (gp.btlManager.active && player == 1) {
-            trainer = gp.btlManager.trainer;
-        }
+
+        // Detect if player 2 or player 1
+        Entity trainer = gp.btlManager.active && player == 1 ? gp.btlManager.trainer : gp.player;
         Pokemon fighter = trainer.pokeParty.get(fighterNum);
 
         List<Move> moveSet = new ArrayList<>(trainer.pokeParty.get(fighterNum).getMoveSet());
@@ -5348,6 +5351,11 @@ public class UI {
                 pc_Box();
                 pc_Party();
                 break;
+            case pc_Party_Select:
+                pc_Box();
+                pc_Party();
+                pc_Select();
+                break;
             case pc_Summary:
                 if (partyState == party_Skills) {
                     party_Skills();
@@ -5749,8 +5757,13 @@ public class UI {
             drawText(text, x, y, battle_white, Color.BLACK);
 
             y += gp.tileSize;
-            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));
-            text = "Lv" + fighter.getLevel();
+            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 37f));
+            text = "Lv.";
+            drawText(text, x, y, battle_white, Color.BLACK);
+
+            x += (int) (gp.tileSize * 0.85);
+            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 50F));
+            text = String.valueOf(fighter.getLevel());
             drawText(text, x, y, battle_white, Color.BLACK);
 
             int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
@@ -5829,12 +5842,30 @@ public class UI {
             if (gp.keyH.aPressed) {
                 gp.keyH.aPressed = false;
                 gp.keyH.playCursorSE();
-
-                selectedFighter = gp.player.pcParty[boxTab][fighterNum];
-                gp.player.pcParty[boxTab][fighterNum] = null;
-
                 commandNum = 0;
-                pcState = pc_Box;
+
+                // Selecting a Pokemon from the box
+                if (pcState == pc_Select) {
+                    selectedFighter = gp.player.pcParty[boxTab][fighterNum];
+                    gp.player.pcParty[boxTab][fighterNum] = null;
+                    pcState = pc_Box;
+                }
+                // Selecting a Pokemon from the party
+                else if (pcState == pc_Party_Select) {
+
+                    // More than one Pokemon in party
+                    if (gp.player.pokeParty.size() > 1) {
+
+                        // Pick up Pokemon and remove from party
+                        selectedFighter = gp.player.pokeParty.get(fighterNum);
+                        gp.player.pokeParty.remove(fighterNum);
+                        pcState = pc_Party;
+                    }
+                    // Attempting to remove the last Pokemon
+                    else {
+                        gp.keyH.playErrorSE();
+                    }
+                }
             }
         }
         // SUMMARY
@@ -5859,8 +5890,15 @@ public class UI {
 
             if (gp.keyH.aPressed) {
                 gp.keyH.aPressed = false;
-                gp.keyH.playCursorSE();
-                commandNum = 0;
+
+                // Attemtping to remove last Pokemon from party
+                if (fromParty && gp.player.pokeParty.size() == 1) {
+                    gp.keyH.playErrorSE();
+                }
+                else {
+                    gp.keyH.playCursorSE();
+                    commandNum = 0;
+                }
             }
         }
         // CANCEL
@@ -5873,7 +5911,15 @@ public class UI {
                 gp.keyH.aPressed = false;
                 gp.keyH.playCloseSE();
                 commandNum = 0;
-                pcState = pc_Box;
+
+                // Selecting a Pokemon from the box
+                if (pcState == pc_Select) {
+                    pcState = pc_Box;
+                }
+                // Selecting a Pokemon from the party
+                else if (pcState == pc_Party_Select) {
+                    pcState = pc_Party;
+                }
             }
         }
 
@@ -5895,7 +5941,15 @@ public class UI {
             gp.keyH.bPressed = false;
             gp.keyH.playCloseSE();
             commandNum = 0;
-            pcState = pc_Box;
+
+            // Box screen
+            if (pcState == pc_Select) {
+                pcState = pc_Box;
+            }
+            // Party screen
+            else if (pcState == pc_Party_Select) {
+                pcState = pc_Party;
+            }
         }
     }
 
@@ -5916,6 +5970,7 @@ public class UI {
         if (fighterNum == 0) {
             slotX = x + (int) (gp.tileSize * 0.5);
             slotY = y - (int) (gp.tileSize * 0.4);
+
             if (selectedFighter != null) {
                 g2.drawImage(selectedFighter.getMenuSprite(), slotX - 15, slotY, null);
             }
@@ -5932,6 +5987,7 @@ public class UI {
             if (fighterNum == i) {
                 slotX = x + (int) (gp.tileSize * 0.5);
                 slotY = y - (int) (gp.tileSize * 0.4);
+
                 if (selectedFighter != null) {
                     g2.drawImage(selectedFighter.getMenuSprite(), slotX - 15, slotY, null);
                 }
@@ -5949,89 +6005,101 @@ public class UI {
             g2.drawImage(pc_cursor, slotX, slotY, null);
         }
 
-        if (fighterNum == 0) {
-            if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.rightPressed) {
-                gp.keyH.upPressed = false;
-                gp.keyH.downPressed = false;
-                gp.keyH.rightPressed = false;
-                gp.keyH.playCursorSE();
-                fighterNum = 1;
-            }
-        }
-        else {
-            if (gp.keyH.downPressed) {
-                gp.keyH.downPressed = false;
-                if (fighterNum < 6) {
+        if (pcState == pc_Party) {
+            if (fighterNum == 0) {
+                if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.rightPressed) {
+                    gp.keyH.upPressed = false;
+                    gp.keyH.downPressed = false;
+                    gp.keyH.rightPressed = false;
                     gp.keyH.playCursorSE();
-                    fighterNum++;
+                    fighterNum = 1;
                 }
             }
-            if (gp.keyH.upPressed) {
-                gp.keyH.upPressed = false;
-                if (fighterNum > 0) {
+            else {
+                if (gp.keyH.downPressed) {
+                    gp.keyH.downPressed = false;
+                    if (fighterNum < 6) {
+                        gp.keyH.playCursorSE();
+                        fighterNum++;
+                    }
+                }
+                if (gp.keyH.upPressed) {
+                    gp.keyH.upPressed = false;
+                    if (fighterNum > 0) {
+                        gp.keyH.playCursorSE();
+                        fighterNum--;
+                    }
+                }
+                if (gp.keyH.leftPressed) {
+                    gp.keyH.leftPressed = false;
                     gp.keyH.playCursorSE();
-                    fighterNum--;
+                    fighterNum = 0;
                 }
             }
-            if (gp.keyH.leftPressed) {
-                gp.keyH.leftPressed = false;
-                gp.keyH.playCursorSE();
-                fighterNum = 0;
+
+            if (gp.keyH.aPressed) {
+                gp.keyH.aPressed = false;
+
+                // Exit button selected
+                if (fighterNum == 6) {
+                    gp.keyH.playCloseSE();
+                    commandNum = 0;
+                    fighterNum = 0;
+                    pcState = pc_Box;
+                }
+                else {
+                    // Pokemon is selected
+                    if (gp.player.pokeParty.size() > fighterNum) {
+                        fighter = gp.player.pokeParty.get(fighterNum);
+                    }
+
+                    // Not holding a Pokemon
+                    if (selectedFighter == null) {
+
+                        // Slot with a Pokemon is selected without holding a Pokemon
+                        if (fighter != null) {
+                            gp.keyH.playCursorSE();
+                            fromParty = true;
+                            commandNum = 0;
+                            pcState = pc_Party_Select;
+                        }
+                        // Empty slot selected without holding a Pokemon
+                        else {
+                            gp.keyH.playErrorSE();
+                        }
+                    }
+                    // Holding a Pokemon
+                    else {
+                        // Slot with a Pokemon is selected while holding a Pokemon
+                        if (fighter != null) {
+                            // Swap selected Pokemon with one in party
+                            gp.player.pokeParty.set(fighterNum, selectedFighter);
+                            selectedFighter = fighter;
+                        }
+                        // Empty slot selected while holding a Pokemon
+                        else {
+                            // Add to party, shift empty slot to closest available
+                            if (gp.player.pokeParty.size() <= fighterNum) {
+                                gp.player.pokeParty.add(selectedFighter);
+                            }
+                            else {
+                                gp.player.pokeParty.set(fighterNum, selectedFighter);
+                            }
+
+                            // Remove from cursor
+                            selectedFighter = null;
+                        }
+                    }
+                }
             }
-        }
 
-        if (gp.keyH.aPressed) {
-            gp.keyH.aPressed = false;
-
-            if (fighterNum == 6) {
+            if (gp.keyH.bPressed) {
+                gp.keyH.bPressed = false;
                 gp.keyH.playCloseSE();
                 commandNum = 0;
                 fighterNum = 0;
                 pcState = pc_Box;
             }
-            else {
-                if (gp.player.pokeParty.size() > fighterNum) {
-                    fighter = gp.player.pokeParty.get(fighterNum);
-                }
-
-                if (selectedFighter == null) {
-                    if (fighter != null) {
-                        if (gp.player.pokeParty.size() > 1) {
-                            selectedFighter = fighter;
-                            gp.player.pokeParty.remove(fighterNum);
-                        }
-                        else {
-                            gp.keyH.playErrorSE();
-                        }
-                    }
-                    else {
-                        gp.keyH.playErrorSE();
-                    }
-                }
-                else {
-                    if (fighter == null) {
-                        if (gp.player.pokeParty.size() <= fighterNum) {
-                            gp.player.pokeParty.add(selectedFighter);
-                        }
-                        else {
-                            gp.player.pokeParty.set(fighterNum, selectedFighter);
-                        }
-                        selectedFighter = null;
-                    }
-                    else {
-                        gp.player.pokeParty.set(fighterNum, selectedFighter);
-                        selectedFighter = fighter;
-                    }
-                }
-            }
-        }
-
-        if (gp.keyH.bPressed) {
-            gp.keyH.bPressed = false;
-            gp.keyH.playCloseSE();
-            commandNum = 0;
-            fighterNum = 0;
-            pcState = pc_Box;
         }
     }
 

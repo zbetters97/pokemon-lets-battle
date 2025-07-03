@@ -1199,16 +1199,25 @@ public class BattleManager extends Thread {
         // Check if target's protection can be bypassed
         switch (trg.getProtection()) {
             case BOUNCE, FLY, SKYDROP:
-                return (move.getMove() == Moves.GUST &&
-                        move.getMove() == Moves.SKYUPPERCUT &&
-                        move.getMove() == Moves.THUNDER &&
-                        move.getMove() == Moves.TWISTER);
+                if (move.getMove() != Moves.GUST &&
+                        move.getMove() != Moves.SKYUPPERCUT &&
+                        move.getMove() != Moves.THUNDER &&
+                        move.getMove() != Moves.TWISTER) {
+                    return false;
+                }
+                break;
             case DIG:
-                return (move.getMove() == Moves.EARTHQUAKE &&
-                        move.getMove() == Moves.FISSURE &&
-                        move.getMove() == Moves.MAGNITUDE);
+                if (move.getMove() != Moves.EARTHQUAKE &&
+                        move.getMove() != Moves.FISSURE &&
+                        move.getMove() != Moves.MAGNITUDE) {
+                    return false;
+                }
+                break;
             case DIVE:
-                return (move.getMove() == Moves.SURF);
+                if (move.getMove() != Moves.SURF) {
+                    return false;
+                }
+                break;
             default:
                 break;
         }
@@ -1227,13 +1236,19 @@ public class BattleManager extends Thread {
         }
         else {
             double accuracy;
+            double moveAccuracy = getAccuracy(atk, move);
+
+            // Always hit
+            if (moveAccuracy > 100) {
+                return true;
+            }
 
             // Ignore evasion if attacker has Foresight
             if (atk.hasActiveMove(Moves.FORESIGHT)) {
-                accuracy = getAccuracy(atk, move) * atk.getAccuracy();
+                accuracy = moveAccuracy * atk.getAccuracy();
             }
             else {
-                accuracy = getAccuracy(atk, move) * (atk.getAccuracy() / trg.getEvasion());
+                accuracy = moveAccuracy * (atk.getAccuracy() / trg.getEvasion());
             }
 
             Random r = new Random();
@@ -1251,16 +1266,21 @@ public class BattleManager extends Thread {
         double accuracy = move.getAccuracy();
 
         switch (weather) {
-            case CLEAR, RAIN:
-                break;
-            case SUNLIGHT, SANDSTORM:
-                if (move.getMove() == Moves.THUNDER) {
-                    accuracy *= 0.5;
-                }
+            case CLEAR:
                 break;
             case HAIL:
                 if (move.getMove() == Moves.BLIZZARD) {
-                    accuracy = 100;
+                    accuracy = 999;
+                }
+                break;
+            case RAIN:
+                if (move.getMove() == Moves.THUNDER) {
+                    accuracy = 999;
+                }
+                break;
+            case SUNLIGHT, SANDSTORM:
+                if (move.getMove() == Moves.THUNDER) {
+                    accuracy = 50;
                 }
                 break;
         }

@@ -124,13 +124,18 @@ public class Move {
         switch (move) {
             case FUTURESIGHT, LIGHTSCREEN, MIST, OUTRAGE, PERISHSONG, PETALDANCE, REFLECT,
                  ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH, WISH, WRAP:
-                if (turnCount > 0) turnCount--;
-                else turnCount = getTurns();
+                if (turnCount > 0) {
+                    turnCount--;
+                }
+                else {
+                    turnCount = getTurns();
+                }
                 break;
             default:
                 if (move.getRecharge()) {
                     turnCount--;
-                } else {
+                }
+                else {
                     turnCount = getTurns();
                 }
                 break;
@@ -140,7 +145,8 @@ public class Move {
     public boolean isWaiting() {
         if (getMType() == MoveType.OTHER) {
             return false;
-        } else {
+        }
+        else {
             return turnCount < getTurns();
         }
     }
@@ -174,12 +180,17 @@ public class Move {
     }
 
     public boolean isToSelf() {
-        return move.isToSelf();
+        // Weather moves are always to self
+        return move.isToSelf() || move.getWeather() != null;
     }
 
     public int getAccuracy() {
-        if (move.getAccuracy() == -1) return 100;
-        else return move.getAccuracy();
+        if (move.getAccuracy() == -1) {
+            return 100;
+        }
+        else {
+            return move.getAccuracy();
+        }
     }
 
     public int getPower() {

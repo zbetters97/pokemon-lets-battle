@@ -15,6 +15,7 @@ import entity.object.object_interactive.OBJ_Boulder;
 import entity.object.object_interactive.OBJ_Rock;
 import entity.object.object_interactive.OBJ_Tree;
 import entity.object.object_interactive.OBJ_Water;
+import moves.Moves;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Pokedex;
 
