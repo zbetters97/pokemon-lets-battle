@@ -540,6 +540,7 @@ public class Player extends Entity {
     private void hm() {
 
         hmCounter++;
+
         if (5 > hmCounter) {
             hmNum = 1;
         }
@@ -555,11 +556,16 @@ public class Player extends Entity {
         else if (25 > hmCounter && hmCounter > 20) {
             hmNum = 5;
         }
+        else if (hmCounter == 26) {
+            // Play Pokemon cry who has the HM
+            Pokemon hmPokemon = pokemonHasHM(activeItem.hmType);
+            if (hmPokemon != null) {
+                gp.playSE(gp.cry_SE, hmPokemon.toString());
+            }
+        }
         else if (hmCounter > 60) {
-
             hmNum = 1;
             hmCounter = 0;
-
             action = Action.IDLE;
 
             switch (activeItem.name) {

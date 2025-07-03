@@ -407,9 +407,10 @@ public class UI {
             }
             else if (npc.type == npc.type_obstacle_i) {
 
-                Pokemon p = gp.player.pokemonHasHM(npc.hmType);
+                Pokemon hmPokemon = gp.player.pokemonHasHM(npc.hmType);
 
-                if (p != null) {
+                // Player has a Pokemon with the correct HM
+                if (hmPokemon != null) {
                     gp.gameState = gp.hmState;
                 }
                 else {
