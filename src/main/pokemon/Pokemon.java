@@ -323,8 +323,10 @@ public class Pokemon {
         spDefenseIV = old.spDefenseIV;
         speedIV = old.speedIV;
 
-        hp = (int) (Math.floor(((2 * baseHP + hpIV + Math.floor(0.25 * ev)) * level) / 100) + level + 10);
+        // Check if hp is 1 for Shedinja
+        hp = old.baseHP == 1 ? 1 : (int) (Math.floor(((2 * baseHP + hpIV + Math.floor(0.25 * ev)) * level) / 100) + level + 10);
         chp = hp;
+        baseHP = hp;
 
         attack = getStat(baseAttack, attackIV);
         defense = getStat(baseDefense, defenseIV);
@@ -380,7 +382,8 @@ public class Pokemon {
         this.spDefenseIV = spDefenseIV;
         this.speedIV = speedIV;
 
-        hp = (int) (Math.floor(((2 * baseHP + hpIV + Math.floor(0.25 * ev)) * level) / 100) + level + 10);
+        // Check if hp is 1 for Shedinja
+        hp = baseHP == 1 ? 1 : (int) (Math.floor(((2 * baseHP + hpIV + Math.floor(0.25 * ev)) * level) / 100) + level + 10);
         chp = hp;
 
         attack = getStat(baseAttack, attackIV);

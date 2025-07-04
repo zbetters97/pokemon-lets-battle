@@ -190,6 +190,11 @@ public class BattleManager extends Thread {
      **/
     private void setBattle() throws InterruptedException {
 
+        if (pcBattle) {
+            gp.player.healPokemonParty();
+            gp.player_2.healPokemonParty();
+        }
+
         switch (battleMode) {
             case wildBattle:
 
@@ -1832,9 +1837,6 @@ public class BattleManager extends Thread {
                 !trg.getAbility().isActive()) {
             trg.getAbility().setActive(true);
         }
-        else if (trg.getAbility() == Ability.WONDERGUARD && effectiveness <= 1.0) {
-            damage = 0;
-        }
 
         if (damage >= trg.getHP()) {
 
@@ -1856,6 +1858,8 @@ public class BattleManager extends Thread {
         /** DAMAGE FORMULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Damage **/
 
         double damage;
+
+        double effectiveness = getEffectiveness(trg, move.getType());
 
         double level = atk.getLevel();
         double power = getPower(move, atk, trg);
@@ -1883,7 +1887,7 @@ public class BattleManager extends Thread {
                 }
                 break;
             case SEISMICTOSS:
-                damage = trg.getLevel();
+                damage = atk.getLevel();
                 break;
             default:
                 break;
@@ -1908,6 +1912,11 @@ public class BattleManager extends Thread {
             case THICKFAT:
                 if (move.getType() == Type.FIRE || move.getType() == Type.ICE) {
                     damage *= 0.5;
+                }
+                break;
+            case WONDERGUARD:
+                if (effectiveness <= 1.0) {
+                    damage = 0;
                 }
                 break;
             default:
@@ -3296,7 +3305,7 @@ public class BattleManager extends Thread {
             }
 
             gp.player.healPokemonParty();
-            trainer.healPokemonParty();
+            gp.player_2.healPokemonParty();
 
             endBattle();
         }
