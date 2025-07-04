@@ -66,7 +66,7 @@ public class NPC_Red extends Entity {
 
         pokeParty.add(Pokemon.get(Pokedex.PIKACHU, 88, null));
         pokeParty.get(0).addMoves(Arrays.asList(
-                Moves.VOLTTACKLE,
+                Moves.FIREFANG,
                 Moves.IRONTAIL,
                 Moves.THUNDERBOLT,
                 Moves.QUICKATTACK
