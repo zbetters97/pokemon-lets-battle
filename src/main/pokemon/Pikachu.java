@@ -26,7 +26,6 @@ public class Pikachu extends Pokemon {
         moveset.addAll(Arrays.asList(
                 /*
                 new Move(Moves.THUNDERSHOCK),
-                new Move
                 */
                 new Move(Moves.THUNDERBOLT),
                 new Move(Moves.SLAM),

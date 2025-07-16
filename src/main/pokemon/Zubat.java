@@ -22,10 +22,13 @@ public class Zubat extends Pokemon {
     }
 
     protected void mapMoves() {
-
-        moveset.add(
-                new Move(Moves.LEECHLIFE)
-        );
+        moveset.addAll(Arrays.asList(
+                //new Move(Moves.LEECHLIFE)
+                new Move(Moves.CONFUSERAY),
+                new Move(Moves.MEGADRAIN),
+                new Move(Moves.TOXIC),
+                new Move(Moves.DOUBLEEDGE)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(5, Moves.SUPERSONIC),

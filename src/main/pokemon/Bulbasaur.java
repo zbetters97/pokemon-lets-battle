@@ -24,8 +24,14 @@ public class Bulbasaur extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.TACKLE),
                 new Move(Moves.GROWL)
+                */
+                new Move(Moves.LEECHSEED),
+                new Move(Moves.TOXIC),
+                new Move(Moves.BODYSLAM),
+                new Move(Moves.RAZORLEAF)
         ));
 
         moveLevels = Map.ofEntries(

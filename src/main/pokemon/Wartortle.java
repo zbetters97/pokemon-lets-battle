@@ -24,9 +24,15 @@ public class Wartortle extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.BUBBLE),
                 new Move(Moves.TACKLE),
                 new Move(Moves.TAILWHIP)
+                 */
+                new Move(Moves.SURF),
+                new Move(Moves.STRENGTH),
+                new Move(Moves.REST),
+                new Move(Moves.ICEBEAM)
         ));
 
         moveLevels = Map.ofEntries(

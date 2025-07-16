@@ -25,8 +25,14 @@ public class Growlithe extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(List.of(
+                /*
                 new Move(Moves.BITE)
 //        		new Move(Moves.ROAR)
+                 */
+                new Move(Moves.FLAMETHROWER),
+                new Move(Moves.BODYSLAM),
+                new Move(Moves.REFLECT),
+                new Move(Moves.DIG)
         ));
 
         moveLevels = Map.ofEntries(

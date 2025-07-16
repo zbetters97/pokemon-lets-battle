@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Horsea extends Pokemon {
@@ -22,9 +23,13 @@ public class Horsea extends Pokemon {
 
     protected void mapMoves() {
 
-        moveset.add(
-                new Move(Moves.BUBBLE)
-        );
+        moveset.addAll(Arrays.asList(
+                //  new Move(Moves.BUBBLE)
+                new Move(Moves.HYDROPUMP),
+                new Move(Moves.TOXIC),
+                new Move(Moves.SMOKESCREEN),
+                new Move(Moves.ICEBEAM)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(4, Moves.SMOKESCREEN),

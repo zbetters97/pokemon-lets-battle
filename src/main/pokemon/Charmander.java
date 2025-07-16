@@ -24,8 +24,14 @@ public class Charmander extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.SCRATCH),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.FLAMETHROWER),
+                new Move(Moves.SLASH),
+                new Move(Moves.DIG),
+                new Move(Moves.FIRESPIN)
         ));
 
         moveLevels = Map.ofEntries(

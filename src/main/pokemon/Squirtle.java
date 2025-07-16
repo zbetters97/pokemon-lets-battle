@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Squirtle extends Pokemon {
@@ -22,9 +23,13 @@ public class Squirtle extends Pokemon {
 
     protected void mapMoves() {
 
-        moveset.add(
-                new Move(Moves.TACKLE)
-        );
+        moveset.addAll(Arrays.asList(
+                // new Move(Moves.TACKLE)
+                new Move(Moves.SURF),
+                new Move(Moves.BLIZZARD),
+                new Move(Moves.BODYSLAM),
+                new Move(Moves.DIG)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(4, Moves.TAILWHIP),

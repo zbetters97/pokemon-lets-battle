@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Magikarp extends Pokemon {
@@ -22,9 +23,10 @@ public class Magikarp extends Pokemon {
 
     protected void mapMoves() {
 
-        moveset.add(
-                new Move(Moves.SPLASH)
-        );
+        moveset.addAll(Arrays.asList(
+                new Move(Moves.SPLASH),
+                new Move(Moves.TACKLE)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(15, Moves.TACKLE),

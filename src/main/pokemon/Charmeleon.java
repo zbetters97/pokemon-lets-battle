@@ -24,9 +24,15 @@ public class Charmeleon extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.EMBER),
                 new Move(Moves.SCRATCH),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.FLAMETHROWER),
+                new Move(Moves.COUNTER),
+                new Move(Moves.SEISMICTOSS),
+                new Move(Moves.STUNSPORE)
         ));
 
         moveLevels = Map.ofEntries(

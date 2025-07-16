@@ -24,9 +24,15 @@ public class Kadabra extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.CONFUSION),
                 new Move(Moves.KINESIS),
                 new Move(Moves.TELEPORT)
+                 */
+                new Move(Moves.PSYCHIC),
+                new Move(Moves.COUNTER),
+                new Move(Moves.RECOVER),
+                new Move(Moves.DIG)
         ));
 
         moveLevels = Map.ofEntries(

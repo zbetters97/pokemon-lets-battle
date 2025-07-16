@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Abra extends Pokemon {
@@ -22,9 +23,13 @@ public class Abra extends Pokemon {
 
     protected void mapMoves() {
 
-        moveset.add(
-                new Move(Moves.TELEPORT)
-        );
+        moveset.addAll(Arrays.asList(
+                //  new Move(Moves.TELEPORT)
+                new Move(Moves.PSYCHIC),
+                new Move(Moves.SEISMICTOSS),
+                new Move(Moves.REFLECT),
+                new Move(Moves.THUNDERWAVE)
+        ));
 
         moveLevels = Map.ofEntries(
 

@@ -24,8 +24,14 @@ public class Ivysaur extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.TACKLE),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.RAZORLEAF),
+                new Move(Moves.SLEEPPOWDER),
+                new Move(Moves.GROWTH),
+                new Move(Moves.DOUBLEEDGE)
         ));
 
         moveLevels = Map.ofEntries(

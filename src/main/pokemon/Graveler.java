@@ -24,8 +24,14 @@ public class Graveler extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.TACKLE),
                 new Move(Moves.DEFENSECURL)
+                 */
+                new Move(Moves.EARTHQUAKE),
+                new Move(Moves.SEISMICTOSS),
+                new Move(Moves.STRENGTH),
+                new Move(Moves.SELFDESTRUCT)
         ));
 
         moveLevels = Map.ofEntries(

@@ -56,6 +56,8 @@ public class BattleManager extends Thread {
     public Move newMove = null, oldMove = null;
     private Weather weather = Weather.CLEAR;
     private int weatherDays = -1;
+    private int playerPoison = 1, cpuPoison = 1;
+    private int playerDamageTaken = 0, cpuDamageTaken = 0;
     private int winner = -1, loser = -1;
     private int escapeAttempts = 0;
     public Entity ballUsed;
@@ -220,7 +222,7 @@ public class BattleManager extends Thread {
                 break;
         }
 
-        // Get player's first available pokemon
+        // Get player's first available Pokémon
         for (Pokemon p : gp.player.pokeParty) {
             if (p.isAlive()) {
                 fighter[0] = p;
@@ -317,7 +319,7 @@ public class BattleManager extends Thread {
 
         boolean defeated = false;
 
-        // If player's pokemon fainted
+        // If player's Pokémon fainted
         if (fighter[0] == null || !fighter[0].isAlive()) {
             fighter[0] = null;
             defeated = true;
@@ -736,7 +738,7 @@ public class BattleManager extends Thread {
                     // KO move with high priority, use it
                     if (move.getPriority() > 0) {
                         bestMove = move;
-                        return move;
+                        return bestMove;
                     }
 
                     int accuracy = (int) getAccuracy(fighter[1], move);
@@ -914,11 +916,11 @@ public class BattleManager extends Thread {
     private boolean canMove(Pokemon pkm, Move move) throws InterruptedException {
 
         // If pokemon has status, check if it can move, else return true
-        boolean canMove = pkm.getStatus() == null || switch (pkm.getStatus().getAbbreviation()) {
-            case "PAR" -> paralyzed(pkm);
-            case "FRZ" -> frozen(pkm);
-            case "SLP" -> asleep(pkm, move);
-            case "CNF" -> confused(pkm);
+        boolean canMove = pkm.getStatus() == null || switch (pkm.getStatus()) {
+            case Status.PARALYZE -> paralyzed(pkm);
+            case Status.FREEZE -> frozen(pkm);
+            case Status.SLEEP -> asleep(pkm, move);
+            case Status.CONFUSE -> confused(pkm);
             default -> true;
         };
 
@@ -1360,7 +1362,7 @@ public class BattleManager extends Thread {
      **/
     private void attributeMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 
-        // if move changes self attributes
+        // if move changes self-attributes
         if (move.isToSelf()) {
 
             int level = move.getLevel();
@@ -1396,7 +1398,7 @@ public class BattleManager extends Thread {
         }
 
         // Loop through each specified attribute to be changed
-        boolean canChange = true;
+        boolean canChange;
         for (String stat : stats) {
             canChange = pkm.canChangeStat(stat, level);
 
@@ -1787,6 +1789,13 @@ public class BattleManager extends Thread {
             typeDialogue("It had no effect!");
         }
         else {
+            if (trg == fighter[0]) {
+                playerDamageTaken = damage;
+            }
+            else {
+                cpuDamageTaken = damage;
+            }
+
             if (crit >= 1.5) {
                 typeDialogue("A critical hit!");
             }
@@ -1875,6 +1884,25 @@ public class BattleManager extends Thread {
                 power * (A / D)) / 50)) + 2) * crit * STAB * type * random);
 
         switch (move.getMove()) {
+            case COUNTER:
+                // Run Counter if the opponent has already used a damaging physical move
+                if (atk == fighter[0]) {
+                    if (cpuMove != null && cpuMove.getMove().getMType() == MoveType.PHYSICAL && playerDamageTaken > 0) {
+                        damage = playerDamageTaken * 2;
+                    }
+                    else {
+                        damage = 0;
+                    }
+                }
+                else {
+                    if (playerMove != null && playerMove.getMove().getMType() == MoveType.PHYSICAL && cpuDamageTaken > 0) {
+                        damage = cpuDamageTaken * 2;
+                    }
+                    else {
+                        damage = 0;
+                    }
+                }
+                break;
             case DRAGONRAGE:
                 damage = 40;
                 break;
@@ -1987,7 +2015,7 @@ public class BattleManager extends Thread {
                 // FOR EACH MAGNITUDE VALUE
                 for (Integer magnitude : magnitudeTable.keySet()) {
 
-                    // GET PROBABILITY OF MAGNITUDE
+                    // GET PROBABILITY OF MOVE MAGNITUDE
                     int rate = magnitudeTable.get(magnitude);
                     total += rate;
 
@@ -2282,7 +2310,7 @@ public class BattleManager extends Thread {
     /** END DAMAGE MOVE METHODS **/
 
     /**
-     * POST MOVE METHODS
+     * POST-MOVE METHODS
      **/
     private void absorbHP(Pokemon pkm, int damage) throws InterruptedException {
 
@@ -2394,7 +2422,7 @@ public class BattleManager extends Thread {
 
         return flinched;
     }
-    /** END POST MOVE METHODS **/
+    /** END POST-MOVE METHODS **/
 
     /**
      * ACTIVE MOVE METHODS
@@ -2519,24 +2547,25 @@ public class BattleManager extends Thread {
      **/
     private void checkStatusDamage() throws InterruptedException {
         if (fighter[0].isAlive()) {
-            setStatusDamage(fighter[0]);
+            setStatusDamage(fighter[0], 0);
         }
         if (fighter[1].isAlive()) {
-            setStatusDamage(fighter[1]);
+            setStatusDamage(fighter[1], 1);
         }
     }
 
-    private void setStatusDamage(Pokemon pkm) throws InterruptedException {
+    private void setStatusDamage(Pokemon pkm, int player) throws InterruptedException {
         // status effects reference: https://pokemon.fandom.com/wiki/Status_Effects
+        // posion reference: https://bulbapedia.bulbagarden.net/wiki/Poison_(status_condition)
 
         if (pkm.getStatus() != null) {
 
-            if (pkm.getStatus().getAbbreviation().equals("PSN") ||
-                    pkm.getStatus().getAbbreviation().equals("BRN")) {
+            if (pkm.getStatus() == Status.POISON ||
+                    pkm.getStatus() == Status.BURN) {
 
                 pause(500);
 
-                int damage = (int) Math.ceil((pkm.getHP() * 0.16));
+                int damage = (int) Math.ceil((pkm.getBHP() * 0.125));
                 if (damage > pkm.getHP()) {
                     damage = pkm.getHP();
                 }
@@ -2546,6 +2575,38 @@ public class BattleManager extends Thread {
                 decreaseHP(pkm, damage);
 
                 pkm.getStatus().printStatus(gp, pkm.getName());
+            }
+            else if (pkm.getStatus() == Status.BADPOISON) {
+
+                pause(500);
+
+                int poisonCount = player == 0 ? playerPoison : cpuPoison;
+
+                if (poisonCount > 15) {
+                    poisonCount = 15;
+                }
+
+                int damage = (int) (poisonCount * (pkm.getBHP() * 0.16));
+                if (damage > pkm.getHP()) {
+                    damage = pkm.getHP();
+                }
+
+                if (damage < 1) {
+                    damage = 1;
+                }
+
+                gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
+                pkm.setHit(true);
+                decreaseHP(pkm, damage);
+
+                pkm.getStatus().printStatus(gp, pkm.getName());
+
+                if (player == 0) {
+                    playerPoison++;
+                }
+                else {
+                    cpuPoison++;
+                }
             }
         }
     }
@@ -2649,6 +2710,9 @@ public class BattleManager extends Thread {
      **/
     private void getDelayedTurn() {
 
+        playerDamageTaken = 0;
+        cpuDamageTaken = 0;
+
         // RESET NON-DELAYED MOVES
         int delay = getDelay();
 
@@ -2725,11 +2789,13 @@ public class BattleManager extends Thread {
             fighter[0].setAlive(false);
             playerMove = null;
             playerFurryCutterCount = 10;
+            playerPoison = 1;
         }
         if (fighter[1].getHP() <= 0) {
             fighter[1].setAlive(false);
             cpuMove = null;
             cpuFurryCutterCount = 10;
+            cpuPoison = 1;
         }
 
         // TIE
@@ -3424,14 +3490,14 @@ public class BattleManager extends Thread {
         catchRate = fighter[1].getCatchRate();
 
         if (fighter[1].getStatus() != null) {
-            switch (fighter[1].getStatus().getAbbreviation()) {
-                case "PAR", "PSN", "BRN":
+            switch (fighter[1].getStatus()) {
+                case Status.PARALYZE, Status.POISON, Status.BADPOISON, Status.BURN:
                     statusBonus = 1.5;
                     break;
-                case "FRZ", "SLP":
+                case Status.FREEZE, Status.SLEEP:
                     statusBonus = 2.0;
                     break;
-                case "CNF":
+                case Status.CONFUSE:
                     break;
             }
         }
@@ -3681,6 +3747,10 @@ public class BattleManager extends Thread {
         newMove = null;
         playerFurryCutterCount = 10;
         cpuFurryCutterCount = 10;
+        playerDamageTaken = 0;
+        cpuDamageTaken = 0;
+        playerPoison = 1;
+        cpuPoison = 1;
         ballUsed = null;
 
         weather = Weather.CLEAR;

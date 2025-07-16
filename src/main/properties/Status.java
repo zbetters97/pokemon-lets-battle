@@ -10,6 +10,7 @@ public enum Status {
 
     PARALYZE("Paralyze", "paralyzed", "PAR"),
     POISON("Poison", "poisoned", "PSN"),
+    BADPOISON("Bad Poison", "poisoned", "PSN"),
     CONFUSE("Confuse", "confused", "CNF"),
     BURN("Burn", "burned", "BRN"),
     FREEZE("Freeze", "frozen", "FRZ"),
@@ -46,13 +47,13 @@ public enum Status {
 
     public Color getColor() {
 
-        Color color = switch (this.abr) {
-            case ("PAR") -> new Color(253, 174, 16);
-            case ("PSN") -> new Color(188, 82, 231);
-            case ("CNF") -> new Color(226, 196, 116);
-            case ("BRN") -> new Color(249, 78, 0);
-            case ("FRZ") -> new Color(98, 204, 212);
-            case ("SLP") -> new Color(125, 125, 125);
+        Color color = switch (this) {
+            case Status.PARALYZE -> new Color(253, 174, 16);
+            case Status.POISON, Status.BADPOISON -> new Color(188, 82, 231);
+            case Status.CONFUSE -> new Color(226, 196, 116);
+            case Status.BURN -> new Color(249, 78, 0);
+            case Status.FREEZE -> new Color(98, 204, 212);
+            case Status.SLEEP -> new Color(125, 125, 125);
             default -> Color.BLACK;
         };
 
@@ -76,36 +77,37 @@ public enum Status {
 
     public void printStatus(GamePanel gp, String fighter) throws InterruptedException {
 
-        switch (this.abr) {
-            case ("PAR"):
+        switch (this) {
+            case Status.PARALYZE:
                 gp.btlManager.typeDialogue(fighter + " is paralyzed\nand unable to move!");
                 break;
-            case ("PSN"):
+            case Status.POISON, Status.BADPOISON:
                 gp.btlManager.typeDialogue(fighter + " is hurt\nfrom the poison!");
                 break;
-            case ("CNF"):
+            case Status.CONFUSE:
                 gp.btlManager.typeDialogue(fighter + " hurt\nitself in confusion!");
                 break;
-            case ("BRN"):
+            case Status.BURN:
                 gp.btlManager.typeDialogue(fighter + " is hurt\nfrom the burn!");
                 break;
-            case ("FRZ"):
+            case Status.FREEZE:
                 gp.btlManager.typeDialogue(fighter + " is frozen\nsolid!");
                 break;
-            case ("SLP"):
+            case Status.SLEEP:
                 gp.btlManager.typeDialogue(fighter + " is fast\nasleep!");
                 break;
         }
     }
 
     public String printCondition() {
-        String recover = switch (this.abr) {
-            case ("PAR") -> " grew\nparalyzed!";
-            case ("PSN") -> " became\npoisoned!";
-            case ("CNF") -> " became\nconfused!";
-            case ("BRN") -> " suffered\na burn!";
-            case ("FRZ") -> " froze\nin ice!";
-            case ("SLP") -> " fell\nasleep!";
+        String recover = switch (this) {
+            case Status.PARALYZE -> " grew\nparalyzed!";
+            case Status.POISON -> " became\npoisoned!";
+            case Status.BADPOISON -> " became\nbadly poisoned!";
+            case Status.CONFUSE -> " became\nconfused!";
+            case Status.BURN -> " suffered\na burn!";
+            case Status.FREEZE -> " froze\nin ice!";
+            case Status.SLEEP -> " fell\nasleep!";
             default -> "";
         };
 
@@ -113,13 +115,13 @@ public enum Status {
     }
 
     public String printRecover() {
-        String recover = switch (this.abr) {
-            case ("PAR") -> " healed\nfrom paralysis!";
-            case ("PSN") -> " healed\nfrom the poison!";
-            case ("CNF") -> " snapped\nout of confusion!";
-            case ("BRN") -> " healed\nfrom the burn!";
-            case ("FRZ") -> " thawed\nfrom the ice!";
-            case ("SLP") -> " woke up!";
+        String recover = switch (this) {
+            case Status.PARALYZE -> " healed\nfrom paralysis!";
+            case Status.POISON, Status.BADPOISON -> " healed\nfrom the poison!";
+            case Status.CONFUSE -> " snapped\nout of confusion!";
+            case Status.BURN -> " healed\nfrom the burn!";
+            case Status.FREEZE -> " thawed\nfrom the ice!";
+            case Status.SLEEP -> " woke up!";
             default -> "";
         };
 

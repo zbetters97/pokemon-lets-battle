@@ -24,10 +24,16 @@ public class Golbat extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.SCREECH),
                 new Move(Moves.LEECHLIFE),
                 new Move(Moves.SUPERSONIC),
                 new Move(Moves.ASTONISH)
+                 */
+                new Move(Moves.CONFUSERAY),
+                new Move(Moves.MEGADRAIN),
+                new Move(Moves.BITE),
+                new Move(Moves.HAZE)
         ));
 
         moveLevels = Map.ofEntries(

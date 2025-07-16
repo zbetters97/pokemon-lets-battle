@@ -24,9 +24,15 @@ public class Seadra extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.WATERGUN),
                 new Move(Moves.BUBBLE),
                 new Move(Moves.LEER)
+                 */
+                new Move(Moves.SURF),
+                new Move(Moves.TOXIC),
+                new Move(Moves.SMOKESCREEN),
+                new Move(Moves.SWIFT)
         ));
 
         moveLevels = Map.ofEntries(

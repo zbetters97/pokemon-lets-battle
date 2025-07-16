@@ -24,8 +24,14 @@ public class Gastly extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.LICK),
                 new Move(Moves.HYPNOSIS)
+                 */
+                new Move(Moves.HYPNOSIS),
+                new Move(Moves.DREAMEATER),
+                new Move(Moves.PSYCHIC),
+                new Move(Moves.CONFUSERAY)
         ));
 
         moveLevels = Map.ofEntries(

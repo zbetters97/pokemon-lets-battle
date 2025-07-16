@@ -24,8 +24,14 @@ public class Machop extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.LOWKICK),
                 new Move(Moves.LEER)
+                 */
+                new Move(Moves.SUBMISSION),
+                new Move(Moves.ROCKSLIDE),
+                new Move(Moves.EARTHQUAKE)
+                //new Move(Moves.FOCUSENERGY)
         ));
 
         moveLevels = Map.ofEntries(

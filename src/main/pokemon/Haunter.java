@@ -24,8 +24,14 @@ public class Haunter extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.LICK),
                 new Move(Moves.HYPNOSIS)
+                */
+                new Move(Moves.MEGADRAIN),
+                new Move(Moves.PSYCHIC),
+                new Move(Moves.EXPLOSION),
+                new Move(Moves.CONFUSERAY)
         ));
 
         moveLevels = Map.ofEntries(

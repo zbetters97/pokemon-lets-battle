@@ -24,8 +24,14 @@ public class Machoke extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.LOWKICK),
                 new Move(Moves.LEER)
+                 */
+                new Move(Moves.SUBMISSION),
+                new Move(Moves.STRENGTH),
+                new Move(Moves.ROCKSLIDE)
+                //    new Move(Moves.FOCUSENERGY)
         ));
 
         moveLevels = Map.ofEntries(
