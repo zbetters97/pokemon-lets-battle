@@ -22,13 +22,11 @@ public class Mewtwo extends Pokemon {
     }
 
     protected void mapMoves() {
-
         /*
         moveset.add(
                 new Move(Moves.CONFUSION)
         );
         */
-
         moveset.addAll(Arrays.asList(
                 new Move(Moves.PSYCHOCUT),
                 new Move(Moves.AURASPHERE),

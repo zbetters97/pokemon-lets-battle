@@ -18,6 +18,7 @@ import entity.object.object_interactive.OBJ_Water;
 import moves.Moves;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Pokedex;
+import properties.Status;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

@@ -43,7 +43,7 @@ public class Crobat extends Pokemon {
                 Map.entry(17, Moves.WINGATTACK),
                 Map.entry(21, Moves.CONFUSERAY),
                 Map.entry(27, Moves.AIRCUTTER),
-//				Map.entry(33, Moves.MEANLOOK),
+                Map.entry(33, Moves.MEANLOOK),
                 Map.entry(39, Moves.POISONFANG),
                 Map.entry(45, Moves.HAZE),
                 Map.entry(51, Moves.AIRSLASH)

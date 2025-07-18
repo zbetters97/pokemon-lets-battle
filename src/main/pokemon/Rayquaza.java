@@ -22,13 +22,11 @@ public class Rayquaza extends Pokemon {
     }
 
     protected void mapMoves() {
-
         /*
         moveset.add(
                 new Move(Moves.TWISTER)
         );
          */
-
         moveset.addAll(Arrays.asList(
                 new Move(Moves.DRAGONCLAW),
                 new Move(Moves.DRAGONDANCE),

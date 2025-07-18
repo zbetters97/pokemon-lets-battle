@@ -40,7 +40,7 @@ public class Salamence extends Pokemon {
                 Map.entry(5, Moves.BITE),
                 Map.entry(10, Moves.LEER),
                 Map.entry(16, Moves.HEADBUTT),
-//				Map.entry(20, Moves.FOCUSENERGY),
+                Map.entry(20, Moves.FOCUSENERGY),
                 Map.entry(25, Moves.EMBER),
                 Map.entry(30, Moves.PROTECT),
                 Map.entry(32, Moves.DRAGONBREATH),

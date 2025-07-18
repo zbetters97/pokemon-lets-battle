@@ -27,7 +27,6 @@ public class Suicune extends Pokemon {
                 new Move(Moves.LEER)
         );
          */
-
         moveset.addAll(Arrays.asList(
                 new Move(Moves.BUBBLEBEAM),
                 new Move(Moves.GUST),

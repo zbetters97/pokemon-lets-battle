@@ -22,13 +22,11 @@ public class Kyogre extends Pokemon {
     }
 
     protected void mapMoves() {
-
         /*
         moveset.add(
                 new Move(Moves.WATERPULSE)
         );
         */
-
         moveset.addAll(Arrays.asList(
                 new Move(Moves.ICEBEAM),
                 new Move(Moves.HYDROPUMP),

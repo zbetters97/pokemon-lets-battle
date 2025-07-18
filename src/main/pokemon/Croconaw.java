@@ -40,7 +40,7 @@ public class Croconaw extends Pokemon {
                 Map.entry(33, Moves.SLASH),
                 Map.entry(39, Moves.SCREECH),
                 Map.entry(42, Moves.AQUATAIL),
-//				Map.entry(48, Moves.SUPERPOWER),
+                Map.entry(48, Moves.SUPERPOWER),
                 Map.entry(51, Moves.HYDROPUMP)
         );
     }

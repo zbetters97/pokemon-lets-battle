@@ -48,7 +48,7 @@ public class Feraligatr extends Pokemon {
                 Map.entry(37, Moves.SLASH),
                 Map.entry(45, Moves.SCREECH),
                 Map.entry(50, Moves.AQUATAIL),
-//				Map.entry(58, Moves.SUPERPOWER),
+                Map.entry(58, Moves.SUPERPOWER),
                 Map.entry(63, Moves.HYDROPUMP)
         );
     }

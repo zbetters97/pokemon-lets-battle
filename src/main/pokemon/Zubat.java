@@ -23,7 +23,7 @@ public class Zubat extends Pokemon {
 
     protected void mapMoves() {
         moveset.addAll(Arrays.asList(
-                //new Move(Moves.LEECHLIFE)
+                //  new Move(Moves.LEECHLIFE)
                 new Move(Moves.CONFUSERAY),
                 new Move(Moves.MEGADRAIN),
                 new Move(Moves.TOXIC),
@@ -37,7 +37,7 @@ public class Zubat extends Pokemon {
                 Map.entry(17, Moves.WINGATTACK),
                 Map.entry(21, Moves.CONFUSERAY),
                 Map.entry(25, Moves.AIRCUTTER),
-//				Map.entry(29, Moves.MEANLOOK),
+                Map.entry(29, Moves.MEANLOOK),
                 Map.entry(33, Moves.POISONFANG),
                 Map.entry(37, Moves.HAZE),
                 Map.entry(41, Moves.AIRSLASH)

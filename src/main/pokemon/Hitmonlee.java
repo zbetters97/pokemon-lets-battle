@@ -24,7 +24,6 @@ public class Hitmonlee extends Pokemon {
     protected void mapMoves() {
 /*
         moveset.add(
-
 //       		new Move(Moves.REVENGE),
                 new Move(Moves.DOUBLEKICK)
                 );
@@ -41,7 +40,7 @@ public class Hitmonlee extends Pokemon {
                 Map.entry(9, Moves.ROLLINGKICK),
                 Map.entry(13, Moves.JUMPKICK),
                 Map.entry(17, Moves.BRICKBREAK),
-//				Map.entry(21, Moves.FOCUSENERGY),
+                Map.entry(21, Moves.FOCUSENERGY),
                 Map.entry(25, Moves.FEINT),
                 Map.entry(29, Moves.HIGHJUMPKICK),
 //				Map.entry(33, Moves.MINDREADER),

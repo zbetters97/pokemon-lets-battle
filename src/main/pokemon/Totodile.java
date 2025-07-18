@@ -39,7 +39,7 @@ public class Totodile extends Pokemon {
                 Map.entry(29, Moves.SLASH),
                 Map.entry(34, Moves.SCREECH),
                 Map.entry(36, Moves.AQUATAIL),
-//				Map.entry(41, Moves.SUPERPOWER),
+                Map.entry(41, Moves.SUPERPOWER),
                 Map.entry(43, Moves.HYDROPUMP)
         );
     }

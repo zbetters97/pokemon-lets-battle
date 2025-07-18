@@ -2319,7 +2319,6 @@ public class UI {
                 gp.keyH.aPressed = false;
 
                 if (gp.btlManager.active) {
-
                     fighter_one_Y = fighter_one_startY;
                     fighter_two_Y = fighter_two_startY;
 
@@ -4940,6 +4939,7 @@ public class UI {
 
             if (gp.keyH.aPressed) {
                 gp.keyH.aPressed = false;
+
                 gp.keyH.playCursorSE();
 
                 gp.btlManager.fightStage = gp.btlManager.fight_Run;

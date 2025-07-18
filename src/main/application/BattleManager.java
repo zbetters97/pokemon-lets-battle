@@ -459,6 +459,11 @@ public class BattleManager extends Thread {
 
         int playerNum = gp.ui.player;
 
+        // Player's Pokemon is alive and can't escape
+        if (fighter[playerNum] != null && fighter[playerNum].isAlive() && !fighter[playerNum].getCanEscape()) {
+            return false;
+        }
+
         Entity player = playerNum == 0 ? gp.player : trainer;
         Pokemon chosenFighter = player.pokeParty.get(partySlot);
 
@@ -480,11 +485,8 @@ public class BattleManager extends Thread {
 
         // If pokemon is alive
         if (chosenFighter.isAlive()) {
-            fighter[playerNum].resetStats();
-            fighter[playerNum].resetStatStages();
-            fighter[playerNum].resetMoveTurns();
-            fighter[playerNum].clearActiveMoves();
 
+            fighter[playerNum].resetValues();
             newFighter[playerNum] = chosenFighter;
 
             // Swap pokemon if there is more than 1 in party
@@ -1487,7 +1489,42 @@ public class BattleManager extends Thread {
      **/
     private void otherMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 
+        int gainedHP;
+
         switch (move.getMove()) {
+            case AROMATHERAPY:
+
+                // Player 1
+                if (atk == fighter[0]) {
+                    for (Pokemon pkm : gp.player.pokeParty) {
+                        if (pkm.isAlive()) {
+                            pkm.removeStatus();
+                        }
+                    }
+                }
+                // Player 2
+                else if (gp.ui.player == 1) {
+                    for (Pokemon pkm : gp.player_2.pokeParty) {
+                        if (pkm.isAlive()) {
+                            pkm.removeStatus();
+                        }
+                    }
+                }
+                // CPU Trainer
+                else if (trainer != null) {
+                    for (Pokemon pkm : trainer.pokeParty) {
+                        if (pkm.isAlive()) {
+                            pkm.removeStatus();
+                        }
+                    }
+                }
+                // Wild Pokemon
+                else {
+                    atk.removeStatus();
+                }
+
+                typeDialogue("A soothing aroma wafted\nthrough the air!");
+                break;
             case DETECT, PROTECT:
                 atk.addActiveMove(Moves.PROTECT);
                 typeDialogue(atk.getName() + " protected\nitself!");
@@ -1504,6 +1541,10 @@ public class BattleManager extends Thread {
                 else {
                     typeDialogue("It had no effect!");
                 }
+                break;
+            case FOCUSENERGY:
+                atk.setIsFocusing(true);
+                typeDialogue(atk.getName() + " is getting\npumped!");
                 break;
             case FUTURESIGHT:
                 if (trg.hasActiveMove(move.getMove())) {
@@ -1565,6 +1606,10 @@ public class BattleManager extends Thread {
                     trg.addActiveMove(move.getMove());
                     typeDialogue(atk.getName() + " became\nshrouded in MIST!");
                 }
+                break;
+            case MEANLOOK:
+                trg.setCanEscape(false);
+                typeDialogue(trg.getName() + " can't\nescape now!");
                 break;
             case METRONOME:
                 do {
@@ -1628,7 +1673,7 @@ public class BattleManager extends Thread {
             case RECOVER, ROOST:
                 if (atk.getHP() < atk.getBHP()) {
 
-                    int gainedHP = atk.getBHP() - atk.getHP();
+                    gainedHP = atk.getBHP() - atk.getHP();
                     int halfHP = (int) Math.floor(atk.getBHP() / 2.0);
                     if (gainedHP > halfHP) {
                         gainedHP = halfHP;
@@ -1650,9 +1695,9 @@ public class BattleManager extends Thread {
                 }
                 break;
             case REST:
-                int gainedHP = atk.getBHP() - atk.getHP();
+                gainedHP = atk.getBHP() - atk.getHP();
                 increaseHP(atk, gainedHP);
-                typeDialogue(atk.getName() + "\nregained health!");
+                typeDialogue(atk.getName() + " regained\nhealth!");
                 setStatus(trg, atk, Status.SLEEP);
                 break;
             case SLEEPTALK:
@@ -1686,6 +1731,20 @@ public class BattleManager extends Thread {
                 break;
             case SPLASH:
                 typeDialogue("It had no effect!");
+                break;
+            case SYNTHESIS:
+                if (weather == Weather.SUNLIGHT) {
+                    gainedHP = (int) (atk.getBHP() * 0.66);
+                }
+                else if (weather == null) {
+                    gainedHP = (int) (atk.getBHP() * 0.5);
+                }
+                else {
+                    gainedHP = (int) (atk.getBHP() * 0.25);
+                }
+
+                increaseHP(atk, gainedHP);
+                typeDialogue(atk.getName() + " regained\nhealth!");
                 break;
             case TELEPORT:
                 if (trainer == null) {
@@ -1960,6 +2019,17 @@ public class BattleManager extends Thread {
         double power = 1.0;
 
         switch (move.getMove()) {
+            case ASSURANCE:
+                if (atk == fighter[0] && cpuDamageTaken > 0) {
+                    power *= 2;
+                }
+                else if (atk == fighter[1] && playerDamageTaken > 0) {
+                    power *= 2;
+                }
+                else {
+                    power = move.getPower();
+                }
+                break;
             case ERUPTION:
                 power = (atk.getHP() * 150.0) / atk.getBHP();
                 break;
@@ -2080,7 +2150,19 @@ public class BattleManager extends Thread {
                 }
 
                 break;
-
+            case REVENGE:
+                // Player 1 already took damage
+                if (atk == fighter[0] && playerDamageTaken > 0) {
+                    power = move.getPower() * 2;
+                }
+                // CPU or Player 2 already took damage
+                else if (atk == fighter[1] && cpuDamageTaken > 0) {
+                    power = move.getPower() * 2;
+                }
+                else {
+                    power = move.getPower();
+                }
+                break;
             case WATERSPOUT:
                 power = Math.ceil((double) (atk.getHP() * move.getPower()) / atk.getBHP());
                 break;
@@ -2290,7 +2372,7 @@ public class BattleManager extends Thread {
     private double getCritical(Pokemon atk, Pokemon trg, Move move) {
         /** CRITICAL HIT REFERENCE: https://www.serebii.net/games/criticalhits.shtml (GEN II-V) **/
 
-        int chance = 2;
+        int stage = 0;
         double damage = 1.5;
 
         if (atk.getAbility() == Ability.SNIPER) {
@@ -2301,11 +2383,22 @@ public class BattleManager extends Thread {
         }
 
         if (move.getCrit() == 1) {
-            chance = 4;
+            stage++;
+        }
+        if (atk.getIsFocusing()) {
+            stage += 2;
         }
 
+        float chance = switch (stage) {
+            case 0 -> 1f / 16f;
+            case 1 -> 1f / 8f;
+            case 2 -> 1f / 4f;
+            case 3 -> 1f / 3f;
+            default -> 0.5f;
+        };
+
         Random r = new Random();
-        return (r.nextFloat() <= ((float) chance / 25)) ? damage : 1.0;
+        return (r.nextFloat() <= chance) ? damage : 1.0;
     }
     /** END DAMAGE MOVE METHODS **/
 
@@ -2825,12 +2918,12 @@ public class BattleManager extends Thread {
 
         // TRAINER 1 WINNER
         if (winner == 0) {
-
             if (playerMove != null) {
                 playerMove.resetMoveTurns();
             }
             playerMove = null;
             fighter[0].clearProtection();
+            fighter[0].setCanEscape(true);
 
             gp.playSE(gp.faint_SE, fighter[1].toString());
             typeDialogue(fighter[1].getName() + " fainted!");
@@ -2841,19 +2934,18 @@ public class BattleManager extends Thread {
         }
         // TRAINER 2 WINNER
         else if (winner == 1) {
-
             if (cpuMove != null) {
                 cpuMove.resetMoveTurns();
             }
             cpuMove = null;
             fighter[1].clearProtection();
+            fighter[1].setCanEscape(true);
 
             gp.playSE(gp.faint_SE, fighter[0].toString());
             typeDialogue(fighter[0].getName() + " fainted!");
         }
         // TIE GAME
         else if (winner == 2) {
-
             playerMove = null;
             cpuMove = null;
 
@@ -3569,6 +3661,12 @@ public class BattleManager extends Thread {
 
         // WILD BATTLE
         if (trainer == null) {
+            if (fighter[0].isAlive() && !fighter[0].getCanEscape()) {
+                typeDialogue("Oh no!\nYou can't escape!", true);
+                setQueue();
+                fightStage = fight_Start;
+                return;
+            }
 
             double playerSpeed = fighter[0].getSpeed();
             double wildSpeed = fighter[1].getSpeed();
@@ -3696,23 +3794,16 @@ public class BattleManager extends Thread {
      * END BATTLE METHODS
      **/
     public void endBattle() {
-
         gp.stopMusic();
         gp.setupMusic();
 
         for (Pokemon p : gp.player.pokeParty) {
-            p.resetStats();
-            p.resetStatStages();
-            p.resetMoveTurns();
-            p.clearActiveMoves();
+            p.resetValues();
         }
 
         if (trainer != null) {
             for (Pokemon p : trainer.pokeParty) {
-                p.resetMoveTurns();
-                p.resetStats();
-                p.resetStatStages();
-                p.clearActiveMoves();
+                p.resetValues();
             }
         }
 

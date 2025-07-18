@@ -22,13 +22,11 @@ public class Snorlax extends Pokemon {
     }
 
     protected void mapMoves() {
-
         /*
         moveset.add(
                 new Move(Moves.TACKLE)
         );
         */
-
         moveset.addAll(Arrays.asList(
                 new Move(Moves.MEGAKICK),
                 new Move(Moves.ROCKBLAST),

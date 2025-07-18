@@ -32,7 +32,6 @@ public class Jirachi extends Pokemon {
                 new Move(Moves.REFRESH),
                 new Move(Moves.ZENHEADBUTT),
                 new Move(Moves.FUTURESIGHT)
-
         ));
 
         moveLevels = Map.ofEntries(

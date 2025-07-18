@@ -30,16 +30,16 @@ public class Bayleef extends Pokemon {
                 new Move(Moves.RAZORLEAF),
                 new Move(Moves.POISONPOWDER)
                 */
-                new Move(Moves.SOLARBEAM),
+                new Move(Moves.RAZORLEAF),
                 new Move(Moves.BODYSLAM),
                 new Move(Moves.SAFEGUARD),
-                new Move(Moves.SWEETSCENT)
+                new Move(Moves.SYNTHESIS)
         ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(6, Moves.RAZORLEAF),
                 Map.entry(9, Moves.POISONPOWDER),
-//				Map.entry(12, Moves.SYNTHESIS),
+                Map.entry(12, Moves.SYNTHESIS),
                 Map.entry(18, Moves.REFLECT),
                 Map.entry(22, Moves.MAGICALLEAF),
 //				Map.entry(26, Moves.NATURALGIFT),
@@ -47,7 +47,7 @@ public class Bayleef extends Pokemon {
                 Map.entry(36, Moves.LIGHTSCREEN),
                 Map.entry(40, Moves.BODYSLAM),
                 Map.entry(46, Moves.SAFEGUARD),
-//				Map.entry(50, Moves.AROMATHERAPY),
+                Map.entry(50, Moves.AROMATHERAPY),
                 Map.entry(54, Moves.SOLARBEAM)
         );
     }

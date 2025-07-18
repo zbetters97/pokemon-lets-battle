@@ -96,7 +96,7 @@ public class Pokemon {
     protected int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg, evasionStg;
 
     protected int statusCounter, statusLimit;
-    protected boolean isAlive = true, attacking = false, statChanging = false, hit = false;
+    protected boolean isAlive = true, attacking = false, isFocusing, canEscape = false, statChanging = false, hit = false;
 
     protected List<Move> moveset, activeMoves;
     protected Map<Integer, Moves> moveLevels;
@@ -979,6 +979,22 @@ public class Pokemon {
         protection = Protection.NONE;
     }
 
+    public boolean getCanEscape() {
+        return canEscape;
+    }
+
+    public void setCanEscape(boolean canEscape) {
+        this.canEscape = canEscape;
+    }
+
+    public boolean getIsFocusing() {
+        return isFocusing;
+    }
+
+    public void setIsFocusing(boolean isFocusing) {
+        this.isFocusing = isFocusing;
+    }
+
     public boolean getAttacking() {
         return attacking;
     }
@@ -1010,9 +1026,15 @@ public class Pokemon {
     public void setAlive(boolean isAlive) {
         this.isAlive = isAlive;
         chp = 0;
-        removeStatus();
-        getAbility().setActive(false);
         resetMoves();
+        removeStatus();
+        resetValues();
+    }
+
+    public void resetValues() {
+        getAbility().setActive(false);
+        setCanEscape(true);
+        setIsFocusing(false);
         resetStats();
         resetStatStages();
         clearProtection();

@@ -31,7 +31,7 @@ public class Chikorita extends Pokemon {
         moveLevels = Map.ofEntries(
                 Map.entry(6, Moves.RAZORLEAF),
                 Map.entry(9, Moves.POISONPOWDER),
-//				Map.entry(12, Moves.SYNTHESIS),
+                Map.entry(12, Moves.SYNTHESIS),
                 Map.entry(17, Moves.REFLECT),
                 Map.entry(20, Moves.MAGICALLEAF),
 //				Map.entry(23, Moves.NATURALGIFT),
@@ -39,7 +39,7 @@ public class Chikorita extends Pokemon {
                 Map.entry(31, Moves.LIGHTSCREEN),
                 Map.entry(34, Moves.BODYSLAM),
                 Map.entry(39, Moves.SAFEGUARD),
-//				Map.entry(42, Moves.AROMATHERAPY),
+                Map.entry(42, Moves.AROMATHERAPY),
                 Map.entry(45, Moves.SOLARBEAM)
         );
     }

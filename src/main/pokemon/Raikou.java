@@ -22,13 +22,11 @@ public class Raikou extends Pokemon {
     }
 
     protected void mapMoves() {
-
         /*
         moveset.add(
                 new Move(Moves.LEER)
         );
         */
-
         moveset.addAll(Arrays.asList(
                 new Move(Moves.SPARK),
                 new Move(Moves.QUICKATTACK),

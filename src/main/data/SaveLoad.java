@@ -230,6 +230,32 @@ public class SaveLoad {
                         ds.npcWorldX[mapNum][i] = gp.npc[mapNum][i].worldX;
                         ds.npcWorldY[mapNum][i] = gp.npc[mapNum][i].worldY;
                         ds.npcSteps[mapNum][i] = gp.npc[mapNum][i].steps;
+
+                        // Fix NPC X position if not on grid
+                        if (ds.npcWorldX[mapNum][i] % 48.0 != 0) {
+                            int difference = (int) (ds.npcWorldX[mapNum][i] % 48.0);
+                            String direction = ds.npcDirections[mapNum][i];
+
+                            if (direction.equals("right")) {
+                                ds.npcWorldX[mapNum][i] -= difference;
+                            }
+                            else if (direction.equals("left")) {
+                                ds.npcWorldX[mapNum][i] += (48 - difference);
+                            }
+                        }
+                        // Fix NPC Y position if not on grid
+                        if (ds.npcWorldY[mapNum][i] % 48.0 != 0) {
+                            int difference = (int) (ds.npcWorldY[mapNum][i] % 48.0);
+                            String direction = ds.npcDirections[mapNum][i];
+
+                            if (direction.equals("up")) {
+                                ds.npcWorldY[mapNum][i] += (48 - difference);
+                            }
+                            else if (direction.equals("down")) {
+                                ds.npcWorldY[mapNum][i] -= difference;
+                            }
+                        }
+
                         ds.npcDialogueSet[mapNum][i] = gp.npc[mapNum][i].dialogueSet;
                         ds.npcHasBattle[mapNum][i] = gp.npc[mapNum][i].hasBattle;
 

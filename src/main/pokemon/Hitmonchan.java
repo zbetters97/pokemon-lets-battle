@@ -22,14 +22,12 @@ public class Hitmonchan extends Pokemon {
     }
 
     protected void mapMoves() {
-
         /*
         moveset.add(
 //				new Move(Moves.REVENGE),
                 new Move(Moves.COMETPUNCH)
         );
         */
-
         moveset.addAll(Arrays.asList(
                 new Move(Moves.HYPNOSIS),
                 new Move(Moves.DREAMEATER),
@@ -50,7 +48,7 @@ public class Hitmonchan extends Pokemon {
                 Map.entry(36, Moves.SKYUPPERCUT),
                 Map.entry(41, Moves.MEGAPUNCH),
                 Map.entry(46, Moves.DETECT),
-//				Map.entry(51, Moves.COUNTER),
+                Map.entry(51, Moves.COUNTER),
                 Map.entry(56, Moves.CLOSECOMBAT)
         );
     }

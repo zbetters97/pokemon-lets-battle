@@ -31,7 +31,7 @@ public class Poochyena extends Pokemon {
                 Map.entry(9, Moves.SANDATTACK),
                 Map.entry(13, Moves.BITE),
                 Map.entry(25, Moves.SWAGGER),
-//				Map.entry(29, Moves.ASSURANCE),
+                Map.entry(29, Moves.ASSURANCE),
                 Map.entry(33, Moves.SCARYFACE),
                 Map.entry(45, Moves.TAKEDOWN),
                 Map.entry(49, Moves.SUCKERPUNCH),

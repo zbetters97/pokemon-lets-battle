@@ -323,6 +323,7 @@ public class Entity {
                     direction = "down";
                     break;
             }
+
             steps = 0;
         }
     }
