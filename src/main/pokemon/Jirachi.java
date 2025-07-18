@@ -42,7 +42,7 @@ public class Jirachi extends Pokemon {
                 Map.entry(30, Moves.REST),
                 Map.entry(35, Moves.ZENHEADBUTT),
                 Map.entry(40, Moves.DOUBLEEDGE),
-//				Map.entry(45, Moves.GRAVITY),
+                Map.entry(45, Moves.GRAVITY),
 //				Map.entry(50, Moves.HEALINGWISH),
                 Map.entry(55, Moves.FUTURESIGHT),
                 Map.entry(60, Moves.COSMICPOWER)

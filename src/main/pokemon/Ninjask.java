@@ -38,7 +38,7 @@ public class Ninjask extends Pokemon {
                 Map.entry(5, Moves.LEECHLIFE),
                 Map.entry(9, Moves.SANDATTACK),
                 Map.entry(14, Moves.FURYSWIPES),
-//				Map.entry(19, Moves.MINDREADER),
+                Map.entry(19, Moves.MINDREADER),
                 Map.entry(20, Moves.DOUBLETEAM),
                 Map.entry(21, Moves.FURYCUTTER),
                 Map.entry(22, Moves.SCREECH),

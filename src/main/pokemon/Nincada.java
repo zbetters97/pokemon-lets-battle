@@ -32,7 +32,7 @@ public class Nincada extends Pokemon {
                 Map.entry(5, Moves.LEECHLIFE),
                 Map.entry(9, Moves.SANDATTACK),
                 Map.entry(14, Moves.FURYSWIPES),
-//				Map.entry(19, Moves.MINDREADER),
+                Map.entry(19, Moves.MINDREADER),
                 Map.entry(25, Moves.FALSESWIPE),
                 Map.entry(31, Moves.MUDSLAP),
                 Map.entry(38, Moves.METALCLAW),

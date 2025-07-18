@@ -589,7 +589,9 @@ public class Pokemon {
      * ACTIVE MOVES METHODS
      **/
     public void addActiveMove(Moves move) {
-        activeMoves.add(new Move(move));
+        if (!hasActiveMove(move)) {
+            activeMoves.add(new Move(move));
+        }
     }
 
     public boolean hasActiveMove(Moves move) {

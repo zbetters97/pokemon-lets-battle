@@ -40,7 +40,7 @@ public class Gardevoir extends Pokemon {
                 Map.entry(6, Moves.CONFUSION),
                 Map.entry(10, Moves.DOUBLETEAM),
                 Map.entry(12, Moves.TELEPORT),
-//				Map.entry(17, Moves.LUCKYCHANT),
+                Map.entry(17, Moves.LUCKYCHANT),
                 Map.entry(22, Moves.MAGICALLEAF),
                 Map.entry(25, Moves.CALMMIND),
                 Map.entry(33, Moves.PSYCHIC),

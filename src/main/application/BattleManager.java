@@ -17,6 +17,12 @@ import java.util.List;
 
 public class BattleManager extends Thread {
 
+    private static final List<Moves> skyMoves = Arrays.asList(
+            Moves.BOUNCE,
+            Moves.FLY,
+            Moves.HIGHJUMPKICK,
+            Moves.JUMPKICK
+    );
     private static final List<Moves> soundMoves = Arrays.asList(
             Moves.GROWL,
             Moves.HOWL,
@@ -58,6 +64,7 @@ public class BattleManager extends Thread {
     private int weatherDays = -1;
     private int playerPoison = 1, cpuPoison = 1;
     private int playerDamageTaken = 0, cpuDamageTaken = 0;
+    private int gravityCounter = 0;
     private int winner = -1, loser = -1;
     private int escapeAttempts = 0;
     public Entity ballUsed;
@@ -1106,10 +1113,16 @@ public class BattleManager extends Thread {
         // Charging move with no cooldown, used on first turn
         else {
             typeDialogue(atk.getName() + " used\n" + atkMove + "!");
-            atk.setProtection(atkMove.getProtection());
-            typeDialogue(atkMove.getDelay(atk.getName()));
 
-            atkMove.setTurnCount(atkMove.getTurnCount() - 1);
+            if (gravityCounter > 0 && atkMove.getMove() == Moves.FLY || atkMove.getMove() == Moves.BOUNCE) {
+                typeDialogue("The move failed!");
+            }
+            else {
+                atk.setProtection(atkMove.getProtection());
+                typeDialogue(atkMove.getDelay(atk.getName()));
+
+                atkMove.setTurnCount(atkMove.getTurnCount() - 1);
+            }
         }
     }
 
@@ -1142,6 +1155,10 @@ public class BattleManager extends Thread {
             case Moves.FEINT -> trg.hasActiveMove(Moves.PROTECT) || trg.hasActiveMove(Moves.DETECT);
             default -> true;
         };
+
+        if (gravityCounter > 0 && skyMoves.contains(move.getMove())) {
+            isValid = false;
+        }
 
         return isValid;
     }
@@ -1205,10 +1222,15 @@ public class BattleManager extends Thread {
 
         boolean hit;
 
+        // Mind Reader bypasses accuracy check unless target has Protect
+        if (atk.hasActiveMove(Moves.MINDREADER) && !trg.hasActiveMove(Moves.PROTECT)) {
+            return true;
+        }
+
         // Check if target's protection can be bypassed
         switch (trg.getProtection()) {
             case BOUNCE, FLY, SKYDROP:
-                if (move.getMove() != Moves.GUST &&
+                if (move.getPower() > 0 && move.getMove() != Moves.GUST &&
                         move.getMove() != Moves.SKYUPPERCUT &&
                         move.getMove() != Moves.THUNDER &&
                         move.getMove() != Moves.TWISTER) {
@@ -1271,6 +1293,7 @@ public class BattleManager extends Thread {
     }
 
     private double getAccuracy(Pokemon pkm, Move move) {
+        /** GRAVITY CALCULATION REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) **/
 
         double accuracy = move.getAccuracy();
 
@@ -1296,6 +1319,10 @@ public class BattleManager extends Thread {
 
         if (pkm.getAbility() == Ability.COMPOUNDEYES) {
             accuracy *= 1.3;
+        }
+
+        if (gravityCounter > 0) {
+            accuracy *= 1.66;
         }
 
         return accuracy;
@@ -1555,6 +1582,21 @@ public class BattleManager extends Thread {
                     typeDialogue(trg.getName() + " has\nforeseen an attack!");
                 }
                 break;
+            case GRAVITY:
+                if (gravityCounter > 0) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    gravityCounter = 4;
+                    typeDialogue("Gravity intensified!");
+
+                    if (trg.getProtection() == Protection.FLY || trg.getProtection() == Protection.BOUNCE) {
+                        trg.setProtection(Protection.NONE);
+                        cpuMove.resetMoveTurns();
+                        playerMove.resetMoveTurns();
+                    }
+                }
+                break;
             case HAZE:
                 atk.resetStats();
                 atk.resetStatStages();
@@ -1598,6 +1640,15 @@ public class BattleManager extends Thread {
                     typeDialogue(atk.getName() + "'s " + move + "\nraised DEFENSE!");
                 }
                 break;
+            case LUCKYCHANT:
+                if (atk.hasActiveMove(move.getMove())) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    atk.addActiveMove(move.getMove());
+                    typeDialogue("The lucky chant shielded\n" + atk.getName() + " from harm!");
+                }
+                break;
             case MIST:
                 if (trg.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
@@ -1619,6 +1670,15 @@ public class BattleManager extends Thread {
                 while (move.getMove() == Moves.METRONOME || move.getMove() == Moves.SLEEPTALK);
 
                 move(atk, trg, move);
+                break;
+            case MINDREADER:
+                if (atk.hasActiveMove(move.getMove())) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    atk.addActiveMove(move.getMove());
+                    typeDialogue(atk.getName() + " took aim\nat " + trg.getName() + "!");
+                }
                 break;
             case ODORSLEUTH, MIRACLEEYE, FORESIGHT:
                 if (trg.hasActiveMove(move.getMove())) {
@@ -1927,8 +1987,6 @@ public class BattleManager extends Thread {
 
         double damage;
 
-        double effectiveness = getEffectiveness(trg, move.getType());
-
         double level = atk.getLevel();
         double power = getPower(move, atk, trg);
         double A = getAttack(move, atk, trg);
@@ -1941,6 +1999,11 @@ public class BattleManager extends Thread {
 
         damage = ((Math.floor(((((Math.floor((2 * level) / 5)) + 2) *
                 power * (A / D)) / 50)) + 2) * crit * STAB * type * random);
+
+        // OHKA moves do not work if the target's level is higher
+        if (power >= 999 && atk.getLevel() < trg.getLevel()) {
+            damage = 0;
+        }
 
         switch (move.getMove()) {
             case COUNTER:
@@ -1987,7 +2050,7 @@ public class BattleManager extends Thread {
                 }
                 break;
             case LEVITATE:
-                if (move.getType() == Type.GROUND) {
+                if (move.getType() == Type.GROUND && gravityCounter == 0) {
                     damage = 0;
                 }
                 break;
@@ -2002,7 +2065,7 @@ public class BattleManager extends Thread {
                 }
                 break;
             case WONDERGUARD:
-                if (effectiveness <= 1.0) {
+                if (type <= 1.0) {
                     damage = 0;
                 }
                 break;
@@ -2305,6 +2368,9 @@ public class BattleManager extends Thread {
                 pkm.hasActiveMove(Moves.MIRACLEEYE)) {
             return effect;
         }
+        else if (type == Type.GROUND && pkm.checkType(Type.FLYING) && gravityCounter > 0) {
+            return effect;
+        }
 
         // if trg is single type
         if (pkm.getTypes() == null) {
@@ -2379,6 +2445,9 @@ public class BattleManager extends Thread {
             damage = 3.0;
         }
         if (trg.getAbility() == Ability.SHELLARMOR) {
+            damage = 1.0;
+        }
+        if (trg.hasActiveMove(Moves.LUCKYCHANT)) {
             damage = 1.0;
         }
 
@@ -2537,6 +2606,13 @@ public class BattleManager extends Thread {
                     break;
                 case LEECHSEED:
                     leechSeed(trg, atk);
+                    break;
+                case MINDREADER:
+                    move.setTurnCount(move.getTurnCount() - 1);
+                    if (move.getTurnCount() <= 0) {
+                        iterator.remove();
+                        move.resetMoveTurns();
+                    }
                     break;
                 case MIST, REFLECT, SAFEGUARD, WRAP:
                     move.setTurnCount(move.getTurnCount() - 1);
@@ -2801,10 +2877,18 @@ public class BattleManager extends Thread {
     /**
      * DELAYED TURN
      **/
-    private void getDelayedTurn() {
+    private void getDelayedTurn() throws InterruptedException {
 
         playerDamageTaken = 0;
         cpuDamageTaken = 0;
+
+        if (gravityCounter > 0) {
+            gravityCounter--;
+
+            if (gravityCounter == 0) {
+                typeDialogue("Intense gravity wore off!");
+            }
+        }
 
         // RESET NON-DELAYED MOVES
         int delay = getDelay();
@@ -3842,6 +3926,7 @@ public class BattleManager extends Thread {
         cpuDamageTaken = 0;
         playerPoison = 1;
         cpuPoison = 1;
+        gravityCounter = 0;
         ballUsed = null;
 
         weather = Weather.CLEAR;

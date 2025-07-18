@@ -43,7 +43,7 @@ public class Hitmonlee extends Pokemon {
                 Map.entry(21, Moves.FOCUSENERGY),
                 Map.entry(25, Moves.FEINT),
                 Map.entry(29, Moves.HIGHJUMPKICK),
-//				Map.entry(33, Moves.MINDREADER),
+                Map.entry(33, Moves.MINDREADER),
                 Map.entry(37, Moves.FORESIGHT),
                 Map.entry(41, Moves.BLAZEKICK),
                 Map.entry(45, Moves.ENDURE),

@@ -30,7 +30,7 @@ public class Ralts extends Pokemon {
                 Map.entry(6, Moves.CONFUSION),
                 Map.entry(10, Moves.DOUBLETEAM),
                 Map.entry(12, Moves.TELEPORT),
-//				Map.entry(17, Moves.LUCKYCHANT),
+                Map.entry(17, Moves.LUCKYCHANT),
                 Map.entry(21, Moves.MAGICALLEAF),
                 Map.entry(23, Moves.CALMMIND),
                 Map.entry(28, Moves.PSYCHIC),
