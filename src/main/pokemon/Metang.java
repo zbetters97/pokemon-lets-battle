@@ -24,7 +24,7 @@ public class Metang extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
-//       		new Move(Moves.MAGNETRISE),
+                new Move(Moves.MAGNETRISE),
                 new Move(Moves.TAKEDOWN),
                 new Move(Moves.METALCLAW),
                 new Move(Moves.CONFUSION)

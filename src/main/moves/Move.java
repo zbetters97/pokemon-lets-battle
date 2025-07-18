@@ -106,7 +106,9 @@ public class Move {
         }
 
         switch (move) {
-            case FUTURESIGHT, GRAVITY, LIGHTSCREEN, LUCKYCHANT, MINDREADER, MIST, OUTRAGE, PERISHSONG, PETALDANCE,
+            case FUTURESIGHT, GRAVITY, HEALBLOCK, LIGHTSCREEN, LUCKYCHANT, MAGNETRISE, MINDREADER, MIST, OUTRAGE,
+                 PERISHSONG,
+                 PETALDANCE,
                  REFLECT,
                  ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH, WISH, WRAP:
                 return true;
@@ -123,7 +125,9 @@ public class Move {
     public void resetMoveTurns() {
 
         switch (move) {
-            case FUTURESIGHT, GRAVITY, LIGHTSCREEN, LUCKYCHANT, MINDREADER, MIST, OUTRAGE, PERISHSONG, PETALDANCE,
+            case FUTURESIGHT, GRAVITY, HEALBLOCK, LIGHTSCREEN, LUCKYCHANT, MAGNETRISE, MINDREADER, MIST, OUTRAGE,
+                 PERISHSONG,
+                 PETALDANCE,
                  REFLECT,
                  ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH, WISH, WRAP:
                 if (turnCount > 0) {

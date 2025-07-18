@@ -5082,6 +5082,17 @@ public class UI {
                 gp.keyH.playErrorSE();
             }
             else {
+                // Can't select a move that the opponent knows during Imprison
+                if (pMove.getMove() != Moves.STRUGGLE) {
+                    int opponent = player == 0 ? 1 : 0;
+                    
+                    if (gp.btlManager.fighter[opponent].hasActiveMove(Moves.IMPRISON) &&
+                            gp.btlManager.fighter[opponent].hasMove(pMove.getMove())) {
+                        gp.keyH.playErrorSE();
+                        return;
+                    }
+                }
+
                 gp.keyH.playCursorSE();
 
                 // CPU Battle, player 2 is choosing, or player 2 is waiting for a move

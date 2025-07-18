@@ -17,6 +17,13 @@ import java.util.List;
 
 public class BattleManager extends Thread {
 
+    private static final List<Moves> healMoves = Arrays.asList(
+            Moves.ROOST,
+            Moves.REST,
+            Moves.RECOVER,
+            Moves.SYNTHESIS,
+            Moves.WISH
+    );
     private static final List<Moves> skyMoves = Arrays.asList(
             Moves.BOUNCE,
             Moves.FLY,
@@ -363,7 +370,7 @@ public class BattleManager extends Thread {
             typeDialogue("Go, " + fighter[0].getName() + "!");
             pause(100);
 
-            // Multiplayer battle
+            // Multi-player battle
             if (!cpu && pcBattle) {
                 int delay = getDelay();
 
@@ -431,7 +438,7 @@ public class BattleManager extends Thread {
             typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");
             pause(100);
 
-            // Player 1 not sending new fighter (only for single player)
+            // Player 1 not sending new fighter (single-player)
             if (cpu && !battleQueue.contains(queue_PlayerSwap)) {
                 newFighter[1] = null;
 
@@ -440,6 +447,24 @@ public class BattleManager extends Thread {
 
                 running = false;
                 gp.ui.battleState = gp.ui.battle_Options;
+            }
+            // Player 1 sending new fighter (multi-player)
+            else if (pcBattle && !battleQueue.contains(queue_PlayerSwap)) {
+                int delay = getDelay();
+
+                // Player 1 waiting for move
+                if (delay == 1) {
+                    setQueue();
+                    getFighterAbility();
+                }
+                // Player 1 not waiting
+                else {
+                    getFighterAbility();
+
+                    gp.ui.player = 0;
+                    running = false;
+                    gp.ui.battleState = gp.ui.battle_Options;
+                }
             }
         }
         // Mid-battle swap out for player 2
@@ -573,9 +598,11 @@ public class BattleManager extends Thread {
     public Move getPlayerMove(int selection, int player) {
 
         Move selectedMove = fighter[player].getMoveSet().get(selection);
+        int opponent = player == 0 ? 1 : 0;
 
-        // If all moves have been used, use Struggle
         boolean struggle = true;
+
+        // Confirm player has a move with PP
         for (Move m : fighter[player].getMoveSet()) {
             if (m.getPP() > 0) {
                 struggle = false;
@@ -585,6 +612,22 @@ public class BattleManager extends Thread {
 
         if (struggle) {
             selectedMove = new Move(Moves.STRUGGLE);
+        }
+        else {
+            // Find if player has a move that opponent doesn't during Imprison
+            if (fighter[opponent].hasActiveMove(Moves.IMPRISON)) {
+
+                struggle = true;
+                for (Move m : fighter[player].getMoveSet()) {
+                    if (!fighter[opponent].hasMove(m.getMove())) {
+                        struggle = false;
+                        break;
+                    }
+                }
+                if (struggle) {
+                    selectedMove = new Move(Moves.STRUGGLE);
+                }
+            }
         }
 
         if (player == 0) {
@@ -613,8 +656,8 @@ public class BattleManager extends Thread {
 
     private int getDelay() {
         // 0: neither is waiting
-        // 1: player is waiting
-        // 2: cpu is waiting
+        // 1: player 1 is waiting
+        // 2: cpu/player 2 is waiting
         // 3: both are waiting
 
         int delay = 0;
@@ -1156,6 +1199,10 @@ public class BattleManager extends Thread {
             default -> true;
         };
 
+        if (trg.hasActiveMove(Moves.HEALBLOCK) && healMoves.contains(move.getMove())) {
+            isValid = false;
+        }
+
         if (gravityCounter > 0 && skyMoves.contains(move.getMove())) {
             isValid = false;
         }
@@ -1333,7 +1380,6 @@ public class BattleManager extends Thread {
      * STATUS MOVE METHODS
      **/
     private void statusMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
-
         if (trg.getStatus() == null) {
             if (trg.hasActiveMove(Moves.SAFEGUARD)) {
                 typeDialogue("It had no effect!");
@@ -1391,7 +1437,18 @@ public class BattleManager extends Thread {
      **/
     private void attributeMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 
-        // if move changes self-attributes
+        if (trg.hasActiveMove(Moves.SNATCH)) {
+            Pokemon temp = atk;
+            atk = trg;
+            trg = temp;
+            typeDialogue(atk.getName() + " snatched\n" + trg.getName() + "'s move!");
+
+            typeDialogue(atk.getName() + " used\n" + move + "!", false);
+            atk.setAttacking(true);
+            playSE(gp.moves_SE, move.getName());
+        }
+
+        // if move changes own attributes
         if (move.isToSelf()) {
 
             int level = move.getLevel();
@@ -1595,6 +1652,18 @@ public class BattleManager extends Thread {
                         cpuMove.resetMoveTurns();
                         playerMove.resetMoveTurns();
                     }
+
+                    trg.removeActiveMove(Moves.MAGNETRISE);
+                    atk.removeActiveMove(Moves.MAGNETRISE);
+                }
+                break;
+            case GRUDGE:
+                if (atk.hasActiveMove(move.getMove())) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    atk.addActiveMove(move.getMove());
+                    typeDialogue(atk.getName() + " wants the\nopponent to bear a GRUDGE!");
                 }
                 break;
             case HAZE:
@@ -1622,6 +1691,24 @@ public class BattleManager extends Thread {
 
                 typeDialogue("A bell chimed!");
                 break;
+            case HEALBLOCK:
+                if (trg.hasActiveMove(move.getMove())) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    trg.addActiveMove(move.getMove());
+                    typeDialogue(trg.getName() + " was prevented\nfrom healing!");
+                }
+                break;
+            case IMPRISON:
+                if (atk.hasActiveMove(move.getMove())) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    atk.addActiveMove(move.getMove());
+                    typeDialogue(atk.getName() + " sealed the\nopponent's move(s)!");
+                }
+                break;
             case LEECHSEED:
                 if (trg.hasActiveMove(move.getMove())) {
                     typeDialogue("It had no effect!");
@@ -1647,6 +1734,15 @@ public class BattleManager extends Thread {
                 else {
                     atk.addActiveMove(move.getMove());
                     typeDialogue("The lucky chant shielded\n" + atk.getName() + " from harm!");
+                }
+                break;
+            case MAGNETRISE:
+                if (atk.hasActiveMove(move.getMove()) || gravityCounter > 0) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    atk.addActiveMove(move.getMove());
+                    typeDialogue(atk.getName() + " levitated\non electromagnetism!");
                 }
                 break;
             case MIST:
@@ -1772,6 +1868,10 @@ public class BattleManager extends Thread {
                 else {
                     typeDialogue("It had no effect!");
                 }
+                break;
+            case SNATCH:
+                atk.addActiveMove(move.getMove());
+                typeDialogue(atk.getName() + " waits for the target\nto make a move!");
                 break;
             case SPITE:
                 Move trgMove = move == playerMove ? cpuMove : playerMove;
@@ -2071,6 +2171,10 @@ public class BattleManager extends Thread {
                 break;
             default:
                 break;
+        }
+
+        if (trg.hasActiveMove(Moves.MAGNETRISE) && gravityCounter <= 0) {
+            damage = 0;
         }
 
         return (int) damage;
@@ -2601,37 +2705,44 @@ public class BattleManager extends Thread {
                     move.setTurnCount(move.getTurnCount() - 1);
                     if (move.getTurnCount() <= 0) {
                         iterator.remove();
+                        move.resetMoveTurns();
                         futureSight(trg, atk);
+                    }
+                    break;
+                case HEALBLOCK, MIST, REFLECT, SAFEGUARD, WRAP:
+                    move.setTurnCount(move.getTurnCount() - 1);
+                    if (move.getTurnCount() <= 0) {
+                        iterator.remove();
+                        move.resetMoveTurns();
+                        typeDialogue(move.getDelay(move.getName()));
                     }
                     break;
                 case LEECHSEED:
                     leechSeed(trg, atk);
                     break;
-                case MINDREADER:
+                case MAGNETRISE, MINDREADER:
                     move.setTurnCount(move.getTurnCount() - 1);
                     if (move.getTurnCount() <= 0) {
                         iterator.remove();
                         move.resetMoveTurns();
                     }
                     break;
-                case MIST, REFLECT, SAFEGUARD, WRAP:
-                    move.setTurnCount(move.getTurnCount() - 1);
-                    if (move.getTurnCount() <= 0) {
-                        iterator.remove();
-                        typeDialogue(move.getDelay(move.getName()));
-                    }
-                    break;
                 case PERISHSONG:
                     move.setTurnCount(move.getTurnCount() - 1);
                     if (move.getTurnCount() <= 0) {
                         iterator.remove();
+                        move.resetMoveTurns();
                         trg.setHP(0);
                     }
+                    break;
+                case SNATCH:
+                    iterator.remove();
                     break;
                 case WISH:
                     move.setTurnCount(move.getTurnCount() - 1);
                     if (move.getTurnCount() <= 0) {
                         iterator.remove();
+                        move.resetMoveTurns();
                         typeDialogue(trg.getName() + "'s wish\ncame true!");
 
                         if (trg.getHP() == trg.getBHP()) {
@@ -2666,7 +2777,6 @@ public class BattleManager extends Thread {
     private void futureSight(Pokemon trg, Pokemon atk) throws InterruptedException {
 
         Move move = new Move(Moves.FUTURESIGHT);
-
         int damage = dealDamage(atk, trg, move, 1);
 
         String hitSE = getHitSE(getEffectiveness(trg, move.getType()));
@@ -2963,12 +3073,28 @@ public class BattleManager extends Thread {
         boolean hasWinningPokemon = false;
 
         if (fighter[0].getHP() <= 0) {
+
+            // Reduce PP if Grudge is active
+            if (fighter[0].hasActiveMove(Moves.GRUDGE)) {
+                if (cpuMove != null && cpuMove.getMove() != Moves.STRUGGLE) {
+                    cpuMove.setPP(0);
+                }
+            }
+
             fighter[0].setAlive(false);
             playerMove = null;
             playerFurryCutterCount = 10;
             playerPoison = 1;
         }
         if (fighter[1].getHP() <= 0) {
+
+            // Reduce PP if Grudge is active
+            if (fighter[1].hasActiveMove(Moves.GRUDGE)) {
+                if (playerMove != null && playerMove.getMove() != Moves.STRUGGLE) {
+                    playerMove.setPP(0);
+                }
+            }
+
             fighter[1].setAlive(false);
             cpuMove = null;
             cpuFurryCutterCount = 10;

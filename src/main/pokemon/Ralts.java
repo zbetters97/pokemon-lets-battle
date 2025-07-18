@@ -34,7 +34,7 @@ public class Ralts extends Pokemon {
                 Map.entry(21, Moves.MAGICALLEAF),
                 Map.entry(23, Moves.CALMMIND),
                 Map.entry(28, Moves.PSYCHIC),
-//				Map.entry(32, Moves.IMPRISON),
+                Map.entry(32, Moves.IMPRISON),
                 Map.entry(34, Moves.FUTURESIGHT),
                 Map.entry(39, Moves.CHARM),
                 Map.entry(43, Moves.HYPNOSIS),

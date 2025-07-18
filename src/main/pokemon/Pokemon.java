@@ -476,6 +476,15 @@ public class Pokemon {
         }
     }
 
+    public boolean hasMove(Moves move) {
+        for (Move m : moveset) {
+            if (m.getMove() == move) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean learnMove(Move move) {
 
         if (moveset.size() == 4) {
@@ -608,7 +617,6 @@ public class Pokemon {
 
     public void removeActiveMove(Moves move) {
         activeMoves.removeIf(m -> m.getMove() == move);
-
     }
 
     public void clearActiveMoves() {

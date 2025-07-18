@@ -44,8 +44,8 @@ public class Shedinja extends Pokemon {
                 Map.entry(25, Moves.SPITE),
                 Map.entry(31, Moves.CONFUSERAY),
                 Map.entry(38, Moves.SHADOWSNEAK),
-//				Map.entry(45, Moves.GRUDGE),
-//				Map.entry(52, Moves.HEALBLOCK),
+                Map.entry(45, Moves.GRUDGE),
+                Map.entry(52, Moves.HEALBLOCK),
                 Map.entry(59, Moves.SHADOWBALL)
         );
     }

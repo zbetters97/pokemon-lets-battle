@@ -40,7 +40,7 @@ public class Deoxys extends Pokemon {
                 Map.entry(25, Moves.KNOCKOFF),
                 Map.entry(33, Moves.PURSUIT),
                 Map.entry(41, Moves.PSYCHIC),
-//				Map.entry(49, Moves.SNATCH),
+                Map.entry(49, Moves.SNATCH),
                 Map.entry(57, Moves.PSYCHOSHIFT),
                 Map.entry(65, Moves.ZENHEADBUTT),
                 Map.entry(73, Moves.COSMICPOWER),
