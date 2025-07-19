@@ -30,8 +30,8 @@ public class Machop extends Pokemon {
                  */
                 new Move(Moves.SUBMISSION),
                 new Move(Moves.ROCKSLIDE),
-                new Move(Moves.EARTHQUAKE)
-                //new Move(Moves.FOCUSENERGY)
+                new Move(Moves.EARTHQUAKE),
+                new Move(Moves.FOCUSENERGY)
         ));
 
         moveLevels = Map.ofEntries(

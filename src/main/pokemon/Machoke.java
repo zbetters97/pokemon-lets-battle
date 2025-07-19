@@ -30,8 +30,8 @@ public class Machoke extends Pokemon {
                  */
                 new Move(Moves.SUBMISSION),
                 new Move(Moves.STRENGTH),
-                new Move(Moves.ROCKSLIDE)
-                //    new Move(Moves.FOCUSENERGY)
+                new Move(Moves.ROCKSLIDE),
+                new Move(Moves.FOCUSENERGY)
         ));
 
         moveLevels = Map.ofEntries(

@@ -1577,7 +1577,6 @@ public class BattleManager extends Thread {
 
         switch (move.getMove()) {
             case AROMATHERAPY:
-
                 // Player 1
                 if (atk == fighter[0]) {
                     for (Pokemon pkm : gp.player.pokeParty) {
@@ -1609,12 +1608,30 @@ public class BattleManager extends Thread {
 
                 typeDialogue("A soothing aroma wafted\nthrough the air!");
                 break;
+            case CHARGE:
+                if (atk.hasActiveMove(Moves.CHARGE)) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    atk.addActiveMove(Moves.CHARGE);
+                    typeDialogue(atk.getName() + " began\ncharging power!");
+                    setAttribute(atk, List.of("sp. defense"), 1);
+                }
+                break;
             case DETECT, PROTECT:
                 atk.addActiveMove(Moves.PROTECT);
                 typeDialogue(atk.getName() + " protected\nitself!");
                 break;
             case ENDURE:
-                typeDialogue(atk.getName() + " braced\nitself!");
+                // Check if next turn is opponent move
+                boolean firstTurn = atk == fighter[0] ? battleQueue.contains(queue_CPUMove) : battleQueue.contains(queue_PlayerMove);
+
+                if (!firstTurn || atk.getHP() == 0) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    typeDialogue(atk.getName() + " braced\nitself!");
+                }
                 break;
             case FLING:
                 Entity item = atk.getItem();
@@ -2067,7 +2084,6 @@ public class BattleManager extends Thread {
         }
 
         if (damage >= trg.getHP()) {
-
             damage = trg.getHP();
 
             Move otherMove = atk == fighter[1] ? playerMove : cpuMove;
@@ -2401,6 +2417,10 @@ public class BattleManager extends Thread {
                 break;
         }
 
+        if (move.getMove().getType() == Type.ELECTRIC && atk.hasActiveMove(Moves.CHARGE)) {
+            power *= 2.0;
+        }
+
         return power;
     }
 
@@ -2701,6 +2721,13 @@ public class BattleManager extends Thread {
             Move move = iterator.next();
 
             switch (move.getMove()) {
+                case CHARGE, MAGNETRISE, MINDREADER:
+                    move.setTurnCount(move.getTurnCount() - 1);
+                    if (move.getTurnCount() <= 0) {
+                        iterator.remove();
+                        move.resetMoveTurns();
+                    }
+                    break;
                 case FUTURESIGHT:
                     move.setTurnCount(move.getTurnCount() - 1);
                     if (move.getTurnCount() <= 0) {
@@ -2719,13 +2746,6 @@ public class BattleManager extends Thread {
                     break;
                 case LEECHSEED:
                     leechSeed(trg, atk);
-                    break;
-                case MAGNETRISE, MINDREADER:
-                    move.setTurnCount(move.getTurnCount() - 1);
-                    if (move.getTurnCount() <= 0) {
-                        iterator.remove();
-                        move.resetMoveTurns();
-                    }
                     break;
                 case PERISHSONG:
                     move.setTurnCount(move.getTurnCount() - 1);

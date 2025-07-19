@@ -37,7 +37,7 @@ public class Articuno extends Pokemon {
         moveLevels = Map.ofEntries(
                 Map.entry(8, Moves.MIST),
                 Map.entry(15, Moves.ICESHARD),
-//				Map.entry(22, Moves.MINDREADER),
+				Map.entry(22, Moves.MINDREADER),
                 Map.entry(29, Moves.ANCIENTPOWER),
                 Map.entry(36, Moves.AGILITY),
                 Map.entry(43, Moves.ICEBEAM),

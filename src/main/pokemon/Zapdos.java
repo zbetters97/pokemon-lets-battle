@@ -39,7 +39,7 @@ public class Zapdos extends Pokemon {
                 Map.entry(15, Moves.DETECT),
                 Map.entry(22, Moves.PLUCK),
                 Map.entry(29, Moves.ANCIENTPOWER),
-//				Map.entry(36, Moves.CHARGE),
+				Map.entry(36, Moves.CHARGE),
                 Map.entry(43, Moves.AGILITY),
                 Map.entry(50, Moves.DISCHARGE),
                 Map.entry(57, Moves.ROOST),

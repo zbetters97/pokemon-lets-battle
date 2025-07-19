@@ -37,7 +37,7 @@ public class Moltres extends Pokemon {
         moveLevels = Map.ofEntries(
                 Map.entry(8, Moves.FIRESPIN),
                 Map.entry(15, Moves.AGILITY),
-//				Map.entry(22, Moves.ENDURE),
+				Map.entry(22, Moves.ENDURE),
                 Map.entry(29, Moves.ANCIENTPOWER),
                 Map.entry(36, Moves.FLAMETHROWER),
                 Map.entry(43, Moves.SAFEGUARD),
