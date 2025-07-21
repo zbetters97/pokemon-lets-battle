@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Ponyta extends Pokemon {
@@ -22,9 +23,17 @@ public class Ponyta extends Pokemon {
 
     protected void mapMoves() {
 
+        /*
         moveset.add(
                 new Move(Moves.TACKLE)
         );
+         */
+        moveset.addAll(Arrays.asList(
+                new Move(Moves.FIREBLAST),
+                new Move(Moves.HEADBUTT),
+                new Move(Moves.IRONTAIL),
+                new Move(Moves.SUNNYDAY)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(7, Moves.GROWL),

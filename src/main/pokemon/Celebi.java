@@ -42,7 +42,7 @@ public class Celebi extends Pokemon {
                 Map.entry(28, Moves.ANCIENTPOWER),
 //				Map.entry(37, Moves.BATONPASS),
 //				Map.entry(46, Moves.NATURALGIFT),
-//				Map.entry(55, Moves.HEALBLOCK),
+                Map.entry(55, Moves.HEALBLOCK),
                 Map.entry(64, Moves.FUTURESIGHT),
 //				Map.entry(73, Moves.HEALINGWISH),
                 Map.entry(82, Moves.LEAFSTORM),

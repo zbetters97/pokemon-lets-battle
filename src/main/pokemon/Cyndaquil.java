@@ -24,8 +24,14 @@ public class Cyndaquil extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.TACKLE),
                 new Move(Moves.LEER)
+                 */
+                new Move(Moves.FLAMETHROWER),
+                new Move(Moves.HEADBUTT),
+                new Move(Moves.DIG),
+                new Move(Moves.SUNNYDAY)
         ));
 
         moveLevels = Map.ofEntries(

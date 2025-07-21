@@ -22,13 +22,11 @@ public class Entei extends Pokemon {
     }
 
     protected void mapMoves() {
-
         /*
         moveset.add(
                 new Move(Moves.LEER)
         );
          */
-
         moveset.addAll(Arrays.asList(
                 new Move(Moves.FIREBLAST),
                 new Move(Moves.ROCKSMASH),

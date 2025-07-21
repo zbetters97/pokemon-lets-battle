@@ -22,13 +22,11 @@ public class Groudon extends Pokemon {
     }
 
     protected void mapMoves() {
-
         /*
         moveset.add(
                 new Move(Moves.MUDSHOT)
         );
         */
-
         moveset.addAll(Arrays.asList(
                 new Move(Moves.EARTHQUAKE),
                 new Move(Moves.ANCIENTPOWER),

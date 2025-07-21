@@ -24,9 +24,15 @@ public class Croconaw extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.SCRATCH),
                 new Move(Moves.LEER),
                 new Move(Moves.WATERGUN)
+                 */
+                new Move(Moves.HYDROPUMP),
+                new Move(Moves.ICEPUNCH),
+                new Move(Moves.SLASH),
+                new Move(Moves.SCARYFACE)
         ));
 
         moveLevels = Map.ofEntries(

@@ -24,7 +24,7 @@ public class Hitmonlee extends Pokemon {
     protected void mapMoves() {
 /*
         moveset.add(
-//       		new Move(Moves.REVENGE),
+          		new Move(Moves.REVENGE),
                 new Move(Moves.DOUBLEKICK)
                 );
  */

@@ -64,6 +64,8 @@ public class BattleManager extends Thread {
     public Pokemon[] fighter = new Pokemon[2];
     private final Pokemon[] newFighter = new Pokemon[2];
     private final ArrayList<Pokemon> otherFighters = new ArrayList<>();
+    private final ArrayList<Moves> playerMoves = new ArrayList<>();
+    private final ArrayList<Moves> cpuMoves = new ArrayList<>();
     public Move playerMove, cpuMove;
     private int playerFurryCutterCount = 10, cpuFurryCutterCount = 10;
     public Move newMove = null, oldMove = null;
@@ -344,6 +346,7 @@ public class BattleManager extends Thread {
         // Remove incoming fighter from EXP share list
         otherFighters.remove(newFighter[0]);
 
+
         // Forced swap out for player 1
         if (defeated) {
             fighter[0] = newFighter[0];
@@ -409,6 +412,7 @@ public class BattleManager extends Thread {
         }
 
         getOtherFighters();
+        playerMoves.clear();
 
         newFighter[0] = null;
         newFighter[1] = null;
@@ -485,6 +489,7 @@ public class BattleManager extends Thread {
         }
 
         gp.player.trackSeenPokemon(fighter[1]);
+        cpuMoves.clear();
     }
 
     public boolean swapPokemon(int partySlot) {
@@ -1192,10 +1197,15 @@ public class BattleManager extends Thread {
 
         // Check if move is used in the correct situation
         boolean isValid = switch (move.getMove()) {
-            case Moves.SNORE -> atk.hasStatus(Status.SLEEP);
             case Moves.DREAMEATER -> trg.hasStatus(Status.SLEEP);
-            case Moves.SUCKERPUNCH -> !battleQueue.isEmpty() && cpuMove.getPower() > 0;
             case Moves.FEINT -> trg.hasActiveMove(Moves.PROTECT) || trg.hasActiveMove(Moves.DETECT);
+            case Moves.LASTRESORT -> {
+                ArrayList<Moves> moveSet = atk == fighter[0] ? playerMoves : cpuMoves;
+                boolean valid = atk.getMoveSet().stream().anyMatch(m -> moveSet.contains(m.getMove()));
+                yield valid;
+            }
+            case Moves.SNORE -> atk.hasStatus(Status.SLEEP);
+            case Moves.SUCKERPUNCH -> !battleQueue.isEmpty() && cpuMove.getPower() > 0;
             default -> true;
         };
 
@@ -1215,6 +1225,17 @@ public class BattleManager extends Thread {
      * ATTACK METHOD
      **/
     public void attack(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
+
+        if (atk == fighter[0]) {
+            if (!playerMoves.contains(move.getMove())) {
+                playerMoves.add(move.getMove());
+            }
+        }
+        else {
+            if (!cpuMoves.contains(move.getMove())) {
+                cpuMoves.add(move.getMove());
+            }
+        }
 
         if (hit(atk, trg, move) || move.isToSelf()) {
             switch (move.getMType()) {
@@ -1618,6 +1639,15 @@ public class BattleManager extends Thread {
                     setAttribute(atk, List.of("sp. defense"), 1);
                 }
                 break;
+            case DOOMDESIRE:
+                if (trg.hasActiveMove(Moves.DOOMDESIRE) || trg.hasActiveMove(Moves.FUTURESIGHT)) {
+                    typeDialogue("It had no effect!");
+                }
+                else {
+                    trg.addActiveMove(Moves.DOOMDESIRE);
+                    typeDialogue(atk.getName() + " chose\nDoome Desire as its destiny!");
+                }
+                break;
             case DETECT, PROTECT:
                 atk.addActiveMove(Moves.PROTECT);
                 typeDialogue(atk.getName() + " protected\nitself!");
@@ -1648,7 +1678,7 @@ public class BattleManager extends Thread {
                 typeDialogue(atk.getName() + " is getting\npumped!");
                 break;
             case FUTURESIGHT:
-                if (trg.hasActiveMove(move.getMove())) {
+                if (trg.hasActiveMove(move.getMove()) || trg.hasActiveMove(Moves.DOOMDESIRE)) {
                     typeDialogue("It had no effect!");
                 }
                 else {
@@ -2067,9 +2097,12 @@ public class BattleManager extends Thread {
     private int dealDamage(Pokemon atk, Pokemon trg, Move move, double crit) throws InterruptedException {
 
         double effectiveness = getEffectiveness(trg, move.getType());
+        if (move.getMove() == Moves.DOOMDESIRE) {
+            effectiveness = 1.0;
+        }
+
         String hitSE = getHitSE(effectiveness);
         gp.playSE(gp.battle_SE, hitSE);
-
         trg.setHit(true);
 
         int damage = calculateDamage(atk, trg, move, crit);
@@ -2109,6 +2142,11 @@ public class BattleManager extends Thread {
         double D = getDefense(move, atk, trg);
         double STAB = atk.checkType(move.getType()) ? 1.5 : 1.0;
         double type = getEffectiveness(trg, move.getType());
+
+        if (move.getMove() == Moves.DOOMDESIRE) {
+            STAB = 1.0;
+            type = 1.0;
+        }
 
         Random r = new Random();
         double random = (double) (r.nextInt(100 - 85 + 1) + 85) / 100.0;
@@ -2428,7 +2466,7 @@ public class BattleManager extends Thread {
 
         double attack = 1.0;
 
-        if (move.getMType().equals(MoveType.SPECIAL)) {
+        if (move.getMType().equals(MoveType.SPECIAL) || move.getMType().equals(MoveType.OTHER)) {
             attack = atk.getSpAttack();
 
             if (trg.hasActiveMove(Moves.LIGHTSCREEN)) {
@@ -2459,7 +2497,7 @@ public class BattleManager extends Thread {
 
         double defense = 1.0;
 
-        if (move.getMType().equals(MoveType.SPECIAL)) {
+        if (move.getMType().equals(MoveType.SPECIAL) || move.getMType().equals(MoveType.OTHER)) {
             defense = trg.getSpDefense();
         }
         else if (move.getMType().equals(MoveType.PHYSICAL)) {
@@ -2568,7 +2606,7 @@ public class BattleManager extends Thread {
         if (atk.getAbility() == Ability.SNIPER) {
             damage = 3.0;
         }
-        if (trg.getAbility() == Ability.SHELLARMOR) {
+        if (trg.getAbility() == Ability.SHELLARMOR || move.getMove() == Moves.DOOMDESIRE) {
             damage = 1.0;
         }
         if (trg.hasActiveMove(Moves.LUCKYCHANT)) {
@@ -2728,6 +2766,14 @@ public class BattleManager extends Thread {
                         move.resetMoveTurns();
                     }
                     break;
+                case DOOMDESIRE:
+                    move.setTurnCount(move.getTurnCount() - 1);
+                    if (move.getTurnCount() <= 0) {
+                        iterator.remove();
+                        move.resetMoveTurns();
+                        doomDesire(trg, atk);
+                    }
+                    break;
                 case FUTURESIGHT:
                     move.setTurnCount(move.getTurnCount() - 1);
                     if (move.getTurnCount() <= 0) {
@@ -2809,6 +2855,14 @@ public class BattleManager extends Thread {
         }
 
         typeDialogue(trg.getName() + " took\n" + damage + " by Future Sight!");
+    }
+
+    private void doomDesire(Pokemon trg, Pokemon atk) throws InterruptedException {
+
+        typeDialogue(trg.getName() + " took the\nDoome Desire attack!");
+
+        Move move = new Move(Moves.DOOMDESIRE);
+        int damage = dealDamage(atk, trg, move, 1);
     }
 
     private void leechSeed(Pokemon trg, Pokemon atk) throws InterruptedException {

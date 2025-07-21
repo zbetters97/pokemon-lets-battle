@@ -24,8 +24,14 @@ public class Dratini extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.WRAP),
                 new Move(Moves.LEER)
+                 */
+                new Move(Moves.OUTRAGE),
+                new Move(Moves.HEADBUTT),
+                new Move(Moves.FIREBLAST),
+                new Move(Moves.THUNDERWAVE)
         ));
 
         moveLevels = Map.ofEntries(

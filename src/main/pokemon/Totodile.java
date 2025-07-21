@@ -24,8 +24,14 @@ public class Totodile extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.TACKLE),
                 new Move(Moves.LEER)
+                 */
+                new Move(Moves.SURF),
+                new Move(Moves.BLIZZARD),
+                new Move(Moves.SLASH),
+                new Move(Moves.SCREECH)
         ));
 
         moveLevels = Map.ofEntries(

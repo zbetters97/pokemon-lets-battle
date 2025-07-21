@@ -24,10 +24,16 @@ public class Dragonair extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.WRAP),
                 new Move(Moves.LEER),
                 new Move(Moves.THUNDERWAVE),
                 new Move(Moves.TWISTER)
+                 */
+                new Move(Moves.OUTRAGE),
+                new Move(Moves.HEADBUTT),
+                new Move(Moves.SAFEGUARD),
+                new Move(Moves.THUNDERWAVE)
         ));
 
         moveLevels = Map.ofEntries(

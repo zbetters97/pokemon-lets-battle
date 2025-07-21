@@ -24,8 +24,14 @@ public class Quilava extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.TACKLE),
                 new Move(Moves.LEER),
+                new Move(Moves.SMOKESCREEN)
+                 */
+                new Move(Moves.FIREBLAST),
+                new Move(Moves.ROLLOUT),
+                new Move(Moves.STRENGTH),
                 new Move(Moves.SMOKESCREEN)
         ));
 

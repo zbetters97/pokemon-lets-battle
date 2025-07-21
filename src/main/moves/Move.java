@@ -106,7 +106,8 @@ public class Move {
         }
 
         switch (move) {
-            case CHARGE, FUTURESIGHT, GRAVITY, HEALBLOCK, LIGHTSCREEN, LUCKYCHANT, MAGNETRISE, MINDREADER, MIST, OUTRAGE,
+            case CHARGE, DOOMDESIRE, FUTURESIGHT, GRAVITY, HEALBLOCK, LIGHTSCREEN, LUCKYCHANT, MAGNETRISE, MINDREADER,
+                 MIST, OUTRAGE,
                  PERISHSONG,
                  PETALDANCE,
                  REFLECT,
@@ -125,7 +126,8 @@ public class Move {
     public void resetMoveTurns() {
 
         switch (move) {
-            case CHARGE, FUTURESIGHT, GRAVITY, HEALBLOCK, LIGHTSCREEN, LUCKYCHANT, MAGNETRISE, MINDREADER, MIST, OUTRAGE,
+            case CHARGE, DOOMDESIRE, FUTURESIGHT, GRAVITY, HEALBLOCK, LIGHTSCREEN, LUCKYCHANT, MAGNETRISE, MINDREADER,
+                 MIST, OUTRAGE,
                  PERISHSONG,
                  PETALDANCE,
                  REFLECT,

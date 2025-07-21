@@ -28,7 +28,6 @@ public class Golem extends Pokemon {
                 new Move(Moves.TACKLE),
                 new Move(Moves.DEFENSECURL)
                  */
-
                 new Move(Moves.DIG),
                 new Move(Moves.SEISMICTOSS),
                 new Move(Moves.FIREBLAST),

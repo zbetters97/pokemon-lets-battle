@@ -24,10 +24,16 @@ public class Meganium extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.TACKLE),
                 new Move(Moves.GROWL),
                 new Move(Moves.RAZORLEAF),
                 new Move(Moves.POISONPOWDER)
+                 */
+                new Move(Moves.SOLARBEAM),
+                new Move(Moves.STRENGTH),
+                new Move(Moves.POISONPOWDER),
+                new Move(Moves.REFLECT)
         ));
 
         moveLevels = Map.ofEntries(
