@@ -24,10 +24,16 @@ public class Shelgon extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.RAGE),
                 new Move(Moves.BITE),
                 new Move(Moves.LEER),
                 new Move(Moves.HEADBUTT)
+                 */
+                new Move(Moves.DRAGONBREATH),
+                new Move(Moves.FOCUSENERGY),
+                new Move(Moves.CRUNCH),
+                new Move(Moves.DOUBLEEDGE)
         ));
 
         moveLevels = Map.ofEntries(

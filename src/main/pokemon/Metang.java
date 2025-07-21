@@ -24,10 +24,16 @@ public class Metang extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.MAGNETRISE),
                 new Move(Moves.TAKEDOWN),
                 new Move(Moves.METALCLAW),
                 new Move(Moves.CONFUSION)
+                 */
+                new Move(Moves.BULLETPUNCH),
+                new Move(Moves.METEORMASH),
+                new Move(Moves.SCARYFACE),
+                new Move(Moves.IRONDEFENSE)
         ));
 
         moveLevels = Map.ofEntries(

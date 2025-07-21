@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Bagon extends Pokemon {
@@ -21,16 +22,20 @@ public class Bagon extends Pokemon {
     }
 
     protected void mapMoves() {
-
-        moveset.add(
-                new Move(Moves.RAGE)
-        );
+        
+        moveset.addAll(Arrays.asList(
+                //    new Move(Moves.RAGE)
+                new Move(Moves.FOCUSENERGY),
+                new Move(Moves.DRAGONCLAW),
+                new Move(Moves.FIREBLAST),
+                new Move(Moves.SCARYFACE)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(5, Moves.BITE),
                 Map.entry(10, Moves.LEER),
                 Map.entry(16, Moves.HEADBUTT),
-				Map.entry(20, Moves.FOCUSENERGY),
+                Map.entry(20, Moves.FOCUSENERGY),
                 Map.entry(25, Moves.EMBER),
                 Map.entry(31, Moves.DRAGONBREATH),
                 Map.entry(35, Moves.ZENHEADBUTT),

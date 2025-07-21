@@ -24,9 +24,15 @@ public class Loudred extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.POUND),
                 new Move(Moves.ASTONISH),
                 new Move(Moves.HOWL)
+                 */
+                new Move(Moves.BITE),
+                new Move(Moves.SUPERSONIC),
+                new Move(Moves.HYPERVOICE),
+                new Move(Moves.REST)
         ));
 
         moveLevels = Map.ofEntries(

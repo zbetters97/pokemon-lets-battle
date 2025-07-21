@@ -24,8 +24,14 @@ public class Mudkip extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.TACKLE),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.MUDDYWATER),
+                new Move(Moves.PROTECT),
+                new Move(Moves.HYDROPUMP),
+                new Move(Moves.ENDEAVOR)
         ));
 
         moveLevels = Map.ofEntries(

@@ -24,10 +24,16 @@ public class Grovyle extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.POUND),
                 new Move(Moves.ABSORB),
                 new Move(Moves.QUICKATTACK),
                 new Move(Moves.LEER)
+                 */
+                new Move(Moves.LEAFBLADE),
+                new Move(Moves.AGILITY),
+                new Move(Moves.LEAFSTORM),
+                new Move(Moves.QUICKATTACK)
         ));
 
         moveLevels = Map.ofEntries(

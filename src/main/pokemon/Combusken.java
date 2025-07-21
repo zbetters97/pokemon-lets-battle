@@ -24,9 +24,15 @@ public class Combusken extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.EMBER),
                 new Move(Moves.SCRATCH),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.FLAREBLITZ),
+                new Move(Moves.SKYUPPERCUT),
+                new Move(Moves.BULKUP),
+                new Move(Moves.BULKUP)
         ));
 
         moveLevels = Map.ofEntries(

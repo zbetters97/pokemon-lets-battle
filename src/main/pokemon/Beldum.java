@@ -23,9 +23,13 @@ public class Beldum extends Pokemon {
 
     protected void mapMoves() {
 
-        moveset.add(
-                new Move(Moves.TAKEDOWN)
-        );
+        moveset.addAll(Arrays.asList(
+                //   new Move(Moves.TAKEDOWN)
+                new Move(Moves.SUPERSONIC),
+                new Move(Moves.REST),
+                new Move(Moves.SLEEPTALK),
+                new Move(Moves.HYPNOSIS)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(11, Moves.ASTONISH),

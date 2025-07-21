@@ -25,8 +25,14 @@ public class Hooh extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(List.of(
+                /*
                 new Move(Moves.FIRESPIN),
                 new Move(Moves.STOMP),
+                new Move(Moves.SWAGGER),
+                new Move(Moves.CALMMIND)
+                 */
+                new Move(Moves.LAVAPLUME),
+                new Move(Moves.EXTRASENSORY),
                 new Move(Moves.SWAGGER),
                 new Move(Moves.CALMMIND)
         ));

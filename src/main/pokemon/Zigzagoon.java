@@ -24,8 +24,14 @@ public class Zigzagoon extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.TACKLE),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.HEADBUTT),
+                new Move(Moves.SANDATTACK),
+                new Move(Moves.FLAIL),
+                new Move(Moves.REST)
         ));
 
         moveLevels = Map.ofEntries(

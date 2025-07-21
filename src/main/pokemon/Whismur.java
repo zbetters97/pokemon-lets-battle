@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Whismur extends Pokemon {
@@ -22,9 +23,13 @@ public class Whismur extends Pokemon {
 
     protected void mapMoves() {
 
-        moveset.add(
-                new Move(Moves.POUND)
-        );
+        moveset.addAll(Arrays.asList(
+                //  new Move(Moves.POUND)
+                new Move(Moves.HYPERVOICE),
+                new Move(Moves.REST),
+                new Move(Moves.SLEEPTALK),
+                new Move(Moves.SCREECH)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(11, Moves.ASTONISH),

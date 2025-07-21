@@ -25,10 +25,16 @@ public class Lugia extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(List.of(
+                /*
                 new Move(Moves.GUST),
                 new Move(Moves.HYDROPUMP),
                 new Move(Moves.ANCIENTPOWER),
                 new Move(Moves.CALMMIND)
+                 */
+                new Move(Moves.HYDROPUMP),
+                new Move(Moves.AEROBLAST),
+                new Move(Moves.SKYATTACK),
+                new Move(Moves.PUNISHMENT)
         ));
 
         moveLevels = Map.ofEntries(

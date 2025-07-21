@@ -24,9 +24,15 @@ public class Sealeo extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.WATERGUN),
                 new Move(Moves.DEFENSECURL),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.BLIZZARD),
+                new Move(Moves.SWAGGER),
+                new Move(Moves.SNORE),
+                new Move(Moves.SURF)
         ));
 
         moveLevels = Map.ofEntries(

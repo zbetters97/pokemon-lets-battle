@@ -24,9 +24,15 @@ public class Marshtomp extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.WATERGUN),
                 new Move(Moves.TACKLE),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.MUDDYWATER),
+                new Move(Moves.EARTHQUAKE),
+                new Move(Moves.PROTECT),
+                new Move(Moves.MUDSHOT)
         ));
 
         moveLevels = Map.ofEntries(

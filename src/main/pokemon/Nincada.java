@@ -24,8 +24,14 @@ public class Nincada extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.SCRATCH),
                 new Move(Moves.HARDEN)
+                 */
+                new Move(Moves.METALCLAW),
+                new Move(Moves.DIG),
+                new Move(Moves.SANDATTACK),
+                new Move(Moves.MINDREADER)
         ));
 
         moveLevels = Map.ofEntries(

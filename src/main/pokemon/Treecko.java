@@ -24,8 +24,14 @@ public class Treecko extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.POUND),
                 new Move(Moves.LEER)
+                 */
+                new Move(Moves.ENERGYBALL),
+                new Move(Moves.AGILITY),
+                new Move(Moves.SLAM),
+                new Move(Moves.MEGADRAIN)
         ));
 
         moveLevels = Map.ofEntries(

@@ -24,21 +24,27 @@ public class Kirlia extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.GROWL),
                 new Move(Moves.CONFUSION),
                 new Move(Moves.DOUBLETEAM),
                 new Move(Moves.TELEPORT)
+                 */
+                new Move(Moves.PSYCHIC),
+                new Move(Moves.FUTURESIGHT),
+                new Move(Moves.IMPRISON),
+                new Move(Moves.MAGICALLEAF)
         ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(6, Moves.CONFUSION),
                 Map.entry(10, Moves.DOUBLETEAM),
                 Map.entry(12, Moves.TELEPORT),
-				Map.entry(17, Moves.LUCKYCHANT),
+                Map.entry(17, Moves.LUCKYCHANT),
                 Map.entry(22, Moves.MAGICALLEAF),
                 Map.entry(25, Moves.CALMMIND),
                 Map.entry(31, Moves.PSYCHIC),
-				Map.entry(36, Moves.IMPRISON),
+                Map.entry(36, Moves.IMPRISON),
                 Map.entry(39, Moves.FUTURESIGHT),
                 Map.entry(45, Moves.CHARM),
                 Map.entry(50, Moves.HYPNOSIS),

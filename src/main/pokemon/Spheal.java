@@ -24,9 +24,15 @@ public class Spheal extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.WATERGUN),
                 new Move(Moves.DEFENSECURL),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.BLIZZARD),
+                new Move(Moves.AURORABEAM),
+                new Move(Moves.HAIL),
+                new Move(Moves.REST)
         ));
 
         moveLevels = Map.ofEntries(

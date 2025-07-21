@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Poochyena extends Pokemon {
@@ -22,9 +23,13 @@ public class Poochyena extends Pokemon {
 
     protected void mapMoves() {
 
-        moveset.add(
-                new Move(Moves.TACKLE)
-        );
+        moveset.addAll(Arrays.asList(
+                //  new Move(Moves.TACKLE)
+                new Move(Moves.SUCKERPUNCH),
+                new Move(Moves.SCARYFACE),
+                new Move(Moves.ASSURANCE),
+                new Move(Moves.SWAGGER)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(5, Moves.HOWL),

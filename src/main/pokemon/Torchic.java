@@ -24,8 +24,14 @@ public class Torchic extends Pokemon {
     protected void mapMoves() {
 
         moveset.addAll(Arrays.asList(
+                /*
                 new Move(Moves.SCRATCH),
                 new Move(Moves.GROWL)
+                 */
+                new Move(Moves.FLAMETHROWER),
+                new Move(Moves.PECK),
+                new Move(Moves.SANDATTACK),
+                new Move(Moves.BULKUP)
         ));
 
         moveLevels = Map.ofEntries(

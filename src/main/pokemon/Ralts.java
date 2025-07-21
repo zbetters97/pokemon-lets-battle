@@ -6,6 +6,7 @@ import moves.Moves;
 import properties.Ability;
 import properties.Type;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class Ralts extends Pokemon {
@@ -22,9 +23,13 @@ public class Ralts extends Pokemon {
 
     protected void mapMoves() {
 
-        moveset.add(
-                new Move(Moves.GROWL)
-        );
+        moveset.addAll(Arrays.asList(
+                //      new Move(Moves.GROWL)
+                new Move(Moves.MAGICALLEAF),
+                new Move(Moves.HYPNOSIS),
+                new Move(Moves.IMPRISON),
+                new Move(Moves.DREAMEATER)
+        ));
 
         moveLevels = Map.ofEntries(
                 Map.entry(6, Moves.CONFUSION),
