@@ -1349,7 +1349,7 @@ public class BattleManager extends Thread {
             else {
                 accuracy = moveAccuracy * (atk.getAccuracy() / trg.getEvasion());
             }
-
+            
             Random r = new Random();
             float chance = r.nextFloat();
 

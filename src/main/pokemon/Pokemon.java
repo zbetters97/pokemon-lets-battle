@@ -96,7 +96,7 @@ public class Pokemon {
     protected int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg, evasionStg;
 
     protected int statusCounter, statusLimit;
-    protected boolean isAlive = true, attacking = false, isFocusing, canEscape = false, statChanging = false, hit = false;
+    protected boolean isAlive = true, attacking = false, isFocusing, canEscape = true, statChanging = false, hit = false;
 
     protected List<Move> moveset, activeMoves;
     protected Map<Integer, Moves> moveLevels;
@@ -1253,6 +1253,7 @@ public class Pokemon {
     }
 
     public String changeStat(String stat, int level) {
+        /** STAT MODIFIER REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Stat_modifier **/
 
         if (!canChangeStat(stat, level)) {
             return "";
@@ -1261,143 +1262,73 @@ public class Pokemon {
         String output = "";
         int difference;
         int change = 0;
+        double result = 0.0;
 
-        switch (stat) {
-            case "attack":
-                difference = attackStg + level;
-                if (level > 0) {
-                    while (attackStg < difference && attackStg < 6) {
-                        attackStg++;
-                        change++;
-                    }
-                    cAttack = Math.floor(attack * ((2.0 + attackStg) / 2.0));
-                    output = outputChange(stat, change);
-                }
-                else if (level < 0) {
-                    while (attackStg > difference && attackStg > -6) {
-                        attackStg--;
-                        change--;
-                    }
-                    cAttack = Math.floor(attack * (2.0 / (2.0 - attackStg)));
-                    output = outputChange(stat, change);
-                }
-                break;
-            case "defense":
-                difference = defenseStg + level;
-                if (level > 0) {
-                    while (defenseStg < difference && defenseStg < 6) {
-                        defenseStg++;
-                        change++;
-                    }
-                    cDefense = Math.floor(defense * ((2.0 + defenseStg) / 2.0));
-                    output = outputChange(stat, change);
-                }
-                else if (level < 0) {
-                    while (defenseStg > difference && defenseStg > -6) {
-                        defenseStg--;
-                        change--;
-                    }
-                    cDefense = Math.floor(defense * (2.0 / (2.0 - defenseStg)));
-                    output = outputChange(stat, change);
-                }
-                break;
-            case "sp. attack":
-                difference = spAttackStg + level;
-                if (level > 0) {
-                    while (spAttackStg < difference && spAttackStg < 6) {
-                        spAttackStg++;
-                        change++;
-                    }
-                    cSpAttack = Math.floor(spAttack * ((2.0 + spAttackStg) / 2.0));
-                    output = outputChange(stat, change);
-                }
-                else if (level < 0) {
-                    while (spAttackStg > difference && spAttackStg > -6) {
-                        spAttackStg--;
-                        change--;
-                    }
-                    cSpAttack = Math.floor(spAttack * (2.0 / (2.0 - spAttackStg)));
-                    output = outputChange(stat, change);
-                }
-                break;
-            case "sp. defense":
-                difference = spDefenseStg + level;
-                if (level > 0) {
-                    while (spDefenseStg < difference && spDefenseStg < 6) {
-                        spDefenseStg++;
-                        change++;
-                    }
-                    cSpDefense = Math.floor(spDefense * ((2.0 + spDefenseStg) / 2.0));
-                    output = outputChange(stat, change);
-                }
-                else if (level < 0) {
-                    while (spDefenseStg > difference && spDefenseStg > -6) {
-                        spDefenseStg--;
-                        change--;
-                    }
-                    cSpDefense = Math.floor(spDefense * (2.0 / (2.0 - spDefenseStg)));
-                    output = outputChange(stat, change);
-                }
-                break;
-            case "speed":
-                difference = speedStg + level;
-                if (level > 0) {
-                    while (speedStg < difference && speedStg < 6) {
-                        speedStg++;
-                        change++;
-                    }
-                    cSpeed = Math.floor(speed * ((2.0 + speedStg) / 2.0));
-                    output = outputChange(stat, change);
-                }
-                else if (level < 0) {
-                    while (speedStg > difference && speedStg > -6) {
-                        speedStg--;
-                        change--;
-                    }
-                    cSpeed = Math.floor(speed * (2.0 / (2.0 - speedStg)));
-                    output = outputChange(stat, change);
-                }
-                break;
-            case "accuracy":
-                difference = accuracyStg + level;
-                if (level > 0) {
-                    while (accuracyStg < difference && accuracyStg < 6) {
-                        accuracyStg++;
-                        change++;
-                    }
-                    accuracy = Math.floor(1 * ((3.0 + accuracyStg) / 3.0));
-                    output = outputChange(stat, change);
-                }
-                else if (level < 0) {
-                    while (accuracyStg > difference && accuracyStg > -6) {
-                        accuracyStg--;
-                        change--;
-                    }
-                    accuracy = Math.floor(1 * (3.0 / (3.0 - accuracyStg)));
-                    output = outputChange(stat, change);
-                }
-                break;
-            case "evasion":
-                difference = evasionStg + level;
-                if (level > 0) {
-                    while (evasionStg < difference && evasionStg < 6) {
-                        evasionStg++;
-                        change++;
-                    }
-                    evasion = Math.floor(1 * ((3.0 + evasionStg) / 3.0));
-                    output = outputChange(stat, change);
-                }
-                else if (level < 0) {
-                    while (evasionStg > difference && evasionStg > -6) {
-                        evasionStg--;
-                        change--;
-                    }
-                    evasion = Math.floor(1 * (3.0 / (3.0 - evasionStg)));
-                    output = outputChange(stat, change);
-                }
-                break;
+        int tempStage = switch (stat) {
+            case "attack" -> attackStg;
+            case "defense" -> defenseStg;
+            case "spAttack" -> spAttackStg;
+            case "spDefense" -> spDefenseStg;
+            case "speed" -> speedStg;
+            case "accuracy" -> accuracyStg;
+            case "evasion" -> evasionStg;
+            default -> 0;
+        };
+
+        double variable = switch (stat) {
+            case "attack", "defense", "spAttack", "spDefense", "speed" -> 2.0;
+            case "accuracy", "evasion" -> 3.0;
+            default -> 2.0;
+        };
+
+        difference = tempStage + level;
+        if (level > 0) {
+            while (tempStage < difference && tempStage < 6) {
+                tempStage++;
+                change++;
+            }
+            result = (variable + tempStage) / (variable);
+        }
+        else if (level < 0) {
+            while (tempStage > difference && tempStage > -6) {
+                tempStage--;
+                change--;
+            }
+            result = variable / (variable - tempStage);
         }
 
+        switch (stat) {
+            case "attack" -> {
+                attackStg = tempStage;
+                cAttack = result;
+            }
+            case "defense" -> {
+                defenseStg = tempStage;
+                cDefense = result;
+            }
+            case "spAttack" -> {
+                spAttackStg = tempStage;
+                cSpAttack = result;
+            }
+            case "spDefense" -> {
+                spDefenseStg = tempStage;
+                cSpDefense = result;
+            }
+            case "speed" -> {
+                speedStg = tempStage;
+                cSpeed = result;
+            }
+            case "accuracy" -> {
+                accuracyStg = tempStage;
+                accuracy = result;
+            }
+            case "evasion" -> {
+                evasionStg = tempStage;
+                evasion = result;
+            }
+        }
+
+        output = outputChange(stat, change);
         return output;
     }
 

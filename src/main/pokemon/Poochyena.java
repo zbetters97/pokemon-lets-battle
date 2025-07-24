@@ -28,6 +28,7 @@ public class Poochyena extends Pokemon {
                 new Move(Moves.SUCKERPUNCH),
                 new Move(Moves.SCARYFACE),
                 new Move(Moves.ASSURANCE),
+                
                 new Move(Moves.SWAGGER)
         ));
 
